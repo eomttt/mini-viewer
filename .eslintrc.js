@@ -8,7 +8,26 @@ module.exports = {
     '@ridi/eslint-config/typescript',
     '@ridi/eslint-config/react'
   ],
+  settings: {
+    'import/resolver': {
+      node: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        moduleDirectory: ['node_modules', '/']
+      }
+    }
+  },
   rules: {
-    'react/jsx-props-no-spreading': 0
+    'react/jsx-props-no-spreading': 0,
+    '@typescript-eslint/no-explicit-any': 0,
+    'import/extensions': [
+      'error',
+      'ignorePackages',
+      {
+        'js': 'never',
+        'jsx': 'never',
+        'ts': 'never',
+        'tsx': 'neve',
+      }
+   ]
   },
 };

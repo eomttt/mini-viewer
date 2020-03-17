@@ -1,21 +1,34 @@
 import React from 'react';
+import { Provider } from 'react-redux';
+
+import withRedux from 'next-redux-wrapper';
 import App, { AppInitialProps } from 'next/app';
 
-class MyApp extends App {
+import initStore from '../store';
+
+interface Props {
+  store: any;
+}
+
+class MyApp extends App<Props> {
   public static async getInitialProps({ Component, ctx }): Promise<AppInitialProps> {
     let pageProps = {};
+
     if (Component.getInitialProps) {
       pageProps = await Component.getInitialProps(ctx);
     }
+
     return { pageProps };
   }
 
   public render(): JSX.Element {
-    const { Component, pageProps } = this.props;
+    const { Component, pageProps, store } = this.props;
     return (
-      <Component {...pageProps} />
+      <Provider store={store}>
+        <Component {...pageProps} />
+      </Provider>
     );
   }
 }
 
-export default MyApp;
+export default withRedux(initStore)(MyApp);

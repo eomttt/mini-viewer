@@ -13,9 +13,12 @@
   "dependencies": {
     "@ridi/epub-parser": "^0.6.14",
     "next": "^9.3.0",
+    "next-redux-wrapper": "^5.0.0",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
     "react-redux": "^7.2.0",
+    "redux": "^4.0.5",
+    "redux-devtools-extension": "^2.13.8",
     "styled-components": "^5.0.1"
   },
   "devDependencies": {
