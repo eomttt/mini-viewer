@@ -7,27 +7,35 @@ const Container = styled.div`
 
 const Home = (bookInfo) => {
   console.log('RRR', bookInfo);
-  const { items, book } = bookInfo;
+  const { readItems, book, basePath } = bookInfo;
 
   const {
-    items: bookItems, images, styles, ncx,
+    items, images, styles, ncx,
   } = book;
 
   const imagesId = images.map((image) => image.id);
   const stylesId = styles.map((style) => style.id);
 
-  const renderItems = (): JSX.Element => bookItems.map((bookItem, idx) => {
+  const renderBookItem = (bookItem, readItem): JSX.Element => {
     if (imagesId.includes(bookItem.id)) {
-      return <img src={`data:image/jpeg;base64,${items[idx].toString('base64')}`} alt="test" key={idx} />;
+      return <img src={`${basePath}/${bookItem.href}`} alt="Cover" />;
     }
     if (stylesId.includes(bookItem.id)) {
-      return <style key={idx}>{items[idx]}</style>;
+      return <link rel="stylesheet" href={`${basePath}/${bookItem.href}`} />;
     }
     if (ncx.id === bookItem.id) {
-      return <div key={idx}>NCX</div>;
+      return <div>NCX</div>;
     }
     // eslint-disable-next-line react/no-danger
-    return <div dangerouslySetInnerHTML={{ __html: items[idx] }} key={idx} />;
+    return <div dangerouslySetInnerHTML={{ __html: readItem }} />;
+  };
+
+  const renderItems = (): JSX.Element => items.map((item, idx) => {
+    return (
+      <section key={idx}>
+        {renderBookItem(item, readItems[idx])}
+      </section>
+    );
   });
 
   return (
@@ -44,21 +52,24 @@ Home.getInitialProps = async (context: NextPageContext): Promise<any> => {
     try {
       const parser = new EpubParser('public/pg61625-images.epub');
       const book = await parser.parse({
+        validatePackage: true,
         parseStyle: false,
+        unzipPath: 'public/epub/pg61625-images',
       });
-      const spines = await parser.readItems(book.spines);
-      const items = await parser.readItems(book.items, {
+      const readSpines = await parser.readItems(book.spines);
+      const readItems = await parser.readItems(book.items, {
         force: true,
         extractBody: true,
         serializedAnchor: true,
         ignoreScript: true,
-        basePath: 'http://www.gutenberg.org/files/61625/61625-h/images',
+        basePath: 'epub/pg61625-images',
       });
 
       return {
         book,
-        spines,
-        items,
+        readSpines,
+        readItems,
+        basePath: 'epub/pg61625-images',
       };
     } catch (error) {
       console.log('Error', error);
