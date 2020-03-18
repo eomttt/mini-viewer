@@ -18,8 +18,10 @@ module.exports = {
   },
   rules: {
     'react/jsx-props-no-spreading': 0,
+    'react/prop-types': 0,
     '@typescript-eslint/no-explicit-any': 0,
     '@typescript-eslint/no-var-requires': 0,
+    '@typescript-eslint/explicit-function-return-type': 0,
     'no-underscore-dangle': 0,
     'global-require': 0,
     'import/extensions': [
