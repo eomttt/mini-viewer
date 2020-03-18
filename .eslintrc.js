@@ -19,6 +19,9 @@ module.exports = {
   rules: {
     'react/jsx-props-no-spreading': 0,
     '@typescript-eslint/no-explicit-any': 0,
+    '@typescript-eslint/no-var-requires': 0,
+    'no-underscore-dangle': 0,
+    'global-require': 0,
     'import/extensions': [
       'error',
       'ignorePackages',
