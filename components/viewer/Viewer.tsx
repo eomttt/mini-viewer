@@ -1,79 +1,85 @@
 /* eslint-disable react/no-danger */
 import React, {
-  useEffect, useState, useRef, useCallback,
+  useEffect, useState, useRef, useCallback, useMemo,
 } from 'react';
-
-import styled from 'styled-components';
 
 import { EpubSpineItem } from '../../interfaces/books';
 
-const HiddenViewSection = styled.section`
-  visibility: hidden;
-`;
+import {
+  Container,
+  ViewArticle, ViewSection, Contents,
+  HiddenViewSection,
+  LeftButton, RightButton,
+} from '../../styles/viewer';
 
-const ViewSection = styled.section`
-  height: 100%;
-  column-fill: auto;
-  column-gap: 46px;
-  column-width: 600px;
-`;
-
-const Container = styled.div`
-
-`;
-
-const ViewArticle = styled.article`
-  box-sizing: border-box;
-  visibility: visible;
-  width: 600px;
-  height: ${(props) => props.styleProps.height}px;
-  vertical-align: top;
-  white-space: initial;
-  display: inline-block;
-  font-size: 1em !important;
-  line-height: 1.67em !important;
-  font-family: kopup_dotum !important;
-  margin: 50px 139px;
-  overflow: hidden;
-`;
-
-const Contents = styled.div`
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-`;
+import { VIEWER_WIDTH_RATIO, VIEWER_HEIGHT_RATIO, VIEWER_PAGE_GAP } from '../../constants/viewer';
 
 interface Props {
-  spines: EpubSpineItem[];
-  viewerSpines: string[];
+  nowSpineIndex: number;
+  spine: EpubSpineItem;
+  viewerSpine: string;
+  setNextSpine: () => void;
+  setPrevSpine: () => void;
 }
 
-const Viewer: React.FunctionComponent<Props> = ({ spines, viewerSpines }) => {
+const Viewer: React.FunctionComponent<Props> = ({
+  nowSpineIndex, spine, viewerSpine,
+  setNextSpine, setPrevSpine,
+}) => {
   const [viewerWidth, setViewerWidth] = useState(0);
   const [viewerHeight, setViewerHeight] = useState(0);
 
-  const [columnViewerCount, setColumnViewerCount] = useState(0);
+  const [nowViewerCount, setNowViewerCount] = useState(0);
+  const [wholeViewerCount, setWholeViewerCount] = useState(0);
+
+  const hasNextViewer = useMemo(() => nowViewerCount < wholeViewerCount, [nowViewerCount, wholeViewerCount]);
+  const hasPrevViewer = useMemo(() => nowViewerCount > 0, [nowViewerCount]);
 
   const viewArticleRef = useRef(null);
   const hiddenViewSectionRef = useRef(null);
 
   useEffect(() => {
-    setViewerWidth(window.innerWidth * 0.7);
-    setViewerHeight(window.innerHeight * 0.9);
+    setViewerWidth(Math.floor(window.innerWidth * (VIEWER_WIDTH_RATIO / 100)));
+    setViewerHeight(Math.floor(window.innerHeight * (VIEWER_HEIGHT_RATIO / 100)));
   }, []);
 
-  const clickRight = useCallback(() => {
-    if (viewArticleRef && hiddenViewSectionRef) {
-      const { current: viewArticleRefCurrent } = viewArticleRef;
+  useEffect(() => {
+    if (hiddenViewSectionRef) {
       const { current: hiddenViewSectionCurrent } = hiddenViewSectionRef;
+      const count = hiddenViewSectionCurrent.clientHeight / viewerHeight;
 
-      const count = hiddenViewSectionCurrent.clientHeight / viewerHeight + 1;
-
-      setColumnViewerCount(Math.floor(count));
-      viewArticleRefCurrent.scrollLeft += viewerWidth;
+      setNowViewerCount(0);
+      setWholeViewerCount(Math.floor(count));
     }
-  }, [viewArticleRef, hiddenViewSectionRef,
-    viewerWidth, viewerHeight]);
+  }, [hiddenViewSectionRef, viewerHeight, nowSpineIndex]);
+
+  const clickRight = useCallback(() => {
+    if (viewArticleRef) {
+      const { current: viewArticleRefCurrent } = viewArticleRef;
+
+      if (hasNextViewer) {
+        setNowViewerCount(nowViewerCount + 1);
+        viewArticleRefCurrent.scrollLeft += (viewerWidth + VIEWER_PAGE_GAP);
+      } else {
+        viewArticleRefCurrent.scrollLeft = 0;
+        setNextSpine();
+      }
+    }
+  }, [viewArticleRef, hasNextViewer, nowViewerCount, viewerWidth, setNextSpine]);
+
+  const clickLeft = useCallback(() => {
+    if (viewArticleRef) {
+      const { current: viewArticleRefCurrent } = viewArticleRef;
+
+      if (hasPrevViewer) {
+        setNowViewerCount(nowViewerCount - 1);
+        viewArticleRefCurrent.scrollLeft -= (viewerWidth + VIEWER_PAGE_GAP);
+      } else {
+        viewArticleRefCurrent.scrollLeft = 0;
+        setPrevSpine();
+      }
+    }
+  }, [viewArticleRef, hasPrevViewer, nowViewerCount, viewerWidth, setPrevSpine]);
 
   return (
     <Container>
@@ -91,14 +97,16 @@ const Viewer: React.FunctionComponent<Props> = ({ spines, viewerSpines }) => {
             height: viewerHeight,
           }}
         >
-          <Contents dangerouslySetInnerHTML={{ __html: viewerSpines[1] }} />
+          <Contents dangerouslySetInnerHTML={{ __html: viewerSpine }} />
         </ViewSection>
         <HiddenViewSection
           ref={hiddenViewSectionRef}
         >
-          <Contents dangerouslySetInnerHTML={{ __html: viewerSpines[1] }} />
+          <Contents dangerouslySetInnerHTML={{ __html: viewerSpine }} />
         </HiddenViewSection>
       </ViewArticle>
+      <LeftButton onClick={clickLeft}>Left</LeftButton>
+      <RightButton onClick={clickRight}>Right</RightButton>
     </Container>
   );
 };

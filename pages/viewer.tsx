@@ -1,26 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { NextPageContext, NextPage } from 'next';
 
-import styled from 'styled-components';
-
-import ViewerComponent from '../components/viewer/Viewer';
+import ViewerPageComponent from '../components/viewer/ViewerPage';
 
 import { EpubBook } from '../interfaces/books';
 
 interface Props {
   book: EpubBook;
-  readSpines: string[];
+  viewerSpines: string[];
   basePath: string;
 }
-
-const Container = styled.div`
-`;
 
 const Viewer: NextPage<Props> = (bookInfo) => {
   const [styleTags, setStyleTags] = useState([]);
 
   const {
-    readSpines, book, basePath,
+    viewerSpines, book, basePath,
   } = bookInfo;
 
   useEffect(() => {
@@ -36,9 +31,9 @@ const Viewer: NextPage<Props> = (bookInfo) => {
       {
         styleTags.map((styleTag) => styleTag)
       }
-      <ViewerComponent
+      <ViewerPageComponent
         spines={book.spines}
-        viewerSpines={readSpines}
+        viewerSpines={viewerSpines}
       />
     </>
   );
@@ -56,7 +51,7 @@ Viewer.getInitialProps = async (context: NextPageContext<any>): Promise<any> => 
         parseStyle: false,
         unzipPath: 'public/epub/jikji',
       });
-      const readSpines = await parser.readItems(book.spines, {
+      const viewerSpines = await parser.readItems(book.spines, {
         force: true,
         extractBody: true,
         serializedAnchor: true,
@@ -66,7 +61,7 @@ Viewer.getInitialProps = async (context: NextPageContext<any>): Promise<any> => 
 
       return {
         book,
-        readSpines,
+        viewerSpines,
         basePath: 'epub/jikji',
       };
     } catch (error) {
