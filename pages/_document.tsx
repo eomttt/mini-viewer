@@ -39,9 +39,7 @@ class MyDocument extends Document {
   render() {
     return (
       <html lang="ko">
-        <Head>
-          {this.props.styles}
-        </Head>
+        <Head />
         <body style={{ margin: 0, padding: 0 }}>
           <Main />
           <NextScript />
