@@ -31,7 +31,7 @@ const ViewerCount: React.FunctionComponent<Props> = ({
 
       dispatch(actions.setViewerCount({
         index: viewerSpineIndex,
-        count,
+        count: count - 1,
       }));
     }
 

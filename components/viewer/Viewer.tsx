@@ -1,6 +1,6 @@
 /* eslint-disable react/no-danger */
 import React, {
-  useState, useRef, useCallback, useMemo,
+  useState, useRef, useCallback, useMemo, useEffect,
 } from 'react';
 
 import { EpubSpineItem } from '../../interfaces/books';
@@ -15,6 +15,7 @@ import { VIEWER_PAGE_GAP } from '../../constants/viewer';
 interface Props {
   viewerWidth: number;
   viewerHeight: number;
+  isShowPrevViewer: boolean;
   wholeColumnCount: number;
   spine: EpubSpineItem;
   viewerSpine: string;
@@ -23,16 +24,26 @@ interface Props {
 }
 
 const Viewer: React.FunctionComponent<Props> = ({
-  viewerWidth, viewerHeight, wholeColumnCount,
+  viewerWidth, viewerHeight,
+  isShowPrevViewer, wholeColumnCount,
   spine, viewerSpine,
   setNextSpine, setPrevSpine,
 }) => {
   const [nowViewerCount, setNowViewerCount] = useState(0);
 
-  const hasNextViewer = useMemo(() => nowViewerCount + 1 < wholeColumnCount, [nowViewerCount, wholeColumnCount]);
+  const hasNextViewer = useMemo(() => nowViewerCount < wholeColumnCount, [nowViewerCount, wholeColumnCount]);
   const hasPrevViewer = useMemo(() => nowViewerCount > 0, [nowViewerCount]);
 
   const viewArticleRef = useRef(null);
+
+  useEffect(() => {
+    if (isShowPrevViewer) {
+      const { current: viewArticleRefCurrent } = viewArticleRef;
+
+      viewArticleRefCurrent.scrollLeft = wholeColumnCount * (viewerWidth + VIEWER_PAGE_GAP);
+      setNowViewerCount(wholeColumnCount);
+    }
+  }, [isShowPrevViewer, viewerWidth, wholeColumnCount]);
 
   const clickRight = useCallback(() => {
     const { current: viewArticleRefCurrent } = viewArticleRef;

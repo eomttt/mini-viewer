@@ -23,6 +23,7 @@ const ViewerPage: React.FunctionComponent<Props> = ({ spines, viewerSpines }) =>
   const [viewerWidth, setViewerWidth] = useState(0);
   const [viewerHeight, setViewerHeight] = useState(0);
   const [nowSpineIndex, setNowSpineIndex] = useState(0);
+  const [isClickedPrev, setIsClickedPrev] = useState(false);
 
   const { viewerCountList } = useSelector((state: ReducerState) => state.viewer);
 
@@ -36,11 +37,13 @@ const ViewerPage: React.FunctionComponent<Props> = ({ spines, viewerSpines }) =>
   const setNextSpine = useCallback(() => {
     console.log('Set next spine', nowSpineIndex);
     setNowSpineIndex(nowSpineIndex + 1);
+    setIsClickedPrev(false);
   }, [nowSpineIndex]);
 
   const setPrevSpine = useCallback(() => {
     console.log('Set prev spine', nowSpineIndex);
     setNowSpineIndex(nowSpineIndex - 1);
+    setIsClickedPrev(true);
   }, [nowSpineIndex]);
 
   return (
@@ -55,6 +58,7 @@ const ViewerPage: React.FunctionComponent<Props> = ({ spines, viewerSpines }) =>
         <Viewer
           viewerWidth={viewerWidth}
           viewerHeight={viewerHeight}
+          isShowPrevViewer={isClickedPrev}
           wholeColumnCount={viewerCountList[nowSpineIndex].count}
           spine={spines[nowSpineIndex]}
           viewerSpine={viewerSpines[nowSpineIndex]}
@@ -76,24 +80,6 @@ const ViewerPage: React.FunctionComponent<Props> = ({ spines, viewerSpines }) =>
           ))
         }
       </section>
-      {/* <Viewer
-        viewerWidth={viewerWidth}
-        viewerHeight={viewerHeight}
-        wholeColumnCount={3}
-        spine={spines[1]}
-        viewerSpine={viewerSpines[1]}
-        setNextSpine={setNextSpine}
-        setPrevSpine={setPrevSpine}
-      />
-      <section>
-        <ViewerCount
-          key={viewerSpines[0]}
-          viewerWidth={viewerWidth}
-          viewerHeight={viewerHeight}
-          viewerSpine={viewerSpines[1]}
-          viewerSpineIndex={4}
-        />
-      </section> */}
     </ViewerContainer>
   );
 };
