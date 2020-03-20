@@ -1,21 +1,21 @@
 /* eslint-disable react/no-danger */
 import React, {
-  useEffect, useState, useRef, useCallback, useMemo,
+  useState, useRef, useCallback, useMemo,
 } from 'react';
 
 import { EpubSpineItem } from '../../interfaces/books';
 
 import {
-  Container,
   ViewArticle, ViewSection, Contents,
-  HiddenViewSection,
   LeftButton, RightButton,
 } from '../../styles/viewer';
 
-import { VIEWER_WIDTH_RATIO, VIEWER_HEIGHT_RATIO, VIEWER_PAGE_GAP } from '../../constants/viewer';
+import { VIEWER_PAGE_GAP } from '../../constants/viewer';
 
 interface Props {
-  nowSpineIndex: number;
+  viewerWidth: number;
+  viewerHeight: number;
+  wholeColumnCount: number;
   spine: EpubSpineItem;
   viewerSpine: string;
   setNextSpine: () => void;
@@ -23,66 +23,44 @@ interface Props {
 }
 
 const Viewer: React.FunctionComponent<Props> = ({
-  nowSpineIndex, spine, viewerSpine,
+  viewerWidth, viewerHeight, wholeColumnCount,
+  spine, viewerSpine,
   setNextSpine, setPrevSpine,
 }) => {
-  const [viewerWidth, setViewerWidth] = useState(0);
-  const [viewerHeight, setViewerHeight] = useState(0);
-
   const [nowViewerCount, setNowViewerCount] = useState(0);
-  const [wholeViewerCount, setWholeViewerCount] = useState(0);
 
-  const hasNextViewer = useMemo(() => nowViewerCount < wholeViewerCount, [nowViewerCount, wholeViewerCount]);
+  const hasNextViewer = useMemo(() => nowViewerCount + 1 < wholeColumnCount, [nowViewerCount, wholeColumnCount]);
   const hasPrevViewer = useMemo(() => nowViewerCount > 0, [nowViewerCount]);
 
   const viewArticleRef = useRef(null);
-  const hiddenViewSectionRef = useRef(null);
-
-  useEffect(() => {
-    setViewerWidth(Math.floor(window.innerWidth * (VIEWER_WIDTH_RATIO / 100)));
-    setViewerHeight(Math.floor(window.innerHeight * (VIEWER_HEIGHT_RATIO / 100)));
-  }, []);
-
-  useEffect(() => {
-    if (hiddenViewSectionRef) {
-      const { current: hiddenViewSectionCurrent } = hiddenViewSectionRef;
-      const count = hiddenViewSectionCurrent.clientHeight / viewerHeight;
-
-      setNowViewerCount(0);
-      setWholeViewerCount(Math.floor(count));
-    }
-  }, [hiddenViewSectionRef, viewerHeight, nowSpineIndex]);
 
   const clickRight = useCallback(() => {
-    if (viewArticleRef) {
-      const { current: viewArticleRefCurrent } = viewArticleRef;
-
-      if (hasNextViewer) {
-        setNowViewerCount(nowViewerCount + 1);
-        viewArticleRefCurrent.scrollLeft += (viewerWidth + VIEWER_PAGE_GAP);
-      } else {
-        viewArticleRefCurrent.scrollLeft = 0;
-        setNextSpine();
-      }
+    const { current: viewArticleRefCurrent } = viewArticleRef;
+    if (hasNextViewer) {
+      setNowViewerCount(nowViewerCount + 1);
+      viewArticleRefCurrent.scrollLeft += (viewerWidth + VIEWER_PAGE_GAP);
+    } else {
+      viewArticleRefCurrent.scrollLeft = 0;
+      setNowViewerCount(0);
+      setNextSpine();
     }
-  }, [viewArticleRef, hasNextViewer, nowViewerCount, viewerWidth, setNextSpine]);
+  }, [hasNextViewer, nowViewerCount, viewerWidth, setNextSpine]);
 
   const clickLeft = useCallback(() => {
-    if (viewArticleRef) {
-      const { current: viewArticleRefCurrent } = viewArticleRef;
+    const { current: viewArticleRefCurrent } = viewArticleRef;
 
-      if (hasPrevViewer) {
-        setNowViewerCount(nowViewerCount - 1);
-        viewArticleRefCurrent.scrollLeft -= (viewerWidth + VIEWER_PAGE_GAP);
-      } else {
-        viewArticleRefCurrent.scrollLeft = 0;
-        setPrevSpine();
-      }
+    if (hasPrevViewer) {
+      setNowViewerCount(nowViewerCount - 1);
+      viewArticleRefCurrent.scrollLeft -= (viewerWidth + VIEWER_PAGE_GAP);
+    } else {
+      viewArticleRefCurrent.scrollLeft = 0;
+      setNowViewerCount(0);
+      setPrevSpine();
     }
-  }, [viewArticleRef, hasPrevViewer, nowViewerCount, viewerWidth, setPrevSpine]);
+  }, [hasPrevViewer, nowViewerCount, viewerWidth, setPrevSpine]);
 
   return (
-    <Container>
+    <>
       <ViewArticle
         ref={viewArticleRef}
         onClick={clickRight}
@@ -99,15 +77,10 @@ const Viewer: React.FunctionComponent<Props> = ({
         >
           <Contents dangerouslySetInnerHTML={{ __html: viewerSpine }} />
         </ViewSection>
-        <HiddenViewSection
-          ref={hiddenViewSectionRef}
-        >
-          <Contents dangerouslySetInnerHTML={{ __html: viewerSpine }} />
-        </HiddenViewSection>
       </ViewArticle>
       <LeftButton onClick={clickLeft}>Left</LeftButton>
       <RightButton onClick={clickRight}>Right</RightButton>
-    </Container>
+    </>
   );
 };
 

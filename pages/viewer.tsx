@@ -1,43 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { NextPageContext, NextPage } from 'next';
 
 import ViewerPageComponent from '../components/viewer/ViewerPage';
 
 import { EpubBook } from '../interfaces/books';
+import Layout from '../components/Layout';
 
 interface Props {
   book: EpubBook;
   viewerSpines: string[];
-  basePath: string;
+  styleLinks: string[];
 }
 
-const Viewer: NextPage<Props> = (bookInfo) => {
-  const [styleTags, setStyleTags] = useState([]);
-
-  const {
-    viewerSpines, book, basePath,
-  } = bookInfo;
-
-  useEffect(() => {
-    const {
-      styles,
-    } = book;
-
-    setStyleTags(styles.map((style) => <link rel="stylesheet" href={`${basePath}/${style.href}`} key={style.href} />));
-  }, [basePath, book]);
-
-  return (
-    <>
-      {
-        styleTags.map((styleTag) => styleTag)
-      }
-      <ViewerPageComponent
-        spines={book.spines}
-        viewerSpines={viewerSpines}
-      />
-    </>
-  );
-};
+const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => (
+  <Layout
+    styleLinks={styleLinks}
+  >
+    <ViewerPageComponent
+      spines={book.spines}
+      viewerSpines={viewerSpines}
+    />
+  </Layout>
+);
 
 // eslint-disable-next-line @typescript-eslint/unbound-method
 Viewer.getInitialProps = async (context: NextPageContext<any>): Promise<any> => {
@@ -62,7 +46,7 @@ Viewer.getInitialProps = async (context: NextPageContext<any>): Promise<any> => 
       return {
         book,
         viewerSpines,
-        basePath: 'epub/jikji',
+        styleLinks: book.styles.map((style) => `epub/jikji/${style.href}`),
       };
     } catch (error) {
       console.log('Error', error);

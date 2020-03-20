@@ -2,12 +2,10 @@ import styled from 'styled-components';
 
 import { VIEWER_WIDTH_RATIO, VIEWER_HEIGHT_RATIO, VIEWER_PAGE_GAP } from '../constants/viewer';
 
-export const HiddenViewSection = styled.section`
-  visibility: hidden;
-`;
-
-export const Container = styled.div`
-  position: relative;
+export const ViewerContainer = styled.div`
+  margin: ${(100 - VIEWER_HEIGHT_RATIO) / 2}% ${(100 - VIEWER_WIDTH_RATIO) / 2}%;
+  height: ${(props) => props.styleProps.height}px;
+  overflow: hidden;
 `;
 
 export const Button = `
@@ -27,26 +25,44 @@ export const LeftButton = styled.div`
   left: 2em;
 `;
 
-export const ViewArticle = styled.article`
+const ViewArticleStyle = `
   box-sizing: border-box;
   visibility: visible;
-  width: ${(props) => props.styleProps.width}px;
-  height: ${(props) => props.styleProps.height}px;
   vertical-align: top;
   white-space: initial;
   display: inline-block;
-  font-size: 1em !important;
-  line-height: 1.67em !important;
   font-family: kopup_dotum !important;
-  margin: ${(100 - VIEWER_HEIGHT_RATIO) / 2}% ${(100 - VIEWER_WIDTH_RATIO) / 2}%;
+`;
+
+const ViewSectionStyle = `
+  height: 100%;
+  column-gap: ${VIEWER_PAGE_GAP}px;
+  column-fill: auto;
+`;
+
+export const ViewArticle = styled.article`
+  ${ViewArticleStyle}
+  width: ${(props) => props.styleProps.width}px;
+  height: ${(props) => props.styleProps.height}px;
   overflow: hidden;
 `;
 
 export const ViewSection = styled.section`
-  height: 100%;
-  column-gap: ${VIEWER_PAGE_GAP}px;
-  column-fill: auto;
+  ${ViewSectionStyle}
   column-width: ${(props) => props.styleProps.width}px;
+`;
+
+export const HiddenViewArticle = styled.article`
+  ${ViewArticleStyle}
+  width: ${(props) => props.styleProps.width}px;
+  height: ${(props) => props.styleProps.height}px;
+  overflow: scroll;
+`;
+
+export const HiddenViewSection = styled.section`
+  ${ViewSectionStyle}
+  column-width: ${(props) => props.styleProps.width}px;
+  visibility: hidden;
 `;
 
 export const Contents = styled.div`
