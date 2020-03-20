@@ -35,15 +35,21 @@ const ViewerPage: React.FunctionComponent<Props> = ({ spines, viewerSpines }) =>
   }, []);
 
   const setNextSpine = useCallback(() => {
-    console.log('Set next spine', nowSpineIndex);
-    setNowSpineIndex(nowSpineIndex + 1);
-    setIsClickedPrev(false);
-  }, [nowSpineIndex]);
+    if (nowSpineIndex + 1 >= viewerSpines.length) {
+      alert('마지막 페이지 입니다.');
+    } else {
+      setNowSpineIndex(nowSpineIndex + 1);
+      setIsClickedPrev(false);
+    }
+  }, [nowSpineIndex, viewerSpines]);
 
   const setPrevSpine = useCallback(() => {
-    console.log('Set prev spine', nowSpineIndex);
-    setNowSpineIndex(nowSpineIndex - 1);
-    setIsClickedPrev(true);
+    if (nowSpineIndex - 1 < 0) {
+      alert('첫번째 페이지 입니다');
+    } else {
+      setNowSpineIndex(nowSpineIndex - 1);
+      setIsClickedPrev(true);
+    }
   }, [nowSpineIndex]);
 
   return (
