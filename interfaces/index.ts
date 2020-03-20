@@ -1,9 +1,9 @@
 import { BooksState } from './books';
-import { ViewerCount, ViewerState } from './viewer';
+import { ViewerState } from './viewer';
 
 export interface ReducerAction {
   type: string;
-  payload: ViewerCount;
+  payload: any;
 }
 
 export interface ReducerState {

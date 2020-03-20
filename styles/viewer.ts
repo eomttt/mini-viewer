@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { VIEWER_WIDTH_RATIO, VIEWER_HEIGHT_RATIO, VIEWER_PAGE_GAP } from '../constants/viewer';
 
-export const ViewerContainer = styled.div`
+export const Container = styled.div`
   margin: ${(100 - VIEWER_HEIGHT_RATIO) / 2}% ${(100 - VIEWER_WIDTH_RATIO) / 2}%;
   height: ${(props) => props.styleProps.height}px;
   overflow: hidden;

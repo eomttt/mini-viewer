@@ -95,6 +95,13 @@ export interface EpubCssItem extends EpubItem {
 
 export interface EpubNcxItem extends EpubItem {
   namespace: string;
+  navPoints: EpubNavPoint[];
+}
+
+export interface EpubNavPoint {
+  id: string;
+  label: string;
+  spine: EpubSpineItem;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface

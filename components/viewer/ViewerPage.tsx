@@ -1,92 +1,96 @@
+
+/* eslint-disable react/no-danger */
 import React, {
-  useCallback, useState, useEffect, useMemo,
+  useState, useRef, useCallback, useMemo, useEffect,
 } from 'react';
-import { useSelector } from 'react-redux';
 
-import Viewer from './Viewer';
-import ViewerCount from './ViewerCount';
+import {
+  ViewArticle, ViewSection, Contents,
+  LeftButton, RightButton,
+} from '../../styles/viewer';
 
-import { ViewerContainer } from '../../styles/viewer';
-
-import { ReducerState } from '../../interfaces';
-import { EpubSpineItem } from '../../interfaces/books';
-
-import { VIEWER_WIDTH_RATIO, VIEWER_HEIGHT_RATIO } from '../../constants/viewer';
-
+import { VIEWER_PAGE_GAP } from '../../constants/viewer';
 
 interface Props {
-  spines: EpubSpineItem[];
-  viewerSpines: string[];
+  viewerWidth: number;
+  viewerHeight: number;
+  isShowPrevViewer: boolean;
+  wholeColumnCount: number;
+  viewerSpine: string;
+  toggleNewViewer: boolean;
+  setNextSpine: () => void;
+  setPrevSpine: () => void;
 }
 
-const ViewerPage: React.FunctionComponent<Props> = ({ spines, viewerSpines }) => {
-  const [viewerWidth, setViewerWidth] = useState(0);
-  const [viewerHeight, setViewerHeight] = useState(0);
-  const [nowSpineIndex, setNowSpineIndex] = useState(0);
-  const [isClickedPrev, setIsClickedPrev] = useState(false);
+const ViewerPage: React.FunctionComponent<Props> = ({
+  viewerWidth, viewerHeight,
+  isShowPrevViewer, wholeColumnCount,
+  viewerSpine, toggleNewViewer,
+  setNextSpine, setPrevSpine,
+}) => {
+  const [nowViewerCount, setNowViewerCount] = useState(0);
 
-  const { viewerCountList } = useSelector((state: ReducerState) => state.viewer);
+  const hasNextViewer = useMemo(() => nowViewerCount < wholeColumnCount, [nowViewerCount, wholeColumnCount]);
+  const hasPrevViewer = useMemo(() => nowViewerCount > 0, [nowViewerCount]);
 
-  const isAnalizedSpine = useMemo(() => viewerCountList.length === viewerSpines.length, [viewerCountList, viewerSpines]);
+  const viewArticleRef = useRef(null);
 
   useEffect(() => {
-    setViewerWidth(Math.floor(window.innerWidth * (VIEWER_WIDTH_RATIO / 100)));
-    setViewerHeight(Math.floor(window.innerHeight * (VIEWER_HEIGHT_RATIO / 100)));
-  }, []);
-
-  const setNextSpine = useCallback(() => {
-    if (nowSpineIndex + 1 >= viewerSpines.length) {
-      alert('마지막 페이지 입니다.');
+    const { current: viewArticleRefCurrent } = viewArticleRef;
+    if (isShowPrevViewer) {
+      // Show prev view
+      viewArticleRefCurrent.scrollLeft = wholeColumnCount * (viewerWidth + VIEWER_PAGE_GAP);
+      setNowViewerCount(wholeColumnCount);
     } else {
-      setNowSpineIndex(nowSpineIndex + 1);
-      setIsClickedPrev(false);
+      // Show new view
+      viewArticleRefCurrent.scrollLeft = 0;
+      setNowViewerCount(0);
     }
-  }, [nowSpineIndex, viewerSpines]);
+  }, [isShowPrevViewer, viewerWidth, wholeColumnCount, toggleNewViewer]);
 
-  const setPrevSpine = useCallback(() => {
-    if (nowSpineIndex - 1 < 0) {
-      alert('첫번째 페이지 입니다');
+  const clickRight = useCallback(() => {
+    const { current: viewArticleRefCurrent } = viewArticleRef;
+    if (hasNextViewer) {
+      setNowViewerCount(nowViewerCount + 1);
+      viewArticleRefCurrent.scrollLeft += (viewerWidth + VIEWER_PAGE_GAP);
     } else {
-      setNowSpineIndex(nowSpineIndex - 1);
-      setIsClickedPrev(true);
+      setNextSpine();
     }
-  }, [nowSpineIndex]);
+  }, [hasNextViewer, nowViewerCount, viewerWidth, setNextSpine]);
+
+  const clickLeft = useCallback(() => {
+    const { current: viewArticleRefCurrent } = viewArticleRef;
+
+    if (hasPrevViewer) {
+      setNowViewerCount(nowViewerCount - 1);
+      viewArticleRefCurrent.scrollLeft -= (viewerWidth + VIEWER_PAGE_GAP);
+    } else {
+      setPrevSpine();
+    }
+  }, [hasPrevViewer, nowViewerCount, viewerWidth, setPrevSpine]);
 
   return (
-    <ViewerContainer
-      styleProps={{
-        height: viewerHeight,
-      }}
-    >
-      {
-        isAnalizedSpine
-        && (
-        <Viewer
-          viewerWidth={viewerWidth}
-          viewerHeight={viewerHeight}
-          isShowPrevViewer={isClickedPrev}
-          wholeColumnCount={viewerCountList[nowSpineIndex].count}
-          spine={spines[nowSpineIndex]}
-          viewerSpine={viewerSpines[nowSpineIndex]}
-          setNextSpine={setNextSpine}
-          setPrevSpine={setPrevSpine}
-        />
-        )
-      }
-      <section>
-        {
-          viewerSpines.map((viewerSpine, index) => (
-            <ViewerCount
-              key={viewerSpine}
-              viewerWidth={viewerWidth}
-              viewerHeight={viewerHeight}
-              viewerSpine={viewerSpine}
-              viewerSpineIndex={index}
-            />
-          ))
-        }
-      </section>
-    </ViewerContainer>
+    <>
+      <ViewArticle
+        ref={viewArticleRef}
+        onClick={clickRight}
+        styleProps={{
+          width: viewerWidth,
+          height: viewerHeight,
+        }}
+      >
+        <ViewSection
+          styleProps={{
+            width: viewerWidth,
+            height: viewerHeight,
+          }}
+        >
+          <Contents dangerouslySetInnerHTML={{ __html: viewerSpine }} />
+        </ViewSection>
+      </ViewArticle>
+      <LeftButton onClick={clickLeft}>Left</LeftButton>
+      <RightButton onClick={clickRight}>Right</RightButton>
+    </>
   );
 };
 
