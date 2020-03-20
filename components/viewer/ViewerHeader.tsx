@@ -3,6 +3,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import ViewerNcx from './ViewerNcx';
+import ViewerSetting from './ViewerSetting';
 
 import { EpubNcxItem } from '../../interfaces/books';
 
@@ -31,8 +32,12 @@ const Titles = styled.div`
   }
 `;
 
-const NavPoints = styled.div`
+const HeaderNcx = styled.div`
   margin: auto 5em auto auto;
+`;
+
+const HeaderSetting = styled.div`
+  margin: auto 5em auto 0;
 `;
 
 interface Props {
@@ -49,9 +54,12 @@ const ViewerHeader: React.FunctionComponent<Props> = ({ titles, ncxItem }) => (
           ))
         }
     </Titles>
-    <NavPoints>
+    <HeaderNcx>
       <ViewerNcx ncxItem={ncxItem} />
-    </NavPoints>
+    </HeaderNcx>
+    <HeaderSetting>
+      <ViewerSetting />
+    </HeaderSetting>
   </Container>
 );
 
