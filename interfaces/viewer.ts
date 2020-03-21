@@ -1,5 +1,4 @@
 export interface ViewerState {
-  viewerSpineId: string;
   viewerCountList: ViewerCount[];
   viewerPageCount: number;
 }
@@ -7,4 +6,5 @@ export interface ViewerState {
 export interface ViewerCount {
   index: number;
   count: number;
+  spineId: string;
 }

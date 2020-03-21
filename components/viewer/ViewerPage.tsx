@@ -32,7 +32,7 @@ const ViewerPage: React.FunctionComponent<Props> = ({
   const dispatch = useDispatch();
   const [nowViewerCount, setNowViewerCount] = useState(0);
 
-  const hasNextViewer = useMemo(() => nowViewerCount < wholeColumnCount, [nowViewerCount, wholeColumnCount]);
+  const hasNextViewer = useMemo(() => nowViewerCount <= wholeColumnCount, [nowViewerCount, wholeColumnCount]);
   const hasPrevViewer = useMemo(() => nowViewerCount > 0, [nowViewerCount]);
 
   const viewArticleRef = useRef(null);

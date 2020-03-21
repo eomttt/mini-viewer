@@ -35,7 +35,7 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
   const [nowSpineIndex, setNowSpineIndex] = useState(0);
   const [wholePageCount, setWholePageCount] = useState(0);
 
-  const { viewerCountList, viewerSpineId, viewerPageCount } = useSelector((state: ReducerState) => state.viewer);
+  const { viewerCountList, viewerPageCount } = useSelector((state: ReducerState) => state.viewer);
 
   const isAnalizedSpine = useMemo(() => viewerCountList.length >= viewerSpines.length, [viewerCountList, viewerSpines]);
 
@@ -44,40 +44,27 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
     let accurateCount = 0;
 
     viewerCountList.some((viewerCount) => {
-      if (accurateCount + viewerCount.count + 1 > viewerPageCount) {
+      if (accurateCount + viewerCount.count > viewerPageCount) {
         spineIndex = viewerCount.index;
         return true;
       }
-      accurateCount += viewerCount.count + 1;
+      accurateCount += viewerCount.count;
       return false;
     });
     return spineIndex;
   }, [viewerPageCount, viewerCountList]);
 
-  useEffect(() => {
-    // 목차에서 선택할 때에 pageCount 업데이트 해준다.
-    let spineIndex = -1;
-    let spinePageCount = 0;
-    spines.some((spine, index) => {
-      if (spine.id === viewerSpineId) {
-        spineIndex = index;
-        return true;
+  const pageColumnOffset = useMemo(() => {
+    let columnOffset = viewerPageCount;
+    viewerCountList.some((viewerCount, index) => {
+      if (index < nowSpineIndex) {
+        columnOffset -= (viewerCount.count);
+        return false;
       }
-      return false;
+      return true;
     });
-
-    if (spineIndex > 0) {
-      viewerCountList.some((viewerCount, index) => {
-        if (index < spineIndex) {
-          spinePageCount += viewerCount.count + 1;
-          return false;
-        }
-        return true;
-      });
-    }
-
-    dispatch(actions.setViewerPageCount(spinePageCount));
-  }, [dispatch, spines, viewerCountList, viewerSpineId]);
+    return columnOffset;
+  }, [viewerCountList, viewerPageCount, nowSpineIndex]);
 
   useEffect(() => {
     console.log('Now spine index', selectedSpineIndex);
@@ -91,7 +78,7 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
 
   useEffect(() => {
     if (isAnalizedSpine) {
-      const pageCount = viewerCountList.reduce((acc, cur) => acc + cur.count + 1, 0);
+      const pageCount = viewerCountList.reduce((acc, cur) => acc + cur.count, 0);
       setWholePageCount(pageCount);
     }
   }, [isAnalizedSpine, viewerCountList]);
@@ -131,6 +118,7 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
         <ViewerPage
           viewerWidth={viewerWidth}
           viewerHeight={viewerHeight}
+          pageColumnOffset={pageColumnOffset}
           wholeColumnCount={viewerCountList[nowSpineIndex].count}
           viewerSpine={viewerSpines[nowSpineIndex]}
           setNextSpine={setNextSpine}
@@ -145,6 +133,7 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
               key={viewerSpine}
               viewerWidth={viewerWidth}
               viewerHeight={viewerHeight}
+              spine={spines[index]}
               viewerSpine={viewerSpine}
               viewerSpineIndex={index}
             />

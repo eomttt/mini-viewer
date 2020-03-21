@@ -30,7 +30,7 @@ interface Props {
   maxValue: number;
 }
 
-const ViewrSlider: React.FunctionComponent<Props> = ({ maxValue }) => {
+const ViewerSlider: React.FunctionComponent<Props> = ({ maxValue }) => {
   const dispatch = useDispatch();
   const [value, setValue] = useState(0);
 
@@ -63,4 +63,4 @@ const ViewrSlider: React.FunctionComponent<Props> = ({ maxValue }) => {
   );
 };
 
-export default ViewrSlider;
+export default ViewerSlider;
