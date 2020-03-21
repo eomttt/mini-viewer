@@ -11,7 +11,7 @@ export const initialState: ViewerState = {
 export const SET_VIEWER_SPINE_ID = 'viewer/SET_VIEWER_SPINE_ID';
 export const SET_VIEWER_COLUMN_COUNT = 'viewer/SET_VIEWER_COLUMN_COUNT';
 
-export const SET_VIEWER_PAGE_COUNT = 'viewer/SET_VIEWR_PAGE_COUNT';
+export const SET_VIEWER_PAGE_COUNT = 'viewer/SET_VIEWER_PAGE_COUNT';
 export const SET_COUNT_UP_VIEWER_PAGE_COUNT = 'viewer/SET_COUNT_UP_VIEWER_PAGE_COUNT';
 export const SET_COUNT_DOWN_VIEWER_PAGE_COUNT = 'viewer/SET_COUNT_DOWN_VIEWER_PAGE_COUNT';
 
@@ -23,7 +23,7 @@ export const setViewerSpineId = (spineId: string) => ({
   },
 });
 
-export const setViewrColumnCount = ({ index, count }: {index: number; count: number}) => ({
+export const setViewerColumnCount = ({ index, count }: {index: number; count: number}) => ({
   type: SET_VIEWER_COLUMN_COUNT,
   payload: {
     index,

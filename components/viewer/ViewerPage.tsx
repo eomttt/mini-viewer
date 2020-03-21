@@ -17,18 +17,16 @@ import { VIEWER_PAGE_GAP } from '../../constants/viewer';
 interface Props {
   viewerWidth: number;
   viewerHeight: number;
-  isShowPrevViewer: boolean;
   wholeColumnCount: number;
   viewerSpine: string;
-  toggleNewViewer: boolean;
   setNextSpine: () => void;
   setPrevSpine: () => void;
 }
 
 const ViewerPage: React.FunctionComponent<Props> = ({
   viewerWidth, viewerHeight,
-  isShowPrevViewer, wholeColumnCount,
-  viewerSpine, toggleNewViewer,
+  wholeColumnCount,
+  viewerSpine,
   setNextSpine, setPrevSpine,
 }) => {
   const dispatch = useDispatch();
@@ -41,16 +39,9 @@ const ViewerPage: React.FunctionComponent<Props> = ({
 
   useEffect(() => {
     const { current: viewArticleRefCurrent } = viewArticleRef;
-    if (isShowPrevViewer) {
-      // Show prev view
-      viewArticleRefCurrent.scrollLeft = wholeColumnCount * (viewerWidth + VIEWER_PAGE_GAP);
-      setNowViewerCount(wholeColumnCount);
-    } else {
-      // Show new view
-      viewArticleRefCurrent.scrollLeft = 0;
-      setNowViewerCount(0);
-    }
-  }, [isShowPrevViewer, viewerWidth, wholeColumnCount, toggleNewViewer]);
+    viewArticleRefCurrent.scrollLeft = 0;
+    setNowViewerCount(0);
+  }, [viewerSpine]);
 
   const clickRight = useCallback(() => {
     const { current: viewArticleRefCurrent } = viewArticleRef;
