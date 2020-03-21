@@ -1,7 +1,8 @@
 # EPUB webviewer @ridi 
 
 ### Run Develope
-> **$ npm run dev**
+> $ npm install  
+> $ npm run dev
 
 ### Project stack
 - TypeScript

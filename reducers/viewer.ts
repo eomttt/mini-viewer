@@ -70,7 +70,9 @@ export default (state = initialState, action: ReducerAction): ViewerState => {
       };
     }
     default: {
-      return state;
+      return {
+        ...state,
+      };
     }
   }
 };

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import * as actions from '../../reducers/viewer';
+import * as viewerActions from '../../reducers/viewer';
 
 import { VIEWER_SLIDER_LEN_RATIO } from '../../constants/viewer';
 
@@ -43,7 +43,7 @@ const ViewerSlider: React.FunctionComponent<Props> = ({ maxValue }) => {
   }, [viewerPageCount]);
 
   const onChangeSlider = useCallback((e) => {
-    dispatch(actions.setViewerPageCount(Number(e.target.value)));
+    dispatch(viewerActions.setViewerPageCount(Number(e.target.value)));
   }, [dispatch]);
 
   return (

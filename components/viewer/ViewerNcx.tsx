@@ -1,11 +1,11 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
-import { subColor } from '../../styles';
+import { subColor, defaultColor } from '../../styles';
 
-import * as actions from '../../reducers/viewer';
+import * as viewerActions from '../../reducers/viewer';
 
 import { ReducerState } from '../../interfaces';
 import { EpubNcxItem, EpubNavPoint } from '../../interfaces/books';
@@ -29,7 +29,7 @@ const NavPointItems = styled.ul`
   margin: 0;
   padding: 0;
   border: 1px solid ${subColor};
-  background-color: white;
+  background-color: ${defaultColor};
 `;
 
 const NavPointItem = styled.li`
@@ -74,7 +74,7 @@ const ViewerNcx: React.FunctionComponent<Props> = ({ ncxItem }) => {
         }
         return true;
       });
-      dispatch(actions.setViewerPageCount(spinePageCount));
+      dispatch(viewerActions.setViewerPageCount(spinePageCount));
     }
   }, [dispatch, viewerCountList]);
 

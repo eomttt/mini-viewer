@@ -1,5 +1,5 @@
 import { BooksState } from './books';
-import { ViewerState } from './viewer';
+import { ViewerState, ViewerSettingState } from './viewer';
 
 export interface ReducerAction {
   type: string;
@@ -9,4 +9,5 @@ export interface ReducerAction {
 export interface ReducerState {
   books: BooksState;
   viewer: ViewerState;
+  viewerSetting: ViewerSettingState;
 }

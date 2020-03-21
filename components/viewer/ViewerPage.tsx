@@ -5,14 +5,44 @@ import React, {
 } from 'react';
 import { useDispatch } from 'react-redux';
 
+import styled from 'styled-components';
+
 import {
-  ViewArticle, ViewSection, Contents,
-  LeftButton, RightButton,
+  ButtonStyle,
+  ViewArticleStyle,
+  ViewSectionStyle,
+  ViewerContentsStyle,
 } from '../../styles/viewer';
 
-import * as actions from '../../reducers/viewer';
+import * as viewerActions from '../../reducers/viewer';
 
 import { VIEWER_PAGE_GAP } from '../../constants/viewer';
+
+const ViewArticle = styled.article`
+  ${ViewArticleStyle}
+  width: ${(props) => props.styleProps.width}px;
+  height: ${(props) => props.styleProps.height}px;
+  overflow: hidden;
+`;
+
+const ViewSection = styled.section`
+  ${ViewSectionStyle}
+  column-width: ${(props) => props.styleProps.width}px;
+`;
+
+const Contents = styled.div`
+  ${ViewerContentsStyle}
+`;
+
+const RightButton = styled.div`
+  ${ButtonStyle}
+  right: 2em;
+`;
+
+const LeftButton = styled.div`
+  ${ButtonStyle}
+  left: 2em;
+`;
 
 interface Props {
   viewerWidth: number;
@@ -45,14 +75,14 @@ const ViewerPage: React.FunctionComponent<Props> = ({
 
     setNowViewerCount(nowViewerCount + 1);
     viewArticleRefCurrent.scrollLeft += (viewerWidth + VIEWER_PAGE_GAP);
-    dispatch(actions.setCountUpViewerPageCount());
+    dispatch(viewerActions.setCountUpViewerPageCount());
   }, [dispatch, nowViewerCount, viewerWidth]);
 
   const clickLeft = useCallback(() => {
     const { current: viewArticleRefCurrent } = viewArticleRef;
     setNowViewerCount(nowViewerCount - 1);
     viewArticleRefCurrent.scrollLeft -= (viewerWidth + VIEWER_PAGE_GAP);
-    dispatch(actions.setCountDownViewerPageCount());
+    dispatch(viewerActions.setCountDownViewerPageCount());
   }, [dispatch, nowViewerCount, viewerWidth]);
 
   return (

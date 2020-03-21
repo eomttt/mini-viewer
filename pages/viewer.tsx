@@ -4,6 +4,8 @@ import React, {
 import { useSelector } from 'react-redux';
 import { NextPageContext, NextPage } from 'next';
 
+import styled from 'styled-components';
+
 import Layout from '../components/Layout';
 import ViewerBottom from '../components/viewer/ViewerBottom';
 import ViewerCount from '../components/viewer/ViewerCount';
@@ -15,7 +17,12 @@ import { VIEWER_WIDTH_RATIO, VIEWER_HEIGHT_RATIO } from '../constants/viewer';
 import { ReducerState } from '../interfaces';
 import { EpubBook } from '../interfaces/books';
 
-import { Container } from '../styles/viewer';
+const Container = styled.div`
+  padding: ${(100 - VIEWER_HEIGHT_RATIO) / 2}% ${(100 - VIEWER_WIDTH_RATIO) / 2}%;
+  height: ${(props) => props.styleProps.height}px;
+  background-color: ${(props) => props.styleProps.backgroundColor};
+  overflow: hidden;
+`;
 
 interface Props {
   book: EpubBook;
@@ -32,6 +39,9 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
   const [wholePageCount, setWholePageCount] = useState(0);
 
   const { viewerCountList, viewerPageCount } = useSelector((state: ReducerState) => state.viewer);
+  const {
+    fontSize, padding, lineHeight, backgroundColor,
+  } = useSelector((state: ReducerState) => state.viewerSetting);
 
   const isAnalizedSpine = useMemo(() => viewerCountList.length >= viewerSpines.length, [viewerCountList, viewerSpines]);
   const isFirstPage = useMemo(() => viewerPageCount === 0, [viewerPageCount]);
@@ -78,6 +88,10 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
     }
   }, [isAnalizedSpine, viewerCountList]);
 
+  useEffect(() => {
+    console.log('Redrawing page');
+  }, [fontSize, padding, lineHeight]);
+
   return (
     <Layout
       styleLinks={styleLinks}
@@ -89,6 +103,7 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
       <Container
         styleProps={{
           height: viewerHeight,
+          backgroundColor,
         }}
       >
         {isAnalizedSpine

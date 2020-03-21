@@ -1,32 +1,15 @@
-import styled from 'styled-components';
+import { defaultColor, subColor } from './index';
+import { VIEWER_HEIGHT_RATIO, VIEWER_PAGE_GAP } from '../constants/viewer';
 
-import { VIEWER_WIDTH_RATIO, VIEWER_HEIGHT_RATIO, VIEWER_PAGE_GAP } from '../constants/viewer';
-import { subColor } from '.';
 
-export const Container = styled.div`
-  margin: ${(100 - VIEWER_HEIGHT_RATIO) / 2}% ${(100 - VIEWER_WIDTH_RATIO) / 2}%;
-  height: ${(props) => props.styleProps.height}px;
-  overflow: hidden;
-`;
-
-export const Button = `
+export const ButtonStyle = `
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
 `;
 
-export const RightButton = styled.div`
-  ${Button}
-  right: 2em;
-`;
-
-export const LeftButton = styled.div`
-  ${Button}
-  left: 2em;
-`;
-
-const ViewArticleStyle = `
+export const ViewArticleStyle = `
   box-sizing: border-box;
   visibility: visible;
   vertical-align: top;
@@ -35,41 +18,10 @@ const ViewArticleStyle = `
   font-family: kopup_dotum !important;
 `;
 
-const ViewSectionStyle = `
+export const ViewSectionStyle = `
   height: 100%;
   column-gap: ${VIEWER_PAGE_GAP}px;
   column-fill: auto;
-`;
-
-export const ViewArticle = styled.article`
-  ${ViewArticleStyle}
-  width: ${(props) => props.styleProps.width}px;
-  height: ${(props) => props.styleProps.height}px;
-  overflow: hidden;
-`;
-
-export const ViewSection = styled.section`
-  ${ViewSectionStyle}
-  column-width: ${(props) => props.styleProps.width}px;
-`;
-
-export const HiddenViewArticle = styled.article`
-  ${ViewArticleStyle}
-  width: ${(props) => props.styleProps.width}px;
-  height: ${(props) => props.styleProps.height}px;
-  overflow: scroll;
-`;
-
-export const HiddenViewSection = styled.section`
-  ${ViewSectionStyle}
-  column-width: ${(props) => props.styleProps.width}px;
-  visibility: hidden;
-`;
-
-export const Contents = styled.div`
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
 `;
 
 export const ViewerMenuStyle = `
@@ -78,5 +30,32 @@ export const ViewerMenuStyle = `
   position: fixed;
   display: flex;
   border-bottom: 1px solid ${subColor};
+  background-color: ${defaultColor};
   z-index: 5;
+`;
+
+export const ViewerContentsStyle = `
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+`;
+
+export const ViewerSettingItemStyle = `
+  height: 3em;
+  text-align: center;
+  padding: .5em;
+  border-bottom: 1px solid ${subColor};
+  margin: 0;
+  display: flex;
+  &:nth-last-child(1) {
+    border-bottom: initial;
+  }
+`;
+
+export const ViewerSettingLabelStyle = `
+  margin: auto .5em auto 0;
+`;
+
+export const ViewerSettingValueStyle = `
+  margin: auto auto auto 0;
 `;

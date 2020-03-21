@@ -1,15 +1,34 @@
 import React, { useRef, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
+import styled from 'styled-components';
+
 import {
-  HiddenViewArticle, HiddenViewSection,
-  Contents,
+  ViewArticleStyle, ViewSectionStyle, ViewerContentsStyle,
 } from '../../styles/viewer';
 
-import * as actions from '../../reducers/viewer';
+import * as viewerActions from '../../reducers/viewer';
+
 import { VIEWER_PAGE_GAP } from '../../constants/viewer';
 
 import { EpubSpineItem } from '../../interfaces/books';
+
+const HiddenViewArticle = styled.article`
+  ${ViewArticleStyle}
+  width: ${(props) => props.styleProps.width}px;
+  height: ${(props) => props.styleProps.height}px;
+  overflow: scroll;
+`;
+
+const HiddenViewSection = styled.section`
+  ${ViewSectionStyle}
+  column-width: ${(props) => props.styleProps.width}px;
+  visibility: hidden;
+`;
+
+const Contents = styled.div`
+  ${ViewerContentsStyle}
+`;
 
 interface Props {
   viewerWidth: number;
@@ -32,7 +51,7 @@ const ViewerCount: React.FunctionComponent<Props> = ({
       const { current: hiddenViewContainerCurrent } = hiddenViewContainerRef;
       const count = hiddenViewContainerCurrent.scrollWidth / (viewerWidth + VIEWER_PAGE_GAP);
 
-      dispatch(actions.setViewerColumnCount({
+      dispatch(viewerActions.setViewerColumnCount({
         count,
         index: viewerSpineIndex,
         spineId: spine.id,
