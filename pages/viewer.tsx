@@ -83,8 +83,9 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
       setIsClickedPrev(false);
       setNowSpineIndex(nowSpineIndex + 1);
       setToggleNewViewr(!toggleNewViewer);
+      dispatch(actions.setCountUpViewerPageCount());
     }
-  }, [nowSpineIndex, toggleNewViewer, viewerSpines]);
+  }, [dispatch, nowSpineIndex, toggleNewViewer, viewerSpines]);
 
   const setPrevSpine = useCallback(() => {
     if (nowSpineIndex - 1 < 0) {
@@ -93,8 +94,9 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
       setIsClickedPrev(true);
       setNowSpineIndex(nowSpineIndex - 1);
       setToggleNewViewr(!toggleNewViewer);
+      dispatch(actions.setCountDownViewerPageCount());
     }
-  }, [nowSpineIndex, toggleNewViewer]);
+  }, [dispatch, nowSpineIndex, toggleNewViewer]);
 
   return (
     <Layout

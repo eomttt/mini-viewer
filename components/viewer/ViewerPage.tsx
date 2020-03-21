@@ -3,11 +3,14 @@
 import React, {
   useState, useRef, useCallback, useMemo, useEffect,
 } from 'react';
+import { useDispatch } from 'react-redux';
 
 import {
   ViewArticle, ViewSection, Contents,
   LeftButton, RightButton,
 } from '../../styles/viewer';
+
+import * as actions from '../../reducers/viewer';
 
 import { VIEWER_PAGE_GAP } from '../../constants/viewer';
 
@@ -28,6 +31,7 @@ const ViewerPage: React.FunctionComponent<Props> = ({
   viewerSpine, toggleNewViewer,
   setNextSpine, setPrevSpine,
 }) => {
+  const dispatch = useDispatch();
   const [nowViewerCount, setNowViewerCount] = useState(0);
 
   const hasNextViewer = useMemo(() => nowViewerCount < wholeColumnCount, [nowViewerCount, wholeColumnCount]);
@@ -53,10 +57,11 @@ const ViewerPage: React.FunctionComponent<Props> = ({
     if (hasNextViewer) {
       setNowViewerCount(nowViewerCount + 1);
       viewArticleRefCurrent.scrollLeft += (viewerWidth + VIEWER_PAGE_GAP);
+      dispatch(actions.setCountUpViewerPageCount());
     } else {
       setNextSpine();
     }
-  }, [hasNextViewer, nowViewerCount, viewerWidth, setNextSpine]);
+  }, [dispatch, hasNextViewer, nowViewerCount, viewerWidth, setNextSpine]);
 
   const clickLeft = useCallback(() => {
     const { current: viewArticleRefCurrent } = viewArticleRef;
@@ -64,10 +69,11 @@ const ViewerPage: React.FunctionComponent<Props> = ({
     if (hasPrevViewer) {
       setNowViewerCount(nowViewerCount - 1);
       viewArticleRefCurrent.scrollLeft -= (viewerWidth + VIEWER_PAGE_GAP);
+      dispatch(actions.setCountDownViewerPageCount());
     } else {
       setPrevSpine();
     }
-  }, [hasPrevViewer, nowViewerCount, viewerWidth, setPrevSpine]);
+  }, [dispatch, hasPrevViewer, nowViewerCount, viewerWidth, setPrevSpine]);
 
   return (
     <>
