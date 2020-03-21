@@ -1,6 +1,7 @@
 export interface ViewerState {
+  viewerSpineId: string;
   viewerCountList: ViewerCount[];
-  selectedSpineId: string;
+  viewerPageCount: number;
 }
 
 export interface ViewerCount {

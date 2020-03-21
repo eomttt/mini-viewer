@@ -57,7 +57,7 @@ const ViewerNcx: React.FunctionComponent<Props> = ({ ncxItem }) => {
 
   const selectNavPoint = useCallback((point: EpubNavPoint) => {
     setIsShowNcx(false);
-    dispatch(actions.setSpineId(point.spine.id));
+    dispatch(actions.setViewerSpineId(point.spine.id));
   }, [dispatch]);
 
   return (

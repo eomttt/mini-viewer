@@ -29,7 +29,7 @@ const ViewerCount: React.FunctionComponent<Props> = ({
       const { current: hiddenViewContainerCurrent } = hiddenViewContainerRef;
       const count = hiddenViewContainerCurrent.scrollWidth / (viewerWidth + VIEWER_PAGE_GAP);
 
-      dispatch(actions.setViewerCount({
+      dispatch(actions.setViewrColumnCount({
         index: viewerSpineIndex,
         count: count - 1,
       }));

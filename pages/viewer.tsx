@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { NextPageContext, NextPage } from 'next';
 
 import Layout from '../components/Layout';
+import ViewerBottom from '../components/viewer/ViewerBottom';
 import ViewerCount from '../components/viewer/ViewerCount';
 import ViewerHeader from '../components/viewer/ViewerHeader';
 import ViewerPage from '../components/viewer/ViewerPage';
@@ -36,21 +37,22 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
   const [nowSpineIndex, setNowSpineIndex] = useState(0);
   const [isClickedPrev, setIsClickedPrev] = useState(false);
   const [toggleNewViewer, setToggleNewViewr] = useState(false);
+  const [wholePageCount, setWholePageCount] = useState(0);
 
-  const { viewerCountList, selectedSpineId } = useSelector((state: ReducerState) => state.viewer);
+  const { viewerCountList, viewerSpineId, viewerPageCount } = useSelector((state: ReducerState) => state.viewer);
 
-  const isAnalizedSpine = useMemo(() => viewerCountList.length === viewerSpines.length, [viewerCountList, viewerSpines]);
+  const isAnalizedSpine = useMemo(() => viewerCountList.length >= viewerSpines.length, [viewerCountList, viewerSpines]);
   const selectedSpineIndex = useMemo(() => {
     let spineIndex = -1;
     spines.some((spine, index) => {
-      if (spine.id === selectedSpineId) {
+      if (spine.id === viewerSpineId) {
         spineIndex = index;
         return true;
       }
       return false;
     });
     return spineIndex;
-  }, [spines, selectedSpineId]);
+  }, [spines, viewerSpineId]);
 
   useEffect(() => {
     setViewerWidth(Math.floor(window.innerWidth * (VIEWER_WIDTH_RATIO / 100)));
@@ -58,12 +60,19 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
   }, []);
 
   useEffect(() => {
+    if (isAnalizedSpine) {
+      const pageCount = viewerCountList.reduce((acc, cur) => acc + cur.count + 1, 0);
+      setWholePageCount(pageCount);
+    }
+  }, [isAnalizedSpine, viewerCountList]);
+
+  useEffect(() => {
     if (selectedSpineIndex >= 0) {
       setIsClickedPrev(false);
       setNowSpineIndex(selectedSpineIndex);
       setToggleNewViewr(!toggleNewViewer);
 
-      dispatch(actions.setSpineId(''));
+      dispatch(actions.setViewerSpineId(''));
     }
   }, [dispatch, toggleNewViewer, selectedSpineIndex]);
 
@@ -103,16 +112,16 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
         {
         isAnalizedSpine
         && (
-          <ViewerPage
-            viewerWidth={viewerWidth}
-            viewerHeight={viewerHeight}
-            isShowPrevViewer={isClickedPrev}
-            wholeColumnCount={viewerCountList[nowSpineIndex].count}
-            viewerSpine={viewerSpines[nowSpineIndex]}
-            toggleNewViewer={toggleNewViewer}
-            setNextSpine={setNextSpine}
-            setPrevSpine={setPrevSpine}
-          />
+        <ViewerPage
+          viewerWidth={viewerWidth}
+          viewerHeight={viewerHeight}
+          isShowPrevViewer={isClickedPrev}
+          wholeColumnCount={viewerCountList[nowSpineIndex].count}
+          viewerSpine={viewerSpines[nowSpineIndex]}
+          toggleNewViewer={toggleNewViewer}
+          setNextSpine={setNextSpine}
+          setPrevSpine={setPrevSpine}
+        />
         )
       }
         <section>
@@ -129,6 +138,9 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
         }
         </section>
       </Container>
+      <ViewerBottom
+        sliderMaxValue={wholePageCount}
+      />
     </Layout>
   );
 };

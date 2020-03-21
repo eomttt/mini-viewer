@@ -7,19 +7,13 @@ import ViewerSetting from './ViewerSetting';
 
 import { EpubNcxItem } from '../../interfaces/books';
 
-import { VIEWER_HEIGHT_RATIO } from '../../constants/viewer';
-
-import { subColor, titleFontSize } from '../../styles';
+import { titleFontSize, subColor } from '../../styles';
+import { ViewrMenuStyle } from '../../styles/viewer';
 
 const Container = styled.div`
-  width: 100%;
-  height: ${(100 - VIEWER_HEIGHT_RATIO) / 2}%;
-  position: fixed;
-  display: flex;
+  ${ViewrMenuStyle}
   top: 0;
   border-bottom: 1px solid ${subColor};
-  background-color: white;
-  z-index: 5;
 `;
 
 const Titles = styled.div`

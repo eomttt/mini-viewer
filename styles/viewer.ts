@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 import { VIEWER_WIDTH_RATIO, VIEWER_HEIGHT_RATIO, VIEWER_PAGE_GAP } from '../constants/viewer';
+import { subColor } from '.';
 
 export const Container = styled.div`
   margin: ${(100 - VIEWER_HEIGHT_RATIO) / 2}% ${(100 - VIEWER_WIDTH_RATIO) / 2}%;
@@ -69,4 +70,13 @@ export const Contents = styled.div`
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+`;
+
+export const ViewrMenuStyle = `
+  width: 100%;
+  height: ${(100 - VIEWER_HEIGHT_RATIO) / 2 - 1}%;
+  position: fixed;
+  display: flex;
+  border-bottom: 1px solid ${subColor};
+  z-index: 5;
 `;
