@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState, useCallback, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
@@ -7,6 +7,7 @@ import { subColor } from '../../styles';
 
 import * as actions from '../../reducers/viewer';
 
+import { ReducerState } from '../../interfaces';
 import { EpubNcxItem, EpubNavPoint } from '../../interfaces/books';
 
 const Container = styled.div`
@@ -48,8 +49,34 @@ interface Props {
 
 const ViewerNcx: React.FunctionComponent<Props> = ({ ncxItem }) => {
   const { navPoints } = ncxItem;
+
   const dispatch = useDispatch();
+  const { viewerCountList } = useSelector((state: ReducerState) => state.viewer);
   const [isShowNcx, setIsShowNcx] = useState(false);
+
+  const setViewerPage = useCallback((viewerSpineId: string) => {
+    // 목차에서 선택할 때에 pageCount 업데이트 해준다.
+    let spineIndex = -1;
+    let spinePageCount = 0;
+    viewerCountList.some((viewrCount, index) => {
+      if (viewrCount.spineId === viewerSpineId) {
+        spineIndex = index;
+        return true;
+      }
+      return false;
+    });
+
+    if (spineIndex > -1) {
+      viewerCountList.some((viewerCount, index) => {
+        if (index < spineIndex) {
+          spinePageCount += viewerCount.count;
+          return false;
+        }
+        return true;
+      });
+      dispatch(actions.setViewerPageCount(spinePageCount));
+    }
+  }, [dispatch, viewerCountList]);
 
   const toggleShowNcs = useCallback(() => {
     setIsShowNcx(!isShowNcx);
@@ -57,8 +84,8 @@ const ViewerNcx: React.FunctionComponent<Props> = ({ ncxItem }) => {
 
   const selectNavPoint = useCallback((point: EpubNavPoint) => {
     setIsShowNcx(false);
-    dispatch(actions.setViewerSpineId(point.spine.id));
-  }, [dispatch]);
+    setViewerPage(point.spine.id);
+  }, [setViewerPage]);
 
   return (
     <Container>

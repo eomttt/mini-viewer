@@ -8,10 +8,10 @@ import ViewerSetting from './ViewerSetting';
 import { EpubNcxItem } from '../../interfaces/books';
 
 import { titleFontSize, subColor } from '../../styles';
-import { ViewrMenuStyle } from '../../styles/viewer';
+import { ViewerMenuStyle } from '../../styles/viewer';
 
 const Container = styled.div`
-  ${ViewrMenuStyle}
+  ${ViewerMenuStyle}
   top: 0;
   border-bottom: 1px solid ${subColor};
 `;

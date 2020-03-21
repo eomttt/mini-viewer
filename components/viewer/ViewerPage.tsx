@@ -1,7 +1,7 @@
 
 /* eslint-disable react/no-danger */
 import React, {
-  useState, useRef, useCallback, useMemo, useEffect,
+  useState, useRef, useCallback, useEffect,
 } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -17,63 +17,43 @@ import { VIEWER_PAGE_GAP } from '../../constants/viewer';
 interface Props {
   viewerWidth: number;
   viewerHeight: number;
-  isShowPrevViewer: boolean;
-  wholeColumnCount: number;
+  pageColumnOffset: number;
   viewerSpine: string;
-  toggleNewViewer: boolean;
-  setNextSpine: () => void;
-  setPrevSpine: () => void;
+  isFirstPage: boolean;
+  isLastPage: boolean;
 }
 
 const ViewerPage: React.FunctionComponent<Props> = ({
   viewerWidth, viewerHeight,
-  isShowPrevViewer, wholeColumnCount,
-  viewerSpine, toggleNewViewer,
-  setNextSpine, setPrevSpine,
+  pageColumnOffset,
+  viewerSpine,
+  isFirstPage, isLastPage,
 }) => {
   const dispatch = useDispatch();
   const [nowViewerCount, setNowViewerCount] = useState(0);
-
-  const hasNextViewer = useMemo(() => nowViewerCount < wholeColumnCount, [nowViewerCount, wholeColumnCount]);
-  const hasPrevViewer = useMemo(() => nowViewerCount > 0, [nowViewerCount]);
 
   const viewArticleRef = useRef(null);
 
   useEffect(() => {
     const { current: viewArticleRefCurrent } = viewArticleRef;
-    if (isShowPrevViewer) {
-      // Show prev view
-      viewArticleRefCurrent.scrollLeft = wholeColumnCount * (viewerWidth + VIEWER_PAGE_GAP);
-      setNowViewerCount(wholeColumnCount);
-    } else {
-      // Show new view
-      viewArticleRefCurrent.scrollLeft = 0;
-      setNowViewerCount(0);
-    }
-  }, [isShowPrevViewer, viewerWidth, wholeColumnCount, toggleNewViewer]);
+    viewArticleRefCurrent.scrollLeft = pageColumnOffset * (viewerWidth + VIEWER_PAGE_GAP);
+    setNowViewerCount(pageColumnOffset);
+  }, [viewerSpine, pageColumnOffset, viewerWidth]);
 
   const clickRight = useCallback(() => {
     const { current: viewArticleRefCurrent } = viewArticleRef;
-    if (hasNextViewer) {
-      setNowViewerCount(nowViewerCount + 1);
-      viewArticleRefCurrent.scrollLeft += (viewerWidth + VIEWER_PAGE_GAP);
-      dispatch(actions.setCountUpViewerPageCount());
-    } else {
-      setNextSpine();
-    }
-  }, [dispatch, hasNextViewer, nowViewerCount, viewerWidth, setNextSpine]);
+
+    setNowViewerCount(nowViewerCount + 1);
+    viewArticleRefCurrent.scrollLeft += (viewerWidth + VIEWER_PAGE_GAP);
+    dispatch(actions.setCountUpViewerPageCount());
+  }, [dispatch, nowViewerCount, viewerWidth]);
 
   const clickLeft = useCallback(() => {
     const { current: viewArticleRefCurrent } = viewArticleRef;
-
-    if (hasPrevViewer) {
-      setNowViewerCount(nowViewerCount - 1);
-      viewArticleRefCurrent.scrollLeft -= (viewerWidth + VIEWER_PAGE_GAP);
-      dispatch(actions.setCountDownViewerPageCount());
-    } else {
-      setPrevSpine();
-    }
-  }, [dispatch, hasPrevViewer, nowViewerCount, viewerWidth, setPrevSpine]);
+    setNowViewerCount(nowViewerCount - 1);
+    viewArticleRefCurrent.scrollLeft -= (viewerWidth + VIEWER_PAGE_GAP);
+    dispatch(actions.setCountDownViewerPageCount());
+  }, [dispatch, nowViewerCount, viewerWidth]);
 
   return (
     <>
@@ -94,8 +74,8 @@ const ViewerPage: React.FunctionComponent<Props> = ({
           <Contents dangerouslySetInnerHTML={{ __html: viewerSpine }} />
         </ViewSection>
       </ViewArticle>
-      <LeftButton onClick={clickLeft}>Left</LeftButton>
-      <RightButton onClick={clickRight}>Right</RightButton>
+      {!isFirstPage && <LeftButton onClick={clickLeft}>Left</LeftButton>}
+      {!isLastPage && <RightButton onClick={clickRight}>Right</RightButton>}
     </>
   );
 };

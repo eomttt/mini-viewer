@@ -2,13 +2,13 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import ViewrSlider from './ViewrSlider';
+import ViewerSlider from './ViewerSlider';
 
 import { subColor } from '../../styles';
-import { ViewrMenuStyle } from '../../styles/viewer';
+import { ViewerMenuStyle } from '../../styles/viewer';
 
 const Container = styled.div`
-  ${ViewrMenuStyle}
+  ${ViewerMenuStyle}
   bottom: 0;
   border-top: 1px solid ${subColor};
 `;
@@ -19,7 +19,7 @@ interface Props {
 
 const ViewerBottom: React.FunctionComponent<Props> = ({ sliderMaxValue }) => (
   <Container>
-    <ViewrSlider
+    <ViewerSlider
       maxValue={sliderMaxValue}
     />
   </Container>

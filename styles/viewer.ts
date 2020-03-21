@@ -72,7 +72,7 @@ export const Contents = styled.div`
   appearance: none;
 `;
 
-export const ViewrMenuStyle = `
+export const ViewerMenuStyle = `
   width: 100%;
   height: ${(100 - VIEWER_HEIGHT_RATIO) / 2 - 1}%;
   position: fixed;
