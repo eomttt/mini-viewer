@@ -27,22 +27,19 @@ interface Props {
 
 const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
   const { spines, titles, ncx } = book;
-
-  console.log('Book', book);
-
   const dispatch = useDispatch();
 
   const [viewerWidth, setViewerWidth] = useState(0);
   const [viewerHeight, setViewerHeight] = useState(0);
   const [nowSpineIndex, setNowSpineIndex] = useState(0);
   const [isClickedPrev, setIsClickedPrev] = useState(false);
-  const [toggleNewViewer, setToggleNewViewr] = useState(false);
+  const [toggleNewViewer, setToggleNewViewer] = useState(false);
   const [wholePageCount, setWholePageCount] = useState(0);
 
   const { viewerCountList, viewerSpineId, viewerPageCount } = useSelector((state: ReducerState) => state.viewer);
 
   const isAnalizedSpine = useMemo(() => viewerCountList.length >= viewerSpines.length, [viewerCountList, viewerSpines]);
-  const selectedSpineIndex = useMemo(() => {
+  const selectedSpineIndexByNcx = useMemo(() => {
     let spineIndex = -1;
     spines.some((spine, index) => {
       if (spine.id === viewerSpineId) {
@@ -53,6 +50,23 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
     });
     return spineIndex;
   }, [spines, viewerSpineId]);
+
+  const selectedSpineIndexBySlider = useMemo(() => {
+    let spineIndex = -1;
+    let accurateCount = 0;
+
+    viewerCountList.some((viewerCount) => {
+      if (accurateCount + viewerCount.count + 1 > viewerPageCount) {
+        spineIndex = viewerCount.index;
+        return true;
+      }
+      accurateCount += viewerCount.count + 1;
+      return false;
+    });
+    return spineIndex;
+  }, [viewerPageCount, viewerCountList]);
+
+  console.log('selectedSpineIndexBySlider', selectedSpineIndexBySlider);
 
   useEffect(() => {
     setViewerWidth(Math.floor(window.innerWidth * (VIEWER_WIDTH_RATIO / 100)));
@@ -67,14 +81,21 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
   }, [isAnalizedSpine, viewerCountList]);
 
   useEffect(() => {
-    if (selectedSpineIndex >= 0) {
+    if (selectedSpineIndexByNcx >= 0) {
       setIsClickedPrev(false);
-      setNowSpineIndex(selectedSpineIndex);
-      setToggleNewViewr(!toggleNewViewer);
+      setNowSpineIndex(selectedSpineIndexByNcx);
+      setToggleNewViewer(!toggleNewViewer);
 
       dispatch(actions.setViewerSpineId(''));
     }
-  }, [dispatch, toggleNewViewer, selectedSpineIndex]);
+  }, [dispatch, toggleNewViewer, selectedSpineIndexByNcx]);
+
+  useEffect(() => {
+    if (selectedSpineIndexBySlider >= 0) {
+      setIsClickedPrev(false);
+      setNowSpineIndex(selectedSpineIndexBySlider);
+    }
+  }, [selectedSpineIndexBySlider]);
 
   const setNextSpine = useCallback(() => {
     if (nowSpineIndex + 1 >= viewerSpines.length) {
@@ -82,7 +103,7 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
     } else {
       setIsClickedPrev(false);
       setNowSpineIndex(nowSpineIndex + 1);
-      setToggleNewViewr(!toggleNewViewer);
+      setToggleNewViewer(!toggleNewViewer);
       dispatch(actions.setCountUpViewerPageCount());
     }
   }, [dispatch, nowSpineIndex, toggleNewViewer, viewerSpines]);
@@ -93,7 +114,7 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
     } else {
       setIsClickedPrev(true);
       setNowSpineIndex(nowSpineIndex - 1);
-      setToggleNewViewr(!toggleNewViewer);
+      setToggleNewViewer(!toggleNewViewer);
       dispatch(actions.setCountDownViewerPageCount());
     }
   }, [dispatch, nowSpineIndex, toggleNewViewer]);
