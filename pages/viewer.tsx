@@ -1,7 +1,7 @@
 import React, {
-  useState, useMemo, useEffect, useCallback,
+  useState, useMemo, useEffect,
 } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { NextPageContext, NextPage } from 'next';
 
 import Layout from '../components/Layout';
@@ -9,8 +9,6 @@ import ViewerBottom from '../components/viewer/ViewerBottom';
 import ViewerCount from '../components/viewer/ViewerCount';
 import ViewerHeader from '../components/viewer/ViewerHeader';
 import ViewerPage from '../components/viewer/ViewerPage';
-
-import * as actions from '../reducers/viewer';
 
 import { VIEWER_WIDTH_RATIO, VIEWER_HEIGHT_RATIO } from '../constants/viewer';
 
@@ -28,8 +26,6 @@ interface Props {
 const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
   const { spines, titles, ncx } = book;
 
-  const dispatch = useDispatch();
-
   const [viewerWidth, setViewerWidth] = useState(0);
   const [viewerHeight, setViewerHeight] = useState(0);
   const [nowSpineIndex, setNowSpineIndex] = useState(0);
@@ -38,11 +34,11 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
   const { viewerCountList, viewerPageCount } = useSelector((state: ReducerState) => state.viewer);
 
   const isAnalizedSpine = useMemo(() => viewerCountList.length >= viewerSpines.length, [viewerCountList, viewerSpines]);
-
+  const isFirstPage = useMemo(() => viewerPageCount === 0, [viewerPageCount]);
+  const isLastPage = useMemo(() => viewerPageCount === wholePageCount, [viewerPageCount, wholePageCount]);
   const selectedSpineIndex = useMemo(() => {
     let spineIndex = 0;
     let accurateCount = 0;
-
     viewerCountList.some((viewerCount) => {
       if (accurateCount + viewerCount.count > viewerPageCount) {
         spineIndex = viewerCount.index;
@@ -53,7 +49,6 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
     });
     return spineIndex;
   }, [viewerPageCount, viewerCountList]);
-
   const pageColumnOffset = useMemo(() => {
     let columnOffset = viewerPageCount;
     viewerCountList.some((viewerCount, index) => {
@@ -67,37 +62,21 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
   }, [viewerCountList, viewerPageCount, nowSpineIndex]);
 
   useEffect(() => {
-    console.log('Now spine index', selectedSpineIndex);
-    setNowSpineIndex(selectedSpineIndex);
-  }, [selectedSpineIndex]);
-
-  useEffect(() => {
     setViewerWidth(Math.floor(window.innerWidth * (VIEWER_WIDTH_RATIO / 100)));
     setViewerHeight(Math.floor(window.innerHeight * (VIEWER_HEIGHT_RATIO / 100)));
   }, []);
 
   useEffect(() => {
+    console.log('Now spine index', selectedSpineIndex);
+    setNowSpineIndex(selectedSpineIndex);
+  }, [selectedSpineIndex]);
+
+  useEffect(() => {
     if (isAnalizedSpine) {
       const pageCount = viewerCountList.reduce((acc, cur) => acc + cur.count, 0);
-      setWholePageCount(pageCount);
+      setWholePageCount(pageCount - 1);
     }
   }, [isAnalizedSpine, viewerCountList]);
-
-  const setNextSpine = useCallback(() => {
-    if (viewerPageCount >= wholePageCount) {
-      alert('마지막 페이지 입니다.');
-    } else {
-      dispatch(actions.setCountUpViewerPageCount());
-    }
-  }, [dispatch, viewerPageCount, wholePageCount]);
-
-  const setPrevSpine = useCallback(() => {
-    if (viewerPageCount <= 0) {
-      alert('첫번째 페이지 입니다');
-    } else {
-      dispatch(actions.setCountDownViewerPageCount());
-    }
-  }, [dispatch, viewerPageCount]);
 
   return (
     <Layout
@@ -112,34 +91,28 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
           height: viewerHeight,
         }}
       >
-        {
-        isAnalizedSpine
+        {isAnalizedSpine
         && (
         <ViewerPage
           viewerWidth={viewerWidth}
           viewerHeight={viewerHeight}
           pageColumnOffset={pageColumnOffset}
-          wholeColumnCount={viewerCountList[nowSpineIndex].count}
           viewerSpine={viewerSpines[nowSpineIndex]}
-          setNextSpine={setNextSpine}
-          setPrevSpine={setPrevSpine}
+          isFirstPage={isFirstPage}
+          isLastPage={isLastPage}
         />
-        )
-      }
-        <section>
-          {
-          viewerSpines.map((viewerSpine, index) => (
-            <ViewerCount
-              key={viewerSpine}
-              viewerWidth={viewerWidth}
-              viewerHeight={viewerHeight}
-              spine={spines[index]}
-              viewerSpine={viewerSpine}
-              viewerSpineIndex={index}
-            />
-          ))
-        }
-        </section>
+        )}
+        {!isAnalizedSpine
+        && viewerSpines.map((viewerSpine, index) => (
+          <ViewerCount
+            key={viewerSpine}
+            viewerWidth={viewerWidth}
+            viewerHeight={viewerHeight}
+            spine={spines[index]}
+            viewerSpine={viewerSpine}
+            viewerSpineIndex={index}
+          />
+        ))}
       </Container>
       <ViewerBottom
         sliderMaxValue={wholePageCount}
