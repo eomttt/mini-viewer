@@ -18,9 +18,15 @@ export const SETTING_ITEM_LABEL = {
   BACKGROUND_COLOR: '배경색',
 };
 
+export const SETTING_ITEM_UNIT = {
+  FONT_SIZE: 0.1,
+  PADDING: 1,
+  LINE_HEIGHT: 1,
+};
+
 export const FONT_SIZE_RANGE = {
   MIN: 1,
-  MAX: 5,
+  MAX: 2,
 };
 
 export const PADDING_RANGE = {
@@ -29,8 +35,8 @@ export const PADDING_RANGE = {
 };
 
 export const LINE_HEIGHT_RANGE = {
-  MIN: 1,
-  MAX: 3,
+  MIN: 1.5,
+  MAX: 5,
 };
 
 export const BACKGROUND_COLORS = ['white', '#fff599', '#f7a0ac'];

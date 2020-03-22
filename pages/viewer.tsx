@@ -1,8 +1,10 @@
 import React, {
   useState, useMemo, useEffect,
 } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { NextPageContext, NextPage } from 'next';
+
+import debounce from 'lodash.debounce';
 
 import styled from 'styled-components';
 
@@ -11,6 +13,8 @@ import ViewerBottom from '../components/viewer/ViewerBottom';
 import ViewerCount from '../components/viewer/ViewerCount';
 import ViewerHeader from '../components/viewer/ViewerHeader';
 import ViewerPage from '../components/viewer/ViewerPage';
+
+import * as viewerActions from '../reducers/viewer';
 
 import { VIEWER_WIDTH_RATIO, VIEWER_HEIGHT_RATIO } from '../constants/viewer';
 
@@ -33,6 +37,8 @@ interface Props {
 const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
   const { spines, titles, ncx } = book;
 
+  const dispatch = useDispatch();
+
   const [viewerWidth, setViewerWidth] = useState(0);
   const [viewerHeight, setViewerHeight] = useState(0);
   const [nowSpineIndex, setNowSpineIndex] = useState(0);
@@ -43,7 +49,7 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
     fontSize, padding, lineHeight, backgroundColor,
   } = useSelector((state: ReducerState) => state.viewerSetting);
 
-  const isAnalizedSpine = useMemo(() => viewerCountList.length >= viewerSpines.length, [viewerCountList, viewerSpines]);
+  const isAnalyzedSpine = useMemo(() => viewerCountList.length >= viewerSpines.length, [viewerCountList, viewerSpines]);
   const isFirstPage = useMemo(() => viewerPageCount === 0, [viewerPageCount]);
   const isLastPage = useMemo(() => viewerPageCount === wholePageCount, [viewerPageCount, wholePageCount]);
   const selectedSpineIndex = useMemo(() => {
@@ -82,15 +88,17 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
   }, [selectedSpineIndex]);
 
   useEffect(() => {
-    if (isAnalizedSpine) {
+    if (isAnalyzedSpine) {
       const pageCount = viewerCountList.reduce((acc, cur) => acc + cur.count, 0);
       setWholePageCount(pageCount - 1);
     }
-  }, [isAnalizedSpine, viewerCountList]);
+  }, [isAnalyzedSpine, viewerCountList]);
 
-  useEffect(() => {
+  useEffect(debounce(() => {
     console.log('Redrawing page');
-  }, [fontSize, padding, lineHeight]);
+    dispatch(viewerActions.initViewerState());
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, 1000), [fontSize, padding, lineHeight]);
 
   return (
     <Layout
@@ -106,7 +114,7 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
           backgroundColor,
         }}
       >
-        {isAnalizedSpine
+        {isAnalyzedSpine
         && (
         <ViewerPage
           viewerWidth={viewerWidth}
@@ -115,9 +123,14 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
           viewerSpine={viewerSpines[nowSpineIndex]}
           isFirstPage={isFirstPage}
           isLastPage={isLastPage}
+          viewerStyle={{
+            fontSize,
+            padding,
+            lineHeight,
+          }}
         />
         )}
-        {!isAnalizedSpine
+        {!isAnalyzedSpine
         && viewerSpines.map((viewerSpine, index) => (
           <ViewerCount
             key={viewerSpine}
@@ -126,6 +139,11 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
             spine={spines[index]}
             viewerSpine={viewerSpine}
             viewerSpineIndex={index}
+            viewerStyle={{
+              fontSize,
+              padding,
+              lineHeight,
+            }}
           />
         ))}
       </Container>

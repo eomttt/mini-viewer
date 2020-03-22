@@ -3,11 +3,14 @@ export interface ViewerState {
   viewerPageCount: number;
 }
 
-export interface ViewerSettingState {
+export interface ViewerSettingState extends ViewerStyle {
+  backgroundColor: string;
+}
+
+export interface ViewerStyle {
   fontSize: number;
   padding: number;
   lineHeight: number;
-  backgroundColor: string;
 }
 
 export interface ViewerCount {
@@ -20,6 +23,7 @@ export interface SettingItem {
   label: string;
   key: string;
   value: number | string;
+  valueUnit?: number;
   minValue?: number;
   maxValue?: number;
   colors?: string[];

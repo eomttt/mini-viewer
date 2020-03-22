@@ -7,6 +7,7 @@ export const initialState: ViewerState = {
 };
 
 // Action types
+export const INIT_VIEWER_STATE = 'viewer/INIT_VIEWER_STATE';
 export const SET_VIEWER_COLUMN_COUNT = 'viewer/SET_VIEWER_COLUMN_COUNT';
 
 export const SET_VIEWER_PAGE_COUNT = 'viewer/SET_VIEWER_PAGE_COUNT';
@@ -14,6 +15,10 @@ export const SET_COUNT_UP_VIEWER_PAGE_COUNT = 'viewer/SET_COUNT_UP_VIEWER_PAGE_C
 export const SET_COUNT_DOWN_VIEWER_PAGE_COUNT = 'viewer/SET_COUNT_DOWN_VIEWER_PAGE_COUNT';
 
 // Action creators
+export const initViewerState = () => ({
+  type: INIT_VIEWER_STATE,
+});
+
 export const setViewerColumnCount = (
   { index, count, spineId }: {index: number; count: number; spineId: string},
 ) => ({
@@ -43,6 +48,13 @@ export const setCountDownViewerPageCount = () => ({
 export default (state = initialState, action: ReducerAction): ViewerState => {
   const { type, payload } = action;
   switch (type) {
+    case INIT_VIEWER_STATE: {
+      return {
+        ...state,
+        viewerCountList: [],
+        viewerPageCount: 0,
+      };
+    }
     case SET_VIEWER_COLUMN_COUNT: {
       const { index, count, spineId } = payload;
       return {

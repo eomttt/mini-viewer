@@ -19,7 +19,7 @@ const Container = styled.div`
 const Titles = styled.div`
   white-space: nowrap;
   vertical-align: top;
-  margin: auto auto auto 5em;
+  margin: auto auto auto 7em;
   & div {
     display: inline-block;
     font-size: ${titleFontSize};
@@ -27,11 +27,11 @@ const Titles = styled.div`
 `;
 
 const HeaderNcx = styled.div`
-  margin: auto 5em auto auto;
+  margin: auto 7em auto auto;
 `;
 
 const HeaderSetting = styled.div`
-  margin: auto 5em auto 0;
+  margin: auto 7em auto 0;
 `;
 
 interface Props {

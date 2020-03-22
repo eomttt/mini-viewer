@@ -43,7 +43,7 @@ export const ViewerContentsStyle = `
 export const ViewerSettingItemStyle = `
   height: 3em;
   text-align: center;
-  padding: .5em;
+  padding: .4em;
   border-bottom: 1px solid ${subColor};
   margin: 0;
   display: flex;

@@ -6,7 +6,7 @@ import { defaultColor } from '../styles';
 export const initialState: ViewerSettingState = {
   fontSize: 1,
   padding: 0,
-  lineHeight: 1,
+  lineHeight: 1.5,
   backgroundColor: defaultColor,
 };
 
@@ -38,7 +38,7 @@ export const setViewerSettingLineHeight = (lineHeight: number) => ({
   },
 });
 
-export const setViewerSettingBackgroundColor = (color: number) => ({
+export const setViewerSettingBackgroundColor = (color: string) => ({
   type: SET_BACKGROUND_COLOR,
   payload: {
     backgroundColor: color,

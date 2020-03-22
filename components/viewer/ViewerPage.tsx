@@ -18,11 +18,15 @@ import * as viewerActions from '../../reducers/viewer';
 
 import { VIEWER_PAGE_GAP } from '../../constants/viewer';
 
+import { ViewerStyle } from '../../interfaces/viewer';
+
 const ViewArticle = styled.article`
   ${ViewArticleStyle}
   width: ${(props) => props.styleProps.width}px;
   height: ${(props) => props.styleProps.height}px;
   overflow: hidden;
+  font-size: ${(props) => props.styleProps.fontSize}em;
+  line-height: ${(props) => props.styleProps.lineHeight}em;
 `;
 
 const ViewSection = styled.section`
@@ -51,6 +55,7 @@ interface Props {
   viewerSpine: string;
   isFirstPage: boolean;
   isLastPage: boolean;
+  viewerStyle: ViewerStyle;
 }
 
 const ViewerPage: React.FunctionComponent<Props> = ({
@@ -58,6 +63,7 @@ const ViewerPage: React.FunctionComponent<Props> = ({
   pageColumnOffset,
   viewerSpine,
   isFirstPage, isLastPage,
+  viewerStyle,
 }) => {
   const dispatch = useDispatch();
   const [nowViewerCount, setNowViewerCount] = useState(0);
@@ -91,6 +97,7 @@ const ViewerPage: React.FunctionComponent<Props> = ({
         ref={viewArticleRef}
         onClick={clickRight}
         styleProps={{
+          ...viewerStyle,
           width: viewerWidth,
           height: viewerHeight,
         }}

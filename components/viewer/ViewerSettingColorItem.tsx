@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
 
 import styled from 'styled-components';
 
@@ -42,11 +41,9 @@ interface Props {
 const ViewerSettingColorItem: React.FunctionComponent<Props> = ({
   label, value, colors, action,
 }) => {
-  const dispatch = useDispatch();
-
   const selectColor = useCallback((selectedColor: string) => {
-    dispatch(action(selectedColor));
-  }, [dispatch, action]);
+    action(selectedColor);
+  }, [action]);
 
   return (
     <Container>

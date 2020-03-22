@@ -1,5 +1,4 @@
-import React, { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useCallback, useState } from 'react';
 
 import styled from 'styled-components';
 
@@ -46,27 +45,45 @@ const PlusButton = styled.div`
 interface Props {
   label: string;
   value: string | number;
+  valueUnit: number;
   minValue: number;
   maxValue: number;
   action: (param: string | number) => void;
 }
 
 const ViewerSettingCountItem: React.FunctionComponent<Props> = ({
-  label, value, minValue, maxValue, action,
+  label, value, valueUnit,
+  minValue, maxValue, action,
 }) => {
-  const dispatch = useDispatch();
+  const [showValue, setShowValue] = useState(value);
+
+  const isIntegerNumber = useCallback((number) => number % 1 === 0, []);
 
   const countUpValue = useCallback(() => {
-    if (Number(value) + 1 <= maxValue) {
-      dispatch(action(Number(value) + 1));
+    const expectedValue = Number(showValue) + valueUnit;
+
+    if (expectedValue <= maxValue) {
+      const newValue = isIntegerNumber(expectedValue) ? expectedValue : expectedValue.toFixed(1);
+
+      setShowValue(newValue);
+      action(newValue);
+    } else {
+      alert('변경 할 수 있는 최대값 입니다.');
     }
-  }, [dispatch, action, value, maxValue]);
+  }, [action, showValue, maxValue, valueUnit, isIntegerNumber]);
 
   const countDownValue = useCallback(() => {
-    if (Number(value) - 1 >= minValue) {
-      dispatch(action(Number(value) - 1));
+    const expectedValue = Number(showValue) - valueUnit;
+
+    if (expectedValue >= minValue) {
+      const newValue = isIntegerNumber(expectedValue) ? expectedValue : expectedValue.toFixed(1);
+
+      setShowValue(newValue);
+      action(newValue);
+    } else {
+      alert('변경 할 수 있는 최소값 입니다.');
     }
-  }, [dispatch, action, value, minValue]);
+  }, [action, showValue, minValue, valueUnit, isIntegerNumber]);
 
   return (
     <Container>
@@ -74,13 +91,14 @@ const ViewerSettingCountItem: React.FunctionComponent<Props> = ({
         {label}
       </Label>
       <Value>
-        {value}
+        {showValue}
       </Value>
       <Controller>
         <MinusButton onClick={countDownValue}>
           -
         </MinusButton>
-        <PlusButton onClick={countUpValue}>
+        <PlusButton onClick={countUpValue}
+        >
           +
         </PlusButton>
       </Controller>
