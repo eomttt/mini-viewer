@@ -8,8 +8,8 @@ export interface ViewerSettingState extends ViewerStyle {
 }
 
 export interface ViewerStyle {
+  widthRatio: number;
   fontSize: number;
-  padding: number;
   lineHeight: number;
 }
 

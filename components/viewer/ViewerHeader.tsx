@@ -7,13 +7,11 @@ import ViewerSetting from './ViewerSetting';
 
 import { EpubNcxItem } from '../../interfaces/books';
 
-import { titleFontSize, subColor } from '../../styles';
-import { ViewerMenuStyle } from '../../styles/viewer';
+import { titleFontSize } from '../../styles';
+import { ViewerMenu } from '../../styles/viewer';
 
-const Container = styled.div`
-  ${ViewerMenuStyle}
+const Container = styled(ViewerMenu)`
   top: 0;
-  border-bottom: 1px solid ${subColor};
 `;
 
 const Titles = styled.div`

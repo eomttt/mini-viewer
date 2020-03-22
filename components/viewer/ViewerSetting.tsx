@@ -14,7 +14,7 @@ import {
   SETTING_ITEM_KEY,
   SETTING_ITEM_LABEL,
   SETTING_ITEM_UNIT,
-  FONT_SIZE_RANGE, PADDING_RANGE, LINE_HEIGHT_RANGE, BACKGROUND_COLORS,
+  FONT_SIZE_RANGE, WIDTH_RATIO_RANGE, LINE_HEIGHT_RANGE, BACKGROUND_COLORS,
 } from '../../constants/viewer';
 
 import { ReducerState } from '../../interfaces';
@@ -43,7 +43,7 @@ const SettingItems = styled.ul`
 
 const ViewerSetting: React.FunctionComponent = () => {
   const {
-    fontSize, padding, lineHeight, backgroundColor,
+    fontSize, widthRatio, lineHeight, backgroundColor,
   } = useSelector((state: ReducerState) => state.viewerSetting);
   const dispatch = useDispatch();
 
@@ -63,14 +63,14 @@ const ViewerSetting: React.FunctionComponent = () => {
           dispatch(settingActions.setViewerSettingFontSize(value));
         },
       }, {
-        label: SETTING_ITEM_LABEL.PADDING,
-        key: SETTING_ITEM_KEY.PADDING,
-        value: padding,
-        valueUnit: SETTING_ITEM_UNIT.PADDING,
-        minValue: PADDING_RANGE.MIN,
-        maxValue: PADDING_RANGE.MAX,
+        label: SETTING_ITEM_LABEL.WIDTH_RATIO,
+        key: SETTING_ITEM_KEY.WIDTH_RATIO,
+        value: widthRatio,
+        valueUnit: SETTING_ITEM_UNIT.WIDTH,
+        minValue: WIDTH_RATIO_RANGE.MIN,
+        maxValue: WIDTH_RATIO_RANGE.MAX,
         action: (value: number) => {
-          dispatch(settingActions.setViewerSettingPadding(value));
+          dispatch(settingActions.setViewerSettingWidthRatio(value));
         },
       }, {
         label: SETTING_ITEM_LABEL.LINE_HEIGHT,
@@ -92,7 +92,7 @@ const ViewerSetting: React.FunctionComponent = () => {
         },
       },
     ]);
-  }, [dispatch, fontSize, padding, lineHeight, backgroundColor]);
+  }, [dispatch, fontSize, widthRatio, lineHeight, backgroundColor]);
 
   const toggleShowNcs = useCallback(() => {
     setIsShowSetting(!isShowSetting);

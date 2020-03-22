@@ -4,8 +4,6 @@ import React, {
 import { useSelector, useDispatch } from 'react-redux';
 import { NextPageContext, NextPage } from 'next';
 
-import debounce from 'lodash.debounce';
-
 import styled from 'styled-components';
 
 import Layout from '../components/Layout';
@@ -25,6 +23,7 @@ const Container = styled.div`
   padding: ${(100 - VIEWER_HEIGHT_RATIO) / 2}% ${(100 - VIEWER_WIDTH_RATIO) / 2}%;
   height: ${(props) => props.styleProps.height}px;
   background-color: ${(props) => props.styleProps.backgroundColor};
+  text-align: center;
   overflow: hidden;
 `;
 
@@ -46,7 +45,7 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
 
   const { viewerCountList, viewerPageCount } = useSelector((state: ReducerState) => state.viewer);
   const {
-    fontSize, padding, lineHeight, backgroundColor,
+    fontSize, widthRatio, lineHeight, backgroundColor,
   } = useSelector((state: ReducerState) => state.viewerSetting);
 
   const isAnalyzedSpine = useMemo(() => viewerCountList.length >= viewerSpines.length, [viewerCountList, viewerSpines]);
@@ -94,11 +93,10 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
     }
   }, [isAnalyzedSpine, viewerCountList]);
 
-  useEffect(debounce(() => {
-    console.log('Redrawing page');
+  useEffect(() => {
+    console.log('New style');
     dispatch(viewerActions.initViewerState());
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, 1000), [fontSize, padding, lineHeight]);
+  }, [dispatch, fontSize, lineHeight, widthRatio]);
 
   return (
     <Layout
@@ -117,15 +115,15 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
         {isAnalyzedSpine
         && (
         <ViewerPage
-          viewerWidth={viewerWidth}
+          viewerWidth={Math.floor(Number(viewerWidth) * (Number(widthRatio) / 100))}
           viewerHeight={viewerHeight}
           pageColumnOffset={pageColumnOffset}
           viewerSpine={viewerSpines[nowSpineIndex]}
           isFirstPage={isFirstPage}
           isLastPage={isLastPage}
           viewerStyle={{
+            widthRatio,
             fontSize,
-            padding,
             lineHeight,
           }}
         />
@@ -134,14 +132,14 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
         && viewerSpines.map((viewerSpine, index) => (
           <ViewerCount
             key={viewerSpine}
-            viewerWidth={viewerWidth}
+            viewerWidth={Math.floor(Number(viewerWidth) * (Number(widthRatio) / 100))}
             viewerHeight={viewerHeight}
             spine={spines[index]}
             viewerSpine={viewerSpine}
             viewerSpineIndex={index}
             viewerStyle={{
+              widthRatio,
               fontSize,
-              padding,
               lineHeight,
             }}
           />

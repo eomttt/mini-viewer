@@ -8,10 +8,10 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 import {
-  ButtonStyle,
-  ViewArticleStyle,
-  ViewSectionStyle,
-  ViewerContentsStyle,
+  ViewerButton,
+  ViewerArticle,
+  ViewerSection,
+  ViewerContents,
 } from '../../styles/viewer';
 
 import * as viewerActions from '../../reducers/viewer';
@@ -20,31 +20,16 @@ import { VIEWER_PAGE_GAP } from '../../constants/viewer';
 
 import { ViewerStyle } from '../../interfaces/viewer';
 
-const ViewArticle = styled.article`
-  ${ViewArticleStyle}
-  width: ${(props) => props.styleProps.width}px;
-  height: ${(props) => props.styleProps.height}px;
+const Article = styled(ViewerArticle)`
   overflow: hidden;
-  font-size: ${(props) => props.styleProps.fontSize}em;
-  line-height: ${(props) => props.styleProps.lineHeight}em;
+  text-align: initial;
 `;
 
-const ViewSection = styled.section`
-  ${ViewSectionStyle}
-  column-width: ${(props) => props.styleProps.width}px;
-`;
-
-const Contents = styled.div`
-  ${ViewerContentsStyle}
-`;
-
-const RightButton = styled.div`
-  ${ButtonStyle}
+const RightButton = styled(ViewerButton)`
   right: 2em;
 `;
 
-const LeftButton = styled.div`
-  ${ButtonStyle}
+const LeftButton = styled(ViewerButton)`
   left: 2em;
 `;
 
@@ -66,6 +51,7 @@ const ViewerPage: React.FunctionComponent<Props> = ({
   viewerStyle,
 }) => {
   const dispatch = useDispatch();
+
   const [nowViewerCount, setNowViewerCount] = useState(0);
 
   const viewArticleRef = useRef(null);
@@ -93,7 +79,7 @@ const ViewerPage: React.FunctionComponent<Props> = ({
 
   return (
     <>
-      <ViewArticle
+      <Article
         ref={viewArticleRef}
         onClick={clickRight}
         styleProps={{
@@ -102,15 +88,16 @@ const ViewerPage: React.FunctionComponent<Props> = ({
           height: viewerHeight,
         }}
       >
-        <ViewSection
+        <ViewerSection
           styleProps={{
+            ...viewerStyle,
             width: viewerWidth,
             height: viewerHeight,
           }}
         >
-          <Contents dangerouslySetInnerHTML={{ __html: viewerSpine }} />
-        </ViewSection>
-      </ViewArticle>
+          <ViewerContents dangerouslySetInnerHTML={{ __html: viewerSpine }} />
+        </ViewerSection>
+      </Article>
       {!isFirstPage && <LeftButton onClick={clickLeft}>Left</LeftButton>}
       {!isLastPage && <RightButton onClick={clickRight}>Right</RightButton>}
     </>

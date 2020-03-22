@@ -2,24 +2,14 @@ import React, { useCallback, useState } from 'react';
 
 import styled from 'styled-components';
 
+import debounce from 'lodash.debounce';
+
 import { subColor } from '../../styles';
 import {
-  ViewerSettingItemStyle,
-  ViewerSettingValueStyle,
-  ViewerSettingLabelStyle,
+  ViewerSettingItem,
+  ViewerSettingLabel,
+  ViewerSettingValue,
 } from '../../styles/viewer';
-
-const Container = styled.div`
-  ${ViewerSettingItemStyle}
-`;
-
-const Label = styled.div`
-  ${ViewerSettingLabelStyle}
-`;
-
-const Value = styled.div`
-  ${ViewerSettingValueStyle}
-`;
 
 const Controller = styled.div`
   display: flex;
@@ -58,6 +48,7 @@ const ViewerSettingCountItem: React.FunctionComponent<Props> = ({
   const [showValue, setShowValue] = useState(value);
 
   const isIntegerNumber = useCallback((number) => number % 1 === 0, []);
+  const debounceAction = useCallback(debounce(action, 400), [action]);
 
   const countUpValue = useCallback(() => {
     const expectedValue = Number(showValue) + valueUnit;
@@ -66,11 +57,11 @@ const ViewerSettingCountItem: React.FunctionComponent<Props> = ({
       const newValue = isIntegerNumber(expectedValue) ? expectedValue : expectedValue.toFixed(1);
 
       setShowValue(newValue);
-      action(newValue);
+      debounceAction(newValue);
     } else {
       alert('변경 할 수 있는 최대값 입니다.');
     }
-  }, [action, showValue, maxValue, valueUnit, isIntegerNumber]);
+  }, [debounceAction, showValue, maxValue, valueUnit, isIntegerNumber]);
 
   const countDownValue = useCallback(() => {
     const expectedValue = Number(showValue) - valueUnit;
@@ -79,20 +70,20 @@ const ViewerSettingCountItem: React.FunctionComponent<Props> = ({
       const newValue = isIntegerNumber(expectedValue) ? expectedValue : expectedValue.toFixed(1);
 
       setShowValue(newValue);
-      action(newValue);
+      debounceAction(newValue);;
     } else {
       alert('변경 할 수 있는 최소값 입니다.');
     }
-  }, [action, showValue, minValue, valueUnit, isIntegerNumber]);
+  }, [debounceAction, showValue, minValue, valueUnit, isIntegerNumber]);
 
   return (
-    <Container>
-      <Label>
+    <ViewerSettingItem>
+      <ViewerSettingLabel>
         {label}
-      </Label>
-      <Value>
+      </ViewerSettingLabel>
+      <ViewerSettingValue>
         {showValue}
-      </Value>
+      </ViewerSettingValue>
       <Controller>
         <MinusButton onClick={countDownValue}>
           -
@@ -102,7 +93,7 @@ const ViewerSettingCountItem: React.FunctionComponent<Props> = ({
           +
         </PlusButton>
       </Controller>
-    </Container>
+    </ViewerSettingItem>
   );
 };
 

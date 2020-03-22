@@ -15,6 +15,7 @@
 - [with-redux-wrapper](https://github.com/zeit/next.js/tree/canary/examples/with-redux-wrapper)
 - [react-viewer](https://github.com/ridi/react-viewer)
 - [epub-parser](https://github.com/ridi/content-parser/tree/master/packages/epub-parser)
+- [epub 이란](http://www.tta.or.kr/data/androReport/ttaJnal/136-6.pdf)
 
 ### Project design
 - [PPT link](https://hyuntaeeom-personal.s3.ap-northeast-2.amazonaws.com/RIDI+mini-vewer/RIDI+%E1%84%8B%E1%85%B5%E1%86%B8%E1%84%89%E1%85%A1%E1%84%8C%E1%85%A1+%E1%84%80%E1%85%AA%E1%84%8C%E1%85%A6.pdf)

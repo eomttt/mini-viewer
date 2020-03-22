@@ -6,21 +6,21 @@ export const VIEWER_SLIDER_LEN_RATIO = 90;
 
 export const SETTING_ITEM_KEY = {
   FONT_SIZE: 'fontSize',
-  PADDING: 'padding',
+  WIDTH_RATIO: 'widthRatio',
   LINE_HEIGHT: 'lineHeight',
   BACKGROUND_COLOR: 'backgroundColor',
 };
 
 export const SETTING_ITEM_LABEL = {
-  FONT_SIZE: '글자 크기',
-  PADDING: '문단 너비',
-  LINE_HEIGHT: '줄 간격',
+  FONT_SIZE: '글자 크기 (em)',
+  WIDTH_RATIO: '문단 너비 (%)',
+  LINE_HEIGHT: '줄 간격 (em)',
   BACKGROUND_COLOR: '배경색',
 };
 
 export const SETTING_ITEM_UNIT = {
   FONT_SIZE: 0.1,
-  PADDING: 1,
+  WIDTH: 10,
   LINE_HEIGHT: 1,
 };
 
@@ -29,9 +29,9 @@ export const FONT_SIZE_RANGE = {
   MAX: 2,
 };
 
-export const PADDING_RANGE = {
-  MIN: 0,
-  MAX: 5,
+export const WIDTH_RATIO_RANGE = {
+  MIN: 50,
+  MAX: 100,
 };
 
 export const LINE_HEIGHT_RANGE = {

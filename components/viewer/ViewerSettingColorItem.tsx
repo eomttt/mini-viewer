@@ -4,17 +4,9 @@ import styled from 'styled-components';
 
 import { subColor } from '../../styles';
 import {
-  ViewerSettingItemStyle,
-  ViewerSettingLabelStyle,
+  ViewerSettingItem,
+  ViewerSettingLabel,
 } from '../../styles/viewer';
-
-const Container = styled.div`
-  ${ViewerSettingItemStyle}
-`;
-
-const Label = styled.div`
-  ${ViewerSettingLabelStyle}
-`;
 
 const Controller = styled.div`
   display: flex;
@@ -46,10 +38,10 @@ const ViewerSettingColorItem: React.FunctionComponent<Props> = ({
   }, [action]);
 
   return (
-    <Container>
-      <Label>
+    <ViewerSettingItem>
+      <ViewerSettingLabel>
         {label}
-      </Label>
+      </ViewerSettingLabel>
       <Controller>
         {
         colors.map((color) => (
@@ -64,7 +56,7 @@ const ViewerSettingColorItem: React.FunctionComponent<Props> = ({
         ))
       }
       </Controller>
-    </Container>
+    </ViewerSettingItem>
   );
 };
 

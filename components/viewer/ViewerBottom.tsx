@@ -4,13 +4,10 @@ import styled from 'styled-components';
 
 import ViewerSlider from './ViewerSlider';
 
-import { subColor } from '../../styles';
-import { ViewerMenuStyle } from '../../styles/viewer';
+import { ViewerMenu } from '../../styles/viewer';
 
-const Container = styled.div`
-  ${ViewerMenuStyle}
+const Container = styled(ViewerMenu)`
   bottom: 0;
-  border-top: 1px solid ${subColor};
 `;
 
 interface Props {
