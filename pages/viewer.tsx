@@ -34,7 +34,11 @@ interface Props {
 }
 
 const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
-  const { spines, titles, ncx } = book;
+  const {
+    spines, titles, ncx, contributors,
+  } = book;
+
+  console.log('Book', book);
 
   const dispatch = useDispatch();
 
@@ -88,6 +92,7 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
 
   useEffect(() => {
     if (isAnalyzedSpine) {
+      console.log('Set whole page count');
       const pageCount = viewerCountList.reduce((acc, cur) => acc + cur.count, 0);
       setWholePageCount(pageCount - 1);
     }
@@ -104,6 +109,7 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
     >
       <ViewerHeader
         titles={titles}
+        authors={contributors}
         ncxItem={ncx}
       />
       <Container

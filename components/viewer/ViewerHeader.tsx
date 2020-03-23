@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 
 import styled from 'styled-components';
 
 import ViewerNcx from './ViewerNcx';
 import ViewerSetting from './ViewerSetting';
 
-import { EpubNcxItem } from '../../interfaces/books';
+import { EpubNcxItem, EpubAuthor } from '../../interfaces/books';
 
 import { titleFontSize } from '../../styles';
 import { ViewerMenu } from '../../styles/viewer';
@@ -14,14 +14,25 @@ const Container = styled(ViewerMenu)`
   top: 0;
 `;
 
-const Titles = styled.div`
+const Info = styled.div`
+  max-width: 50%;
   white-space: nowrap;
   vertical-align: top;
   margin: auto auto auto 7em;
-  & div {
-    display: inline-block;
-    font-size: ${titleFontSize};
-  }
+`;
+
+const Title = styled.div`
+  width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: inline-block;
+  font-size: ${titleFontSize};
+`;
+
+const Author = styled.div`
+  width: 100%;
+  text-overflow: ellipsis;
+  overflow: hidden;
 `;
 
 const HeaderNcx = styled.div`
@@ -34,25 +45,31 @@ const HeaderSetting = styled.div`
 
 interface Props {
   titles: string[];
+  authors: EpubAuthor[];
   ncxItem: EpubNcxItem;
 }
 
-const ViewerHeader: React.FunctionComponent<Props> = ({ titles, ncxItem }) => (
-  <Container>
-    <Titles>
-      {
-          titles.map((title) => (
-            <div key={title}>{title}</div>
-          ))
-        }
-    </Titles>
-    <HeaderNcx>
-      <ViewerNcx ncxItem={ncxItem} />
-    </HeaderNcx>
-    <HeaderSetting>
-      <ViewerSetting />
-    </HeaderSetting>
-  </Container>
-);
+const ViewerHeader: React.FunctionComponent<Props> = ({ titles, authors, ncxItem }) => {
+  const getString = useCallback((items) => items.reduce((acc, cur, index) => `${acc}${index > 0 ? ', ' : ''}${cur}`, ''), []);
+
+  return (
+    <Container>
+      <Info>
+        <Title>
+          {getString(titles)}
+        </Title>
+        <Author>
+          {getString(authors.map((authorItem) => authorItem.name))}
+        </Author>
+      </Info>
+      <HeaderNcx>
+        <ViewerNcx ncxItem={ncxItem} />
+      </HeaderNcx>
+      <HeaderSetting>
+        <ViewerSetting />
+      </HeaderSetting>
+    </Container>
+  );
+};
 
 export default ViewerHeader;
