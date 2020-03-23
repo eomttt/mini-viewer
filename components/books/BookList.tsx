@@ -19,6 +19,7 @@ const CoverImage = styled.li`
   vertical-align: bottom;
   & img {
     width: 100%;
+    user-select: none;
   }
 `;
 
@@ -37,7 +38,8 @@ const BookList: React.FunctionComponent<Props> = ({ books }) => {
     e.dataTransfer.setDragImage(e.target.parentNode, 20, 20);
   }, [bookList]);
 
-  const dragOver = useCallback((index) => {
+  const dragOver = useCallback((e, index) => {
+    e.preventDefault();
     const draggedOverItem = bookList[index];
 
     if (draggedItem.publicPath === draggedOverItem.publicPath) {
@@ -58,7 +60,7 @@ const BookList: React.FunctionComponent<Props> = ({ books }) => {
       {
         bookList.map(({ cover, publicPath }, index) => (
           <CoverImage
-            onDragOver={() => dragOver(index)}
+            onDragOver={(e) => dragOver(e, index)}
             key={publicPath}
           >
             <img
