@@ -1,12 +1,14 @@
 import React, { useCallback, useState } from 'react';
+import Router from 'next/router';
 
 import styled from 'styled-components';
 
 import { subColor } from '../../styles';
 
-import { EpubBook } from '../../interfaces/books';
+import { BookInfo } from '../../interfaces/books';
 
 import { DEFAULT_IMAGE } from '../../constants/books';
+import { VIEWER_PATH_NAME } from '../../constants/viewer';
 
 const Container = styled.ul``;
 
@@ -17,6 +19,7 @@ const CoverImage = styled.li`
   display: inline-block;
   margin: 1em;
   vertical-align: bottom;
+  cursor: grab;
   & img {
     width: 100%;
     user-select: none;
@@ -24,12 +27,23 @@ const CoverImage = styled.li`
 `;
 
 interface Props {
-  books: EpubBook[];
+  books: BookInfo[];
 }
 
 const BookList: React.FunctionComponent<Props> = ({ books }) => {
   const [bookList, setBookList] = useState(books);
-  const [draggedItem, setDraggedItem] = useState<EpubBook>(null);
+  const [draggedItem, setDraggedItem] = useState<BookInfo>(null);
+
+  const openBook = useCallback((bookIndex: number) => {
+    const selectedBook = bookList[bookIndex];
+
+    Router.push({
+      pathname: VIEWER_PATH_NAME,
+      query: {
+        bookPath: encodeURI(selectedBook.publicPath),
+      },
+    });
+  }, [bookList]);
 
   const dragStart = useCallback((e, index) => {
     setDraggedItem(bookList[index]);
@@ -46,7 +60,7 @@ const BookList: React.FunctionComponent<Props> = ({ books }) => {
       return;
     }
 
-    const newSortedBooks = bookList.filter((book) => book.publicPath !== draggedItem.publicPath);
+    const newSortedBooks = bookList.filter((item) => item.publicPath !== draggedItem.publicPath);
     newSortedBooks.splice(index, 0, draggedItem);
     setBookList(newSortedBooks);
   }, [bookList, draggedItem]);
@@ -58,13 +72,14 @@ const BookList: React.FunctionComponent<Props> = ({ books }) => {
   return (
     <Container>
       {
-        bookList.map(({ cover, publicPath }, index) => (
+        bookList.map(({ book, publicPath }, index) => (
           <CoverImage
+            onClick={() => openBook(index)}
             onDragOver={(e) => dragOver(e, index)}
             key={publicPath}
           >
             <img
-              src={cover ? `${publicPath}/${cover.href}` : DEFAULT_IMAGE}
+              src={book.cover ? `${publicPath}/${book.cover.href}` : DEFAULT_IMAGE}
               draggable
               onDragStart={(e) => dragStart(e, index)}
               onDragEnd={dragEnd}

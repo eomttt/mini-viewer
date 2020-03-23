@@ -1,3 +1,5 @@
+export const VIEWER_PATH_NAME = '/viewer';
+
 export const VIEWER_WIDTH_RATIO = 70;
 export const VIEWER_HEIGHT_RATIO = 85;
 

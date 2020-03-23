@@ -1,60 +1,63 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { NextPageContext, NextPage } from 'next';
-
-import styled from 'styled-components';
 
 import Layout from '../components/Layout';
 import BookList from '../components/books/BookList';
 
-import { EpubBook } from '../interfaces/books';
+import * as booksActions from '../reducers/books';
 
-interface Props {
-  books: EpubBook[];
-}
+import { getBookInfo, isEpubFile } from '../lib/util';
 
-const Home: NextPage<Props> = ({ books }) => {
-  console.log('AAAA', books);
+import { ReducerState } from '../interfaces';
+import { BookInfo } from '../interfaces/books';
+
+const Home: NextPage = () => {
+  const { list } = useSelector((state: ReducerState) => state.books);
 
   return (
     <Layout>
-      <BookList books={books} />
+      <BookList books={list} />
     </Layout>
   );
 };
+
 // eslint-disable-next-line @typescript-eslint/unbound-method
 Home.getInitialProps = async (context: NextPageContext<any>): Promise<any> => {
-  const { req } = context;
+  const { req, store } = context;
   if (req) {
     const fs = require('fs');
     const { EpubParser } = require('@ridi/epub-parser');
-    const books: EpubBook[] = [];
 
     const files = fs.readdirSync('public/');
-    try {
-      // eslint-disable-next-line no-restricted-syntax
-      for (const file of files) {
-        if (file.includes('.epub')) {
-          const fileName = file.split('.epub')[0];
-          const parser = new EpubParser(`public/${file}`);
-          // eslint-disable-next-line no-await-in-loop
-          const book: EpubBook = await parser.parse({
-            validatePackage: true,
-            parseStyle: false,
-            unzipPath: `public/epub/${fileName}`,
+    const booksInfo: BookInfo[] = [];
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const file of files) {
+      if (isEpubFile(file)) {
+        const [fileName] = file.split('.epub');
+        const epubPath = `epub/${fileName}`;
+        try {
+          const { book, viewers } = await getBookInfo(EpubParser, {
+            epubFile: fileName,
+            epubPath,
           });
 
-          books.push({
-            ...book,
-            publicPath: `epub/${fileName}`,
+          booksInfo.push({
+            book,
+            viewers,
+            publicPath: epubPath,
           });
+        } catch (error) {
+          console.log('Error', error);
         }
       }
-      return {
-        books,
-      };
-    } catch (error) {
-      console.log('Error', error);
     }
+    store.dispatch(booksActions.setBookList(booksInfo));
+
+    return {
+      booksInfo,
+    };
   }
   return {};
 };

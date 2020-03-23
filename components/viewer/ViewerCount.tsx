@@ -1,5 +1,4 @@
 import React, { useRef, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 
 import styled from 'styled-components';
 
@@ -9,11 +8,8 @@ import {
   ViewerContents,
 } from '../../styles/viewer';
 
-import * as viewerActions from '../../reducers/viewer';
-
 import { VIEWER_PAGE_GAP } from '../../constants/viewer';
 
-import { EpubSpineItem } from '../../interfaces/books';
 import { ViewerStyle } from '../../interfaces/viewer';
 
 const HiddenArticle = styled(ViewerArticle)`
@@ -27,18 +23,16 @@ const HiddenSection = styled(ViewerSection)`
 interface Props {
   viewerWidth: number;
   viewerHeight: number;
-  viewerSpineIndex: number;
-  viewerSpine: string;
-  spine: EpubSpineItem;
+  viewer: string;
   viewerStyle: ViewerStyle;
+  setCountCallback: (count: number) => void;
 }
 
 const ViewerCount: React.FunctionComponent<Props> = ({
   viewerWidth, viewerHeight,
-  viewerSpineIndex, viewerSpine, spine,
-  viewerStyle,
+  viewer,
+  viewerStyle, setCountCallback,
 }) => {
-  const dispatch = useDispatch();
   const hiddenViewContainerRef = useRef(null);
   const hiddenViewSectionRef = useRef(null);
 
@@ -47,11 +41,7 @@ const ViewerCount: React.FunctionComponent<Props> = ({
       const { current: hiddenViewContainerCurrent } = hiddenViewContainerRef;
       const count = hiddenViewContainerCurrent.scrollWidth / (viewerWidth + VIEWER_PAGE_GAP);
 
-      dispatch(viewerActions.setViewerColumnCount({
-        count,
-        index: viewerSpineIndex,
-        spineId: spine.id,
-      }));
+      setCountCallback(count);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [viewerWidth]);
@@ -71,7 +61,7 @@ const ViewerCount: React.FunctionComponent<Props> = ({
         }}
         ref={hiddenViewSectionRef}
       >
-        <ViewerContents dangerouslySetInnerHTML={{ __html: viewerSpine }} />
+        <ViewerContents dangerouslySetInnerHTML={{ __html: viewer }} />
       </HiddenSection>
     </HiddenArticle>
   );

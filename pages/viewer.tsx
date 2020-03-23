@@ -1,5 +1,5 @@
 import React, {
-  useState, useMemo, useEffect,
+  useState, useMemo, useEffect, useCallback,
 } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { NextPageContext, NextPage } from 'next';
@@ -8,11 +8,13 @@ import styled from 'styled-components';
 
 import Layout from '../components/Layout';
 import ViewerBottom from '../components/viewer/ViewerBottom';
-import ViewerCount from '../components/viewer/ViewerCount';
+import ViewerCalculator from '../components/viewer/ViewerCalculator';
 import ViewerHeader from '../components/viewer/ViewerHeader';
 import ViewerPage from '../components/viewer/ViewerPage';
 
 import * as viewerActions from '../reducers/viewer';
+
+import { getBookInfo } from '../lib/util';
 
 import { VIEWER_WIDTH_RATIO, VIEWER_HEIGHT_RATIO } from '../constants/viewer';
 
@@ -29,17 +31,14 @@ const Container = styled.div`
 
 interface Props {
   book: EpubBook;
-  viewerSpines: string[];
+  viewers: string[];
   styleLinks: string[];
 }
 
-const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
+const Viewer: NextPage<Props> = ({ book, viewers, styleLinks }) => {
   const {
     spines, titles, ncx, contributors,
   } = book;
-
-  console.log('Book', book);
-
   const dispatch = useDispatch();
 
   const [viewerWidth, setViewerWidth] = useState(0);
@@ -47,12 +46,14 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
   const [nowSpineIndex, setNowSpineIndex] = useState(0);
   const [wholePageCount, setWholePageCount] = useState(0);
 
-  const { viewerCountList, viewerPageCount } = useSelector((state: ReducerState) => state.viewer);
+  const {
+    viewerCountList, viewerPageCount,
+  } = useSelector((state: ReducerState) => state.viewer);
   const {
     fontSize, widthRatio, lineHeight, backgroundColor,
   } = useSelector((state: ReducerState) => state.viewerSetting);
 
-  const isAnalyzedSpine = useMemo(() => viewerCountList.length >= viewerSpines.length, [viewerCountList, viewerSpines]);
+  const isAnalyzedSpine = useMemo(() => viewerCountList.length >= viewers.length, [viewerCountList, viewers]);
   const isFirstPage = useMemo(() => viewerPageCount === 0, [viewerPageCount]);
   const isLastPage = useMemo(() => viewerPageCount === wholePageCount, [viewerPageCount, wholePageCount]);
   const selectedSpineIndex = useMemo(() => {
@@ -83,7 +84,10 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
   useEffect(() => {
     setViewerWidth(Math.floor(window.innerWidth * (VIEWER_WIDTH_RATIO / 100)));
     setViewerHeight(Math.floor(window.innerHeight * (VIEWER_HEIGHT_RATIO / 100)));
-  }, []);
+    return () => {
+      dispatch(viewerActions.initViewerState());
+    };
+  }, [dispatch]);
 
   useEffect(() => {
     console.log('Now spine index', selectedSpineIndex);
@@ -103,6 +107,11 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
     dispatch(viewerActions.initViewerState());
   }, [dispatch, fontSize, lineHeight, widthRatio]);
 
+  const calculateViewerWidth = useCallback(
+    (nowWidth, newRatio) => Math.floor(Number(nowWidth) * (Number(newRatio) / 100)),
+    [],
+  );
+
   return (
     <Layout
       styleLinks={styleLinks}
@@ -121,35 +130,23 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
         {isAnalyzedSpine
         && (
         <ViewerPage
-          viewerWidth={Math.floor(Number(viewerWidth) * (Number(widthRatio) / 100))}
+          viewerWidth={calculateViewerWidth(viewerWidth, widthRatio)}
           viewerHeight={viewerHeight}
           pageColumnOffset={pageColumnOffset}
-          viewerSpine={viewerSpines[nowSpineIndex]}
+          viewerSpine={viewers[nowSpineIndex]}
           isFirstPage={isFirstPage}
           isLastPage={isLastPage}
-          viewerStyle={{
-            widthRatio,
-            fontSize,
-            lineHeight,
-          }}
         />
         )}
         {!isAnalyzedSpine
-        && viewerSpines.map((viewerSpine, index) => (
-          <ViewerCount
-            key={viewerSpine}
-            viewerWidth={Math.floor(Number(viewerWidth) * (Number(widthRatio) / 100))}
-            viewerHeight={viewerHeight}
-            spine={spines[index]}
-            viewerSpine={viewerSpine}
-            viewerSpineIndex={index}
-            viewerStyle={{
-              widthRatio,
-              fontSize,
-              lineHeight,
-            }}
-          />
-        ))}
+        && (
+        <ViewerCalculator
+          viewerWidth={calculateViewerWidth(viewerWidth, widthRatio)}
+          viewerHeight={viewerHeight}
+          spines={spines}
+          viewers={viewers}
+        />
+        )}
       </Container>
       <ViewerBottom
         sliderMaxValue={wholePageCount}
@@ -160,33 +157,52 @@ const Viewer: NextPage<Props> = ({ book, viewerSpines, styleLinks }) => {
 
 // eslint-disable-next-line @typescript-eslint/unbound-method
 Viewer.getInitialProps = async (context: NextPageContext<any>): Promise<any> => {
-  const { req } = context;
+  const { req, store, query } = context;
+  const { bookPath } = query;
+  const queryPath = decodeURI(String(bookPath));
+
   if (req) {
+    // Server side render
+    const [, fileName] = queryPath.split('/');
     const { EpubParser } = require('@ridi/epub-parser');
     try {
-      const parser = new EpubParser('public/jikji.epub');
-      const book: EpubBook = await parser.parse({
-        validatePackage: true,
-        parseStyle: false,
-        unzipPath: 'public/epub/jikji',
-      });
-      const viewerSpines = await parser.readItems(book.spines, {
-        force: true,
-        extractBody: true,
-        serializedAnchor: true,
-        ignoreScript: true,
-        basePath: 'epub/jikji',
+      const { book, viewers } = await getBookInfo(EpubParser, {
+        epubFile: fileName,
+        epubPath: queryPath,
       });
 
       return {
         book,
-        viewerSpines,
-        styleLinks: book.styles.map((style) => `epub/jikji/${style.href}`),
+        viewers,
+        styleLinks: book.styles.map((style) => `${queryPath}/${style.href}`),
       };
     } catch (error) {
       console.log('Error', error);
     }
+  } else {
+    // Client side render
+    const { books }: ReducerState = store.getState();
+    const { list } = books;
+
+    let selectedBookInfo = list[0];
+
+    list.some((bookInfo) => {
+      if (bookInfo.publicPath === queryPath) {
+        selectedBookInfo = bookInfo;
+        return true;
+      }
+      return false;
+    });
+
+    const { book, viewers, publicPath } = selectedBookInfo;
+
+    return {
+      book,
+      viewers,
+      styleLinks: book.styles.map((style) => `${publicPath}/${style.href}`),
+    };
   }
+
   return {};
 };
 

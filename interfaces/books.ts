@@ -1,5 +1,11 @@
 export interface BooksState {
-  list: [];
+  list: BookInfo[];
+}
+
+export interface BookInfo {
+  book: EpubBook;
+  viewers: string[];
+  publicPath: string;
 }
 
 export interface EpubBook {
@@ -28,7 +34,6 @@ export interface EpubBook {
   styles: EpubCssItem[];
   guides: EpubGuide[];
   deadItems: EpubDeadItem[];
-  publicPath?: string;
   toRaw(): object;
 }
 

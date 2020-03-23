@@ -1,5 +1,5 @@
 import { ReducerAction } from '../interfaces';
-import { ViewerState } from '../interfaces/viewer';
+import { ViewerState, ViewerCount } from '../interfaces/viewer';
 
 export const initialState: ViewerState = {
   viewerCountList: [],
@@ -8,7 +8,7 @@ export const initialState: ViewerState = {
 
 // Action types
 export const INIT_VIEWER_STATE = 'viewer/INIT_VIEWER_STATE';
-export const SET_VIEWER_COLUMN_COUNT = 'viewer/SET_VIEWER_COLUMN_COUNT';
+export const SET_VIEWER_COLUMN_COUNT_LIST = 'viewer/SET_VIEWER_COLUMN_COUNT_LIST';
 
 export const SET_VIEWER_PAGE_COUNT = 'viewer/SET_VIEWER_PAGE_COUNT';
 export const SET_COUNT_UP_VIEWER_PAGE_COUNT = 'viewer/SET_COUNT_UP_VIEWER_PAGE_COUNT';
@@ -19,14 +19,10 @@ export const initViewerState = () => ({
   type: INIT_VIEWER_STATE,
 });
 
-export const setViewerColumnCount = (
-  { index, count, spineId }: {index: number; count: number; spineId: string},
-) => ({
-  type: SET_VIEWER_COLUMN_COUNT,
+export const setViewerCountList = (countList: ViewerCount[]) => ({
+  type: SET_VIEWER_COLUMN_COUNT_LIST,
   payload: {
-    index,
-    count,
-    spineId,
+    countList,
   },
 });
 
@@ -55,11 +51,11 @@ export default (state = initialState, action: ReducerAction): ViewerState => {
         viewerPageCount: 0,
       };
     }
-    case SET_VIEWER_COLUMN_COUNT: {
-      const { index, count, spineId } = payload;
+    case SET_VIEWER_COLUMN_COUNT_LIST: {
+      const { countList } = payload;
       return {
         ...state,
-        viewerCountList: [...state.viewerCountList, { index, count, spineId }],
+        viewerCountList: [...countList],
       };
     }
     case SET_VIEWER_PAGE_COUNT: {

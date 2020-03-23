@@ -22,7 +22,9 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 0,
     '@typescript-eslint/no-var-requires': 0,
     '@typescript-eslint/explicit-function-return-type': 0,
+    'import/prefer-default-export': 0,
     'no-underscore-dangle': 0,
+    'no-await-in-loop': 0,
     'global-require': 0,
     'import/extensions': [
       'error',
