@@ -28,6 +28,7 @@ export interface EpubBook {
   styles: EpubCssItem[];
   guides: EpubGuide[];
   deadItems: EpubDeadItem[];
+  publicPath?: string;
   toRaw(): object;
 }
 

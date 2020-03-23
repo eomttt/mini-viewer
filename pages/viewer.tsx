@@ -187,8 +187,6 @@ Viewer.getInitialProps = async (context: NextPageContext<any>): Promise<any> => 
       console.log('Error', error);
     }
   }
-
-
   return {};
 };
 
