@@ -4,9 +4,9 @@ import React, {
 import { useSelector, useDispatch } from 'react-redux';
 import { NextPageContext, NextPage } from 'next';
 
+
 import styled from 'styled-components';
 
-import Layout from '../components/Layout';
 import ViewerBottom from '../components/viewer/ViewerBottom';
 import ViewerCalculator from '../components/viewer/ViewerCalculator';
 import ViewerHeader from '../components/viewer/ViewerHeader';
@@ -14,12 +14,13 @@ import ViewerPage from '../components/viewer/ViewerPage';
 
 import * as viewerActions from '../reducers/viewer';
 
-import { getBookInfo } from '../lib/util';
+import { getBookInfo, getStyleText } from '../lib/util';
 
 import { VIEWER_WIDTH_RATIO, VIEWER_HEIGHT_RATIO } from '../constants/viewer';
 
 import { ReducerState } from '../interfaces';
 import { EpubBook } from '../interfaces/books';
+import Layout from '../components/Layout';
 
 const Container = styled.div`
   padding: ${(100 - VIEWER_HEIGHT_RATIO) / 2}% ${(100 - VIEWER_WIDTH_RATIO) / 2}%;
@@ -32,10 +33,10 @@ const Container = styled.div`
 interface Props {
   book: EpubBook;
   viewers: string[];
-  styleLinks: string[];
+  styleText: string;
 }
 
-const Viewer: NextPage<Props> = ({ book, viewers, styleLinks }) => {
+const Viewer: NextPage<Props> = ({ book, viewers, styleText }) => {
   const {
     spines, titles, ncx, contributors,
   } = book;
@@ -114,7 +115,7 @@ const Viewer: NextPage<Props> = ({ book, viewers, styleLinks }) => {
 
   return (
     <Layout
-      styleLinks={styleLinks}
+      styleText={styleText}
     >
       <ViewerHeader
         titles={titles}
@@ -163,18 +164,19 @@ Viewer.getInitialProps = async (context: NextPageContext<any>): Promise<any> => 
 
   if (req) {
     // Server side render
-    const [, fileName] = queryPath.split('/');
     const { EpubParser } = require('@ridi/epub-parser');
+    const [, fileName] = queryPath.split('/');
+    const publicPath = `http://${req.headers.host}/${queryPath}`;
     try {
       const { book, viewers } = await getBookInfo(EpubParser, {
         epubFile: fileName,
         epubPath: queryPath,
       });
-
+      const styleText = await getStyleText(publicPath, book.styles);
       return {
         book,
         viewers,
-        styleLinks: book.styles.map((style) => `${queryPath}/${style.href}`),
+        styleText,
       };
     } catch (error) {
       console.log('Error', error);
@@ -195,15 +197,14 @@ Viewer.getInitialProps = async (context: NextPageContext<any>): Promise<any> => 
     });
 
     const { book, viewers, publicPath } = selectedBookInfo;
+    const styleText = await getStyleText(publicPath, book.styles);
 
     return {
       book,
       viewers,
-      styleLinks: book.styles.map((style) => `${publicPath}/${style.href}`),
+      styleText,
     };
   }
-
-  return {};
 };
 
 export default Viewer;

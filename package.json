@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "@ridi/epub-parser": "^0.6.14",
+    "axios": "^0.19.2",
     "fs": "0.0.1-security",
     "lodash.debounce": "^4.0.8",
     "next": "^9.3.0",

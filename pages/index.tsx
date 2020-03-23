@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { NextPageContext, NextPage } from 'next';
 
-import Layout from '../components/Layout';
 import BookList from '../components/books/BookList';
 
 import * as booksActions from '../reducers/books';
@@ -11,19 +10,29 @@ import { getBookInfo, isEpubFile } from '../lib/util';
 
 import { ReducerState } from '../interfaces';
 import { BookInfo } from '../interfaces/books';
+import Layout from '../components/Layout';
 
 const Home: NextPage = () => {
   const { list } = useSelector((state: ReducerState) => state.books);
 
+  useEffect(() => {
+    if (!list) {
+      window.location.reload();
+    }
+  }, [list]);
+
   return (
     <Layout>
-      <BookList books={list} />
+      {
+        list
+        && <BookList books={list} />
+      }
     </Layout>
   );
 };
 
 // eslint-disable-next-line @typescript-eslint/unbound-method
-Home.getInitialProps = async (context: NextPageContext<any>): Promise<any> => {
+Home.getInitialProps = async (context: NextPageContext<any>) => {
   const { req, store } = context;
   if (req) {
     const fs = require('fs');
@@ -49,17 +58,12 @@ Home.getInitialProps = async (context: NextPageContext<any>): Promise<any> => {
             publicPath: epubPath,
           });
         } catch (error) {
-          console.log('Error', error);
+          console.log('Error index.', error);
         }
       }
     }
     store.dispatch(booksActions.setBookList(booksInfo));
-
-    return {
-      booksInfo,
-    };
   }
-  return {};
 };
 
 export default Home;

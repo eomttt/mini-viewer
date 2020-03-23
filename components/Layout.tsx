@@ -2,13 +2,15 @@ import React from 'react';
 import Head from 'next/head';
 
 interface Props {
-  styleLinks?: string[];
+  styleText?: string;
 }
 
-const Layout: React.FunctionComponent<Props> = ({ children, styleLinks }) => (
+const Layout: React.FunctionComponent<Props> = ({ children, styleText }) => (
   <>
     <Head>
-      {styleLinks && styleLinks.map((styleLink) => <link rel="stylesheet" href={styleLink} key={styleLink} />)}
+      <style>
+        {styleText}
+      </style>
     </Head>
     {children}
   </>

@@ -14,12 +14,12 @@ const Container = styled.ul``;
 
 const CoverImage = styled.li`
   width: 10em;
-  min-height: 13em;
   border: 1px solid ${subColor};
   display: inline-block;
   margin: 1em;
   vertical-align: bottom;
   cursor: grab;
+  padding: 0;
   & img {
     width: 100%;
     user-select: none;

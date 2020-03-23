@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { EpubBook } from '../interfaces/books';
 
 export const getBook = async (parser, {
@@ -75,4 +76,19 @@ export const getBookInfo = async (EpubParser, {
 
 export const isEpubFile = (fileName) => {
   return fileName.includes('.epub');
+};
+
+export const getStyleText = async (publicPath, styles) => {
+  const res = [];
+  // eslint-disable-next-line no-restricted-syntax
+  for (const style of styles) {
+    try {
+      const data = await axios.get(`${publicPath}/${style.href}`);
+      res.push(data.data);
+    } catch (error) {
+      console.log('Get style text error', error);
+    }
+  }
+
+  return res.join('');
 };

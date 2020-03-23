@@ -1,5 +1,6 @@
 export interface BooksState {
-  list: BookInfo[];
+  list: BookInfo[] | null;
+  styles: string[];
 }
 
 export interface BookInfo {
