@@ -7,12 +7,16 @@ import BookList from '../components/books/BookList';
 
 import * as booksActions from '../reducers/books';
 
-import { getBookInfo, isEpubFile } from '../lib/util';
+import { getBookInfo, isEpubFile, isProduction } from '../lib/util';
 
 import { ReducerState } from '../interfaces';
 import { BookInfo } from '../interfaces/books';
 
-const Home: NextPage = () => {
+interface Props {
+  test: string[];
+}
+
+const Home: NextPage<Props> = ({ test }) => {
   const { list } = useSelector((state: ReducerState) => state.books);
 
   useEffect(() => {
@@ -36,9 +40,13 @@ Home.getInitialProps = async (context: NextPageContext<any>) => {
   const { req, store } = context;
   if (req) {
     const fs = require('fs');
+    const path = require('path');
     const { EpubParser } = require('@ridi/epub-parser');
 
-    const files = fs.readdirSync('public/');
+    const dirPath = isProduction() ? path.join(__dirname) : 'public/';
+
+    const files = fs.readdirSync(dirPath);
+    console.log('files', files);
     const booksInfo: BookInfo[] = [];
 
     // eslint-disable-next-line no-restricted-syntax
@@ -63,7 +71,13 @@ Home.getInitialProps = async (context: NextPageContext<any>) => {
       }
     }
     store.dispatch(booksActions.setBookList(booksInfo));
+    return {
+      test: files,
+    };
   }
+  return {
+    test: 'WOWO',
+  };
 };
 
 export default Home;

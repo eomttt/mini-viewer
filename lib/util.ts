@@ -74,10 +74,6 @@ export const getBookInfo = async (EpubParser, {
   };
 };
 
-export const isEpubFile = (fileName) => {
-  return fileName.includes('.epub');
-};
-
 export const getStyleText = async (publicPath, styles) => {
   const res = [];
   // eslint-disable-next-line no-restricted-syntax
@@ -91,4 +87,12 @@ export const getStyleText = async (publicPath, styles) => {
   }
 
   return res.join('');
+};
+
+export const isProduction = () => {
+  return process.env.NODE_ENV === 'production';
+};
+
+export const isEpubFile = (fileName) => {
+  return fileName.includes('.epub');
 };

@@ -1,1 +1,3 @@
-export const PROTOCOL = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+import { isProduction } from '../lib/util';
+
+export const PROTOCOL = isProduction() ? 'https' : 'http';

@@ -6,10 +6,10 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import reducers from '../reducers';
 
 const bindMiddleware = (middleware: any[]) => {
-  if (process.env.NODE_ENV !== 'production') {
+  // if (process.env.NODE_ENV !== 'production') {
     return composeWithDevTools(applyMiddleware(...middleware));
-  }
-  return applyMiddleware(...middleware);
+  // }
+  // return applyMiddleware(...middleware);
 };
 
 export default (initialState) => createStore(
