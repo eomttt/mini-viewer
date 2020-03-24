@@ -1,1 +1,0 @@
-{"ast":null,"code":"export const defaultColor = 'white';\nexport const subColor = '#80808080';\nexport const titleFontSize = '1.3em';","map":null,"metadata":{},"sourceType":"module"}
