@@ -160,7 +160,7 @@ const Viewer: NextPage<Props> = ({ book, viewers, styleText }) => {
 Viewer.getInitialProps = async (context: NextPageContext<any>): Promise<any> => {
   const { req, store, query } = context;
   const { bookPath } = query;
-  const queryPath = decodeURI(String(bookPath));
+  const queryPath = decodeURI(String(bookPath || 'epub/jikji'));
 
   if (req) {
     // Server side render
