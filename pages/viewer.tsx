@@ -7,6 +7,7 @@ import { NextPageContext, NextPage } from 'next';
 
 import styled from 'styled-components';
 
+import Layout from '../components/Layout';
 import ViewerBottom from '../components/viewer/ViewerBottom';
 import ViewerCalculator from '../components/viewer/ViewerCalculator';
 import ViewerHeader from '../components/viewer/ViewerHeader';
@@ -16,11 +17,11 @@ import * as viewerActions from '../reducers/viewer';
 
 import { getBookInfo, getStyleText } from '../lib/util';
 
+import { PROTOCOL } from '../constants';
 import { VIEWER_WIDTH_RATIO, VIEWER_HEIGHT_RATIO } from '../constants/viewer';
 
 import { ReducerState } from '../interfaces';
 import { EpubBook } from '../interfaces/books';
-import Layout from '../components/Layout';
 
 const Container = styled.div`
   padding: ${(100 - VIEWER_HEIGHT_RATIO) / 2}% ${(100 - VIEWER_WIDTH_RATIO) / 2}%;
@@ -166,7 +167,7 @@ Viewer.getInitialProps = async (context: NextPageContext<any>): Promise<any> => 
     // Server side render
     const { EpubParser } = require('@ridi/epub-parser');
     const [, fileName] = queryPath.split('/');
-    const publicPath = `http://${req.headers.host}/${queryPath}`;
+    const publicPath = `${PROTOCOL}://${req.headers.host}/${queryPath}`;
     try {
       const { book, viewers } = await getBookInfo(EpubParser, {
         epubFile: fileName,

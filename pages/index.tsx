@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { NextPageContext, NextPage } from 'next';
 
+import Layout from '../components/Layout';
 import BookList from '../components/books/BookList';
 
 import * as booksActions from '../reducers/books';
@@ -10,7 +11,6 @@ import { getBookInfo, isEpubFile } from '../lib/util';
 
 import { ReducerState } from '../interfaces';
 import { BookInfo } from '../interfaces/books';
-import Layout from '../components/Layout';
 
 const Home: NextPage = () => {
   const { list } = useSelector((state: ReducerState) => state.books);
