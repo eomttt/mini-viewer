@@ -12,6 +12,8 @@ interface Props {
 
 class MyApp extends App<Props> {
   public static async getInitialProps({ Component, ctx }): Promise<AppInitialProps> {
+    console.log('NODE_ENV', process.env.NODE_ENV);
+
     let pageProps = {};
 
     if (Component.getInitialProps) {
