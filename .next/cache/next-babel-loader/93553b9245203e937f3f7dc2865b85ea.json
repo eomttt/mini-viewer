@@ -1,0 +1,1 @@
+{"ast":null,"code":"export var DEFAULT_IMAGE = 'default-book.png';","map":{"version":3,"sources":["/Users/hyuntaeeom/Projects/personal/mini-viewer/constants/books.ts"],"names":["DEFAULT_IMAGE"],"mappings":"AAAA,OAAO,IAAMA,aAAa,GAAG,kBAAtB","sourcesContent":["export const DEFAULT_IMAGE = 'default-book.png';\n"]},"metadata":{},"sourceType":"module"}

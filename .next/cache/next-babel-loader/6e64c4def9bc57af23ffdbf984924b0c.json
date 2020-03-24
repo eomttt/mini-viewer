@@ -1,0 +1,1 @@
+{"ast":null,"code":"var __jsx = React.createElement;\nimport React from 'react';\nimport Head from 'next/head';\n\nconst Layout = ({\n  children,\n  styleText\n}) => __jsx(React.Fragment, null, __jsx(Head, null, __jsx(\"style\", null, styleText)), children);\n\nexport default Layout;","map":null,"metadata":{},"sourceType":"module"}

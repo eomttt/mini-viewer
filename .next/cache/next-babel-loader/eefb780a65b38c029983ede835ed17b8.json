@@ -1,0 +1,1 @@
+{"ast":null,"code":"export const subColor = '#80808080';","map":{"version":3,"sources":["/Users/hyuntaeeom/Projects/personal/mini-viewer/styles/index.ts"],"names":["subColor"],"mappings":"AAAA,OAAO,MAAMA,QAAQ,GAAG,WAAjB","sourcesContent":["export const subColor = '#80808080';\n"]},"metadata":{},"sourceType":"module"}

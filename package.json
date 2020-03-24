@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "next",
-    "build": "npm i && next build",
+    "build": "next build",
     "start": "next start"
   },
   "author": "",

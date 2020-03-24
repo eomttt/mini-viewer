@@ -1,0 +1,1 @@
+{"ast":null,"code":"export var defaultColor = 'white';\nexport var subColor = '#80808080';\nexport var titleFontSize = '1.3em';","map":null,"metadata":{},"sourceType":"module"}

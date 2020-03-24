@@ -1,0 +1,1 @@
+{"ast":null,"code":"import { combineReducers } from 'redux';\nimport books from './books';\nimport viewer from './viewer';\nimport viewerSetting from './viewerSetting';\nexport default combineReducers({\n  books,\n  viewer,\n  viewerSetting\n});","map":null,"metadata":{},"sourceType":"module"}
