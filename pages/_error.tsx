@@ -5,7 +5,7 @@ class MyError extends Error {
   public render(): JSX.Element {
     return (
       <div>
-        ERROR PAGE
+        ERROR///PAGE???
       </div>
     );
   }
