@@ -1,12 +1,12 @@
 export interface BooksState {
   list: BookInfo[] | null;
-  styles: string[];
 }
 
 export interface BookInfo {
+  fileName: string;
   book: EpubBook;
   viewers: string[];
-  publicPath: string;
+  styleText: string;
 }
 
 export interface EpubBook {

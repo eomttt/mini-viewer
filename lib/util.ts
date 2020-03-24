@@ -1,5 +1,4 @@
-import axios from 'axios';
-import { EpubBook } from '../interfaces/books';
+import { EpubBook, BookInfo } from '../interfaces/books';
 
 export const getBook = async (parser, {
   unzipPath,
@@ -40,28 +39,32 @@ export const getViewers = async (parser, {
   return [];
 };
 
-export const getBookInfo = async (EpubParser, {
-  epubFile,
-  epubPath,
-}): Promise<{
-  book: EpubBook | null;
-  viewers: string[];
-}> => {
-  const parser = new EpubParser(`public/${epubFile}.epub`);
+export const getBookInfo = async (EpubParser, fileSystem, fileName): Promise<BookInfo> => {
+  const parser = new EpubParser(`public/${fileName}.epub`);
+  const styleText = [];
   try {
     const book: EpubBook = await getBook(parser, {
-      unzipPath: `public/${epubPath}`,
+      unzipPath: `public/epub/${fileName}`,
     });
 
     if (book) {
       const viewers = await getViewers(parser, {
         bookSpines: book.spines,
-        publicPath: epubPath,
+        publicPath: `epub/${fileName}`,
       });
+
+      const { styles } = book;
+      // eslint-disable-next-line no-restricted-syntax
+      for (const style of styles) {
+        const text = fileSystem.readFileSync(`public/epub/${fileName}/${style.href}`, 'utf8');
+        styleText.push(text);
+      }
 
       return {
         book,
         viewers,
+        fileName,
+        styleText: styleText.join(''),
       };
     }
   } catch (error) {
@@ -69,24 +72,11 @@ export const getBookInfo = async (EpubParser, {
   }
 
   return {
+    fileName,
     book: null,
     viewers: [],
+    styleText: '',
   };
-};
-
-export const getStyleText = async (publicPath, styles) => {
-  const res = [];
-  // eslint-disable-next-line no-restricted-syntax
-  for (const style of styles) {
-    try {
-      const data = await axios.get(`${publicPath}/${style.href}`);
-      res.push(data.data);
-    } catch (error) {
-      console.log('Get style text error', error);
-    }
-  }
-
-  return res.join('');
 };
 
 export const isProduction = () => {

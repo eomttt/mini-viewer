@@ -17,6 +17,8 @@ interface Props {
 }
 
 const Home: NextPage<Props> = ({ test }) => {
+
+  console.log('Test', test);
   const { list } = useSelector((state: ReducerState) => state.books);
 
   useEffect(() => {
@@ -39,6 +41,7 @@ const Home: NextPage<Props> = ({ test }) => {
 Home.getInitialProps = async (context: NextPageContext<any>) => {
   const { req, store } = context;
   if (req) {
+    // Server side render
     const fs = require('fs');
     const path = require('path');
     const { EpubParser } = require('@ridi/epub-parser');
@@ -53,18 +56,10 @@ Home.getInitialProps = async (context: NextPageContext<any>) => {
     for (const file of files) {
       if (isEpubFile(file)) {
         const [fileName] = file.split('.epub');
-        const epubPath = `epub/${fileName}`;
         try {
-          const { book, viewers } = await getBookInfo(EpubParser, {
-            epubFile: fileName,
-            epubPath,
-          });
+          const bookInfo = await getBookInfo(EpubParser, fs, fileName);
 
-          booksInfo.push({
-            book,
-            viewers,
-            publicPath: epubPath,
-          });
+          booksInfo.push({ ...bookInfo });
         } catch (error) {
           console.log('Error index.', error);
         }

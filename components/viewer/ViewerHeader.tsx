@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 
 import styled from 'styled-components';
 
@@ -12,6 +12,7 @@ import { ViewerMenu } from '../../styles/viewer';
 
 const Container = styled(ViewerMenu)`
   top: 0;
+  font-family: initial;
 `;
 
 const Info = styled.div`

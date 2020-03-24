@@ -4,7 +4,6 @@ import React, {
 import { useSelector, useDispatch } from 'react-redux';
 import { NextPageContext, NextPage } from 'next';
 
-
 import styled from 'styled-components';
 
 import Layout from '../components/Layout';
@@ -15,9 +14,8 @@ import ViewerPage from '../components/viewer/ViewerPage';
 
 import * as viewerActions from '../reducers/viewer';
 
-import { getBookInfo, getStyleText } from '../lib/util';
+import { getBookInfo } from '../lib/util';
 
-import { PROTOCOL } from '../constants';
 import { VIEWER_WIDTH_RATIO, VIEWER_HEIGHT_RATIO } from '../constants/viewer';
 
 import { ReducerState } from '../interfaces';
@@ -160,50 +158,40 @@ const Viewer: NextPage<Props> = ({ book, viewers, styleText }) => {
 // eslint-disable-next-line @typescript-eslint/unbound-method
 Viewer.getInitialProps = async (context: NextPageContext<any>): Promise<any> => {
   const { req, store, query } = context;
-  const { bookPath } = query;
-  const queryPath = decodeURI(String(bookPath || 'epub/jikji'));
+  const { fileName } = query;
+  const queryName = decodeURI(String(fileName || 'jikji'));
 
   if (req) {
     // Server side render
+    const fs = require('fs');
     const { EpubParser } = require('@ridi/epub-parser');
-    const [, fileName] = queryPath.split('/');
-    const publicPath = `${PROTOCOL}://${req.headers.host}/${queryPath}`;
+
     try {
-      const { book, viewers } = await getBookInfo(EpubParser, {
-        epubFile: fileName,
-        epubPath: queryPath,
-      });
-      const styleText = await getStyleText(publicPath, book.styles);
+      const bookInfo = await getBookInfo(EpubParser, fs, fileName);
+
       return {
-        book,
-        viewers,
-        styleText,
+        ...bookInfo,
       };
     } catch (error) {
       console.log('Error', error);
     }
   } else {
     // Client side render
+    // Selected book from store
     const { books }: ReducerState = store.getState();
     const { list } = books;
 
     let selectedBookInfo = list[0];
-
     list.some((bookInfo) => {
-      if (bookInfo.publicPath === queryPath) {
+      if (bookInfo.fileName === queryName) {
         selectedBookInfo = bookInfo;
         return true;
       }
       return false;
     });
 
-    const { book, viewers, publicPath } = selectedBookInfo;
-    const styleText = await getStyleText(publicPath, book.styles);
-
     return {
-      book,
-      viewers,
-      styleText,
+      ...selectedBookInfo,
     };
   }
 };

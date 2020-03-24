@@ -40,7 +40,7 @@ const BookList: React.FunctionComponent<Props> = ({ books }) => {
     Router.push({
       pathname: VIEWER_PATH_NAME,
       query: {
-        bookPath: encodeURI(selectedBook.publicPath),
+        fileName: encodeURI(selectedBook.fileName),
       },
     });
   }, [bookList]);
@@ -56,11 +56,11 @@ const BookList: React.FunctionComponent<Props> = ({ books }) => {
     e.preventDefault();
     const draggedOverItem = bookList[index];
 
-    if (draggedItem.publicPath === draggedOverItem.publicPath) {
+    if (draggedItem.fileName === draggedOverItem.fileName) {
       return;
     }
 
-    const newSortedBooks = bookList.filter((item) => item.publicPath !== draggedItem.publicPath);
+    const newSortedBooks = bookList.filter((item) => item.fileName !== draggedItem.fileName);
     newSortedBooks.splice(index, 0, draggedItem);
     setBookList(newSortedBooks);
   }, [bookList, draggedItem]);
@@ -72,14 +72,14 @@ const BookList: React.FunctionComponent<Props> = ({ books }) => {
   return (
     <Container>
       {
-        bookList.map(({ book, publicPath }, index) => (
+        bookList.map(({ book, fileName }, index) => (
           <CoverImage
             onClick={() => openBook(index)}
             onDragOver={(e) => dragOver(e, index)}
-            key={publicPath}
+            key={fileName}
           >
             <img
-              src={book.cover ? `${publicPath}/${book.cover.href}` : DEFAULT_IMAGE}
+              src={book.cover ? `epub/${fileName}/${book.cover.href}` : DEFAULT_IMAGE}
               draggable
               onDragStart={(e) => dragStart(e, index)}
               onDragEnd={dragEnd}

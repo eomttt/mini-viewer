@@ -8,6 +8,7 @@ import { ViewerMenu } from '../../styles/viewer';
 
 const Container = styled(ViewerMenu)`
   bottom: 0;
+  font-family: initial;
 `;
 
 interface Props {
