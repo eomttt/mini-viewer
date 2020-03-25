@@ -36,6 +36,14 @@ interface Props {
 }
 
 const Viewer: NextPage<Props> = ({ book, viewers, styleText }) => {
+  if (!book) {
+    return (
+      <div>
+        지원하지 않은 책입니다.
+      </div>
+    );
+  }
+
   const {
     spines, titles, ncx, contributors,
   } = book;

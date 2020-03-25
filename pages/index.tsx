@@ -14,11 +14,13 @@ import { BookInfo } from '../interfaces/books';
 
 interface Props {
   test: string[];
+  files: any[];
 }
 
-const Home: NextPage<Props> = ({ test }) => {
+const Home: NextPage<Props> = ({ test, files }) => {
 
   console.log('Test', test);
+  console.log('files', files);
   const { list } = useSelector((state: ReducerState) => state.books);
 
   useEffect(() => {
@@ -41,7 +43,7 @@ const getBooksInfo = async (): Promise<BookInfo[]> => {
   const fs = require('fs');
   const path = require('path');
   const { EpubParser } = require('@ridi/epub-parser');
-  const dirPath = isProduction() ? path.join(__dirname) : 'public';
+  const dirPath = isProduction() ? path.join(__dirname, 'public') : 'public';
 
   const files = fs.readdirSync(dirPath);
   const booksInfo: BookInfo[] = [];
@@ -72,12 +74,22 @@ const getBooksInfo = async (): Promise<BookInfo[]> => {
 Home.getInitialProps = async (context: NextPageContext<any>): Promise<any> => {
   const { req, store } = context;
   if (req) {
+    const fs = require('fs');
+    const path = require('path');
+    const dirPath = isProduction() ? 'public' : 'public';
+
+    const files = fs.readdirSync(dirPath);
     // Server side render
-    const booksInfo = await getBooksInfo();
-    store.dispatch(booksActions.setBookList(booksInfo));
+    // const booksInfo = await getBooksInfo();
+    store.dispatch(booksActions.setBookList([]));
+    return {
+      test: 'WOWO',
+      files,
+    };
   }
   return {
     test: 'WOWO',
+    files: [1, 2, 3],
   };
 };
 

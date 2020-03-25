@@ -40,7 +40,13 @@ class MyDocument extends Document {
     return (
       <html lang="ko">
         <Head />
-        <body style={{ margin: 0, padding: 0 }}>
+        <body style={{
+          margin: 0,
+          padding: 0,
+          width: '100%',
+          maxWidth: 'unset',
+        }}
+        >
           <Main />
           <NextScript />
         </body>

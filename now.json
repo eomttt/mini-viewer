@@ -1,10 +1,18 @@
 {
-  "version": 2,
   "builds": [
     {
       "src": "package.json",
-      "use": "@now/static-build",
-      "config": { "distDir": "public" }
+      "use": "@now/next"
+    },
+    {
+      "src": "public/**",
+      "use": "@now/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/public/$1"
     }
   ]
 }
