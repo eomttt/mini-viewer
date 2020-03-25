@@ -61,7 +61,7 @@ export const getBookInfo = async ({
       const { styles } = book;
       // eslint-disable-next-line no-restricted-syntax
       for (const style of styles) {
-        const text = FileSystem.readFileSync(`${dirPath}/epub/${fileName}/${style.href}`, 'utf8');
+        const text = FileSystem.readFileSync(`${dirPath}/${fileName}/${style.href}`, 'utf8');
         styleText.push(text);
       }
 

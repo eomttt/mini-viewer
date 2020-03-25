@@ -79,7 +79,7 @@ const BookList: React.FunctionComponent<Props> = ({ books }) => {
             key={fileName}
           >
             <img
-              src={book.cover ? `epub/${fileName}/${book.cover.href}` : DEFAULT_IMAGE}
+              src={book.cover ? `${fileName}/${book.cover.href}` : DEFAULT_IMAGE}
               draggable
               onDragStart={(e) => dragStart(e, index)}
               onDragEnd={dragEnd}
