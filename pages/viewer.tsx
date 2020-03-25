@@ -14,7 +14,7 @@ import ViewerPage from '../components/viewer/ViewerPage';
 
 import * as viewerActions from '../reducers/viewer';
 
-import { getBookInfo, isProduction } from '../lib/util';
+import { getBookInfo } from '../lib/util';
 
 import { VIEWER_WIDTH_RATIO, VIEWER_HEIGHT_RATIO } from '../constants/viewer';
 

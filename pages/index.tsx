@@ -7,7 +7,7 @@ import BookList from '../components/books/BookList';
 
 import * as booksActions from '../reducers/books';
 
-import { getBookInfo, isEpubFile, isProduction } from '../lib/util';
+import { getBookInfo, isEpubFile } from '../lib/util';
 
 import { ReducerState } from '../interfaces';
 import { BookInfo } from '../interfaces/books';

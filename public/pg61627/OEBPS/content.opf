@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<package xmlns:opf="http://www.idpf.org/2007/opf" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.idpf.org/2007/opf" version="2.0" unique-identifier="id">
+  <metadata>
+    <dc:rights>Public domain in the USA.</dc:rights>
+    <dc:identifier opf:scheme="URI" id="id">http://www.gutenberg.org/61627</dc:identifier>
+    <dc:creator opf:file-as="Boulenger, Marcel">Marcel Boulenger</dc:creator>
+    <dc:title>Au pays de Sylvie</dc:title>
+    <dc:language xsi:type="dcterms:RFC4646">fr</dc:language>
+    <dc:subject>French fiction -- 20th century</dc:subject>
+    <dc:date opf:event="publication">2020-03-15</dc:date>
+    <dc:date opf:event="conversion">2020-03-20T22:00:07.329850+00:00</dc:date>
+    <dc:source>https://www.gutenberg.org/files/61627/61627-h/61627-h.htm</dc:source>
+    <meta name="cover" content="item1"/>
+  </metadata>
+  <manifest>
+    <!--Image: 347 x 542 size=50352 -->
+    <item href="@public@vhost@g@gutenberg@html@files@61627@61627-h@images@cover.jpg" id="item1" media-type="image/jpeg"/>
+    <!--Image: 106 x 130 size=3968 -->
+    <item href="@public@vhost@g@gutenberg@html@files@61627@61627-h@images@marque.png" id="item2" media-type="image/png"/>
+    <!--Image: 398 x 600 size=21489 -->
+    <item href="@public@vhost@g@gutenberg@html@files@61627@61627-h@images@adv.png" id="item3" media-type="image/png"/>
+    <item href="pgepub.css" id="item4" media-type="text/css"/>
+    <item href="0.css" id="item5" media-type="text/css"/>
+    <item href="1.css" id="item6" media-type="text/css"/>
+    <!--Chunk: size=62378 Split on div.chapter-->
+    <item href="@public@vhost@g@gutenberg@html@files@61627@61627-h@61627-h-0.htm.html" id="item7" media-type="application/xhtml+xml"/>
+    <!--Chunk: size=29729 Split on div.chapter-->
+    <item href="@public@vhost@g@gutenberg@html@files@61627@61627-h@61627-h-1.htm.html" id="l2" media-type="application/xhtml+xml"/>
+    <!--Chunk: size=13266 Split on div.chapter-->
+    <item href="@public@vhost@g@gutenberg@html@files@61627@61627-h@61627-h-2.htm.html" id="l3" media-type="application/xhtml+xml"/>
+    <!--Chunk: size=10705 Split on div.chapter-->
+    <item href="@public@vhost@g@gutenberg@html@files@61627@61627-h@61627-h-3.htm.html" id="l4" media-type="application/xhtml+xml"/>
+    <!--Chunk: size=10438 Split on div.chapter-->
+    <item href="@public@vhost@g@gutenberg@html@files@61627@61627-h@61627-h-4.htm.html" id="l4c2" media-type="application/xhtml+xml"/>
+    <!--Chunk: size=6973 Split on div.chapter-->
+    <item href="@public@vhost@g@gutenberg@html@files@61627@61627-h@61627-h-5.htm.html" id="l4c3" media-type="application/xhtml+xml"/>
+    <!--Chunk: size=8582 Split on div.chapter-->
+    <item href="@public@vhost@g@gutenberg@html@files@61627@61627-h@61627-h-6.htm.html" id="l4c4" media-type="application/xhtml+xml"/>
+    <!--Chunk: size=9896 Split on div.chapter-->
+    <item href="@public@vhost@g@gutenberg@html@files@61627@61627-h@61627-h-7.htm.html" id="l4c5" media-type="application/xhtml+xml"/>
+    <!--Chunk: size=7745 Split on div.chapter-->
+    <item href="@public@vhost@g@gutenberg@html@files@61627@61627-h@61627-h-8.htm.html" id="l5" media-type="application/xhtml+xml"/>
+    <!--Chunk: size=2451 Split on div.chapter-->
+    <item href="@public@vhost@g@gutenberg@html@files@61627@61627-h@61627-h-9.htm.html" id="l6" media-type="application/xhtml+xml"/>
+    <!--Chunk: size=1581 Split on div.chapter-->
+    <item href="@public@vhost@g@gutenberg@html@files@61627@61627-h@61627-h-10.htm.html" id="l7" media-type="application/xhtml+xml"/>
+    <!--Chunk: size=9333 Split on div.chapter-->
+    <item href="@public@vhost@g@gutenberg@html@files@61627@61627-h@61627-h-11.htm.html" id="l7c1" media-type="application/xhtml+xml"/>
+    <!--Chunk: size=10861 Split on div.chapter-->
+    <item href="@public@vhost@g@gutenberg@html@files@61627@61627-h@61627-h-12.htm.html" id="l7c2" media-type="application/xhtml+xml"/>
+    <!--Chunk: size=7067 Split on div.chapter-->
+    <item href="@public@vhost@g@gutenberg@html@files@61627@61627-h@61627-h-13.htm.html" id="l7c3" media-type="application/xhtml+xml"/>
+    <!--Chunk: size=9455 Split on div.chapter-->
+    <item href="@public@vhost@g@gutenberg@html@files@61627@61627-h@61627-h-14.htm.html" id="l7c4" media-type="application/xhtml+xml"/>
+    <!--Chunk: size=8591 Split on div.chapter-->
+    <item href="@public@vhost@g@gutenberg@html@files@61627@61627-h@61627-h-15.htm.html" id="l7c5" media-type="application/xhtml+xml"/>
+    <!--Chunk: size=17947 Split on div.chapter-->
+    <item href="@public@vhost@g@gutenberg@html@files@61627@61627-h@61627-h-16.htm.html" id="l7c6" media-type="application/xhtml+xml"/>
+    <!--Chunk: size=11135 Split on div.chapter-->
+    <item href="@public@vhost@g@gutenberg@html@files@61627@61627-h@61627-h-17.htm.html" id="l7c7" media-type="application/xhtml+xml"/>
+    <!--Chunk: size=19558 Split on div.chapter-->
+    <item href="@public@vhost@g@gutenberg@html@files@61627@61627-h@61627-h-18.htm.html" id="l7c8" media-type="application/xhtml+xml"/>
+    <!--Chunk: size=26897-->
+    <item href="@public@vhost@g@gutenberg@html@files@61627@61627-h@61627-h-19.htm.html" id="item8" media-type="application/xhtml+xml"/>
+    <item href="toc.ncx" id="ncx" media-type="application/x-dtbncx+xml"/>
+    <item href="wrap0000.html" id="coverpage-wrapper" media-type="application/xhtml+xml"/>
+  </manifest>
+  <spine toc="ncx">
+    <itemref idref="coverpage-wrapper" linear="yes"/>
+    <itemref idref="item7" linear="yes"/>
+    <itemref idref="l2" linear="yes"/>
+    <itemref idref="l3" linear="yes"/>
+    <itemref idref="l4" linear="yes"/>
+    <itemref idref="l4c2" linear="yes"/>
+    <itemref idref="l4c3" linear="yes"/>
+    <itemref idref="l4c4" linear="yes"/>
+    <itemref idref="l4c5" linear="yes"/>
+    <itemref idref="l5" linear="yes"/>
+    <itemref idref="l6" linear="yes"/>
+    <itemref idref="l7" linear="yes"/>
+    <itemref idref="l7c1" linear="yes"/>
+    <itemref idref="l7c2" linear="yes"/>
+    <itemref idref="l7c3" linear="yes"/>
+    <itemref idref="l7c4" linear="yes"/>
+    <itemref idref="l7c5" linear="yes"/>
+    <itemref idref="l7c6" linear="yes"/>
+    <itemref idref="l7c7" linear="yes"/>
+    <itemref idref="l7c8" linear="yes"/>
+    <itemref idref="item8" linear="yes"/>
+  </spine>
+  <guide>
+    <reference type="cover" title="Cover" href="wrap0000.html"/>
+  </guide>
+</package>

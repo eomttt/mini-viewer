@@ -1,0 +1,190 @@
+/**/
+p {
+    text-align: justify;
+    line-height: 1.2em;
+    text-indent: 1.5em;
+    margin: 0.3em 0
+    }
+p.noindent {
+    text-indent: 0
+    }
+h1 {
+    text-align: center;
+    line-height: 1.5em;
+    margin: 1em 0
+    }
+h2, h3.t2 {
+    text-align: center;
+    line-height: 1.5em;
+    font-size: 150%;
+    font-weight: normal;
+    margin: 4em 0 2em 0
+    }
+h3, h4 {
+    text-align: center;
+    line-height: 1.5em;
+    margin: 2em 0 1em 0
+    }
+div.c, p.c {
+    text-align: center;
+    line-height: 1.5em;
+    text-indent: 0;
+    margin: 1em 0
+    }
+.large {
+    font-size: 130%
+    }
+.xlarge {
+    font-size: 150%
+    }
+.small, small {
+    font-size: 90%
+    }
+.xsmall {
+    font-size: 70%
+    }
+.sans-serif {
+    font-family: sans-serif
+    }
+i sup {
+    padding-left: 0.25em;
+    font-style: normal
+    }
+b i {
+    padding-right: 0.25em
+    }
+.sc {
+    font-variant: small-caps
+    }
+.ind {
+    margin: 1em 0 1em 10%;
+    text-indent: 0
+    }
+.sign {
+    margin: 1em 5% 1em 20%;
+    text-align: right
+    }
+.dedic {
+    margin: 1em 5% 1em 20%;
+    text-align: right
+    }
+.attr {
+    margin: 1em 5% 1em 20%;
+    text-align: right
+    }
+p.r {
+    text-align: right
+    }
+p.drap {
+    text-indent: -1.5em;
+    padding-left: 1.5em
+    }
+.poetry {
+    text-align: left;
+    margin: 1em 0 1em 5%
+    }
+.verse {
+    padding-left: 3em;
+    text-indent: -3em
+    }
+hr {
+    width: 20%;
+    margin: 1em 40%
+    }
+.dots {
+    margin: 1em 0;
+    text-align: center
+    }
+.dots b {
+    display: inline-block;
+    width: 4.8%
+    }
+.asterism {
+    text-align: center;
+    line-height: 0.6em;
+    margin: 1em 0
+    }
+a {
+    text-decoration: none
+    }
+sup {
+    font-size: smaller;
+    vertical-align: 20%
+    }
+li {
+    list-style: none
+    }
+table {
+    margin: 1em auto
+    }
+td {
+    vertical-align: top
+    }
+td.drap {
+    text-indent: -1.5em;
+    padding-left: 1.5em;
+    text-align: justify
+    }
+td.drap2 {
+    text-indent: -1.5em;
+    padding-left: 3em;
+    text-align: justify
+    }
+td.num {
+    text-align: right;
+    vertical-align: bottom;
+    padding-left: 1em
+    }
+.pagenum {
+    font-size: small;
+    font-style: normal;
+    font-variant: small-caps;
+    text-align: right;
+    color: #777;
+    background-color: inherit;
+    text-indent: 0
+    }
+div.gap, p.gap {
+    margin-top: 2.5em
+    }
+.break, .chapter {
+    margin-top: 4em
+    }
+.figc {
+    margin: 1em 0;
+    text-align: center
+    }
+img {
+    max-width: 100%
+    }
+p.rdate {
+    margin: 1em 0 1em 15%;
+    font-size: 90%;
+    text-align: right;
+    text-indent: 0
+    }
+span.cblk {
+    display: inline-block;
+    text-align: center
+    }
+@media screen {
+    body {
+        max-width: 40em;
+        width: 80%;
+        margin: 0 auto
+        }
+    }
+@media all {
+    /* was @media handheld */
+    .break, .chapter {
+        page-break-before: always;
+        margin-top: 0
+        }
+    .top4em {
+        padding-top: 4em
+        }
+    .nobreak {
+        page-break-before: avoid
+        }
+    }
+/**/

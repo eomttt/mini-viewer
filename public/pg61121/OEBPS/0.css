@@ -1,0 +1,136 @@
+/**/
+body {
+    color: black;
+    background: white;
+    margin-right: 10%;
+    margin-left: 10%;
+    font-family: "Times New Roman", serif;
+    text-align: justify
+    }
+p {
+    text-indent: 4%
+    }
+p.noindent {
+    text-indent: 0%
+    }
+p.t1 {
+    text-indent: 0%;
+    font-size: 200%;
+    text-align: center
+    }
+p.t2 {
+    text-indent: 0%;
+    font-size: 150%;
+    text-align: center
+    }
+p.t2b {
+    text-indent: 0%;
+    font-size: 150%;
+    font-weight: bold;
+    text-align: center
+    }
+p.t3 {
+    text-indent: 0%;
+    font-size: 100%;
+    text-align: center
+    }
+p.t3b {
+    text-indent: 0%;
+    font-size: 100%;
+    font-weight: bold;
+    text-align: center
+    }
+p.t4 {
+    text-indent: 0%;
+    font-size: 80%;
+    text-align: center
+    }
+p.t4b {
+    text-indent: 0%;
+    font-size: 80%;
+    font-weight: bold;
+    text-align: center
+    }
+p.t5 {
+    text-indent: 0%;
+    font-size: 60%;
+    text-align: center
+    }
+h1 {
+    text-align: center
+    }
+h2 {
+    text-align: center
+    }
+h3 {
+    text-align: center
+    }
+h4 {
+    text-align: center
+    }
+h5 {
+    text-align: center
+    }
+p.poem {
+    text-indent: 0%;
+    margin-left: 10%
+    }
+p.thought {
+    text-indent: 0%;
+    letter-spacing: 4em;
+    text-align: center
+    }
+p.letter {
+    text-indent: 0%;
+    margin-left: 10%;
+    margin-right: 10%
+    }
+p.footnote {
+    text-indent: 0%;
+    font-size: 90%;
+    margin-left: 0%;
+    margin-right: 0%
+    }
+.smcap {
+    font-variant: small-caps
+    }
+p.transnote {
+    text-indent: 0%;
+    margin-left: 10%;
+    margin-right: 10%
+    }
+p.intro {
+    font-size: 90%;
+    text-indent: -5%;
+    margin-left: 5%;
+    margin-right: 0%
+    }
+p.quote {
+    text-indent: 4%;
+    margin-left: 0%;
+    margin-right: 0%
+    }
+p.finis {
+    font-size: larger;
+    text-align: center;
+    text-indent: 0%;
+    margin-left: 0%;
+    margin-right: 0%
+    }
+p.capcenter {
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 0.5%;
+    margin-top: 0;
+    font-weight: bold;
+    clear: both;
+    text-indent: 0%;
+    text-align: center
+    }
+img.imgcenter {
+    margin-left: auto;
+    margin-bottom: 0;
+    margin-top: 1%;
+    margin-right: auto
+    }
+/**/

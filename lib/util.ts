@@ -49,13 +49,13 @@ export const getBookInfo = async ({
   const styleText = [];
   try {
     const book: EpubBook = await getBook(parser, {
-      unzipPath: `${dirPath}/epub/${fileName}`,
+      unzipPath: `${dirPath}/${fileName}`,
     });
 
     if (book) {
       const viewers = await getViewers(parser, {
         bookSpines: book.spines,
-        publicPath: `epub/${fileName}`,
+        publicPath: `${fileName}`,
       });
 
       const { styles } = book;
