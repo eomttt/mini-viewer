@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<package xmlns:opf="http://www.idpf.org/2007/opf" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.idpf.org/2007/opf" version="2.0" unique-identifier="id">
+  <metadata>
+    <dc:rights>Public domain in the USA.</dc:rights>
+    <dc:identifier opf:scheme="URI" id="id">http://www.gutenberg.org/61630</dc:identifier>
+    <dc:creator opf:file-as="Cornell, Beaumont Sandfield">Beaumont Sandfield Cornell</dc:creator>
+    <dc:title>Lantern Marsh</dc:title>
+    <dc:language xsi:type="dcterms:RFC4646">en</dc:language>
+    <dc:date opf:event="publication">2020-03-16</dc:date>
+    <dc:date opf:event="conversion">2020-03-16T22:00:06.170611+00:00</dc:date>
+    <dc:source>https://www.gutenberg.org/files/61630/61630-h/61630-h.htm</dc:source>
+    <meta name="cover" content="item1"/>
+  </metadata>
+  <manifest>
+    <!--Image: 500 x 750 size=91683 -->
+    <item href="@public@vhost@g@gutenberg@html@files@61630@61630-h@images@cover.jpg" id="item1" media-type="image/jpeg"/>
+    <!--Image: 200 x 275 size=17524 -->
+    <item href="@public@vhost@g@gutenberg@html@files@61630@61630-h@images@ryerson-press.jpg" id="item2" media-type="image/jpeg"/>
+    <item href="pgepub.css" id="item3" media-type="text/css"/>
+    <item href="0.css" id="item4" media-type="text/css"/>
+    <item href="1.css" id="item5" media-type="text/css"/>
+    <!--Chunk: size=82108 Split on p-->
+    <item href="@public@vhost@g@gutenberg@html@files@61630@61630-h@61630-h-0.htm.html" id="item6" media-type="application/xhtml+xml"/>
+    <!--Chunk: size=79002 Split on h3-->
+    <item href="@public@vhost@g@gutenberg@html@files@61630@61630-h@61630-h-1.htm.html" id="I_CHAPTER_III" media-type="application/xhtml+xml"/>
+    <!--Chunk: size=82018 Split on p-->
+    <item href="@public@vhost@g@gutenberg@html@files@61630@61630-h@61630-h-2.htm.html" id="I_CHAPTER_V" media-type="application/xhtml+xml"/>
+    <!--Chunk: size=61390 Split on div-->
+    <item href="@public@vhost@g@gutenberg@html@files@61630@61630-h@61630-h-3.htm.html" id="II_CHAPTER_II" media-type="application/xhtml+xml"/>
+    <!--Chunk: size=77865 Split on h2-->
+    <item href="@public@vhost@g@gutenberg@html@files@61630@61630-h@61630-h-4.htm.html" id="II_CHAPTER_V" media-type="application/xhtml+xml"/>
+    <!--Chunk: size=82023 Split on p-->
+    <item href="@public@vhost@g@gutenberg@html@files@61630@61630-h@61630-h-5.htm.html" id="BOOK_III" media-type="application/xhtml+xml"/>
+    <!--Chunk: size=82619 Split on p-->
+    <item href="@public@vhost@g@gutenberg@html@files@61630@61630-h@61630-h-6.htm.html" id="III_CHAPTER_IV" media-type="application/xhtml+xml"/>
+    <!--Chunk: size=80040 Split on h3-->
+    <item href="@public@vhost@g@gutenberg@html@files@61630@61630-h@61630-h-7.htm.html" id="BOOK_IV" media-type="application/xhtml+xml"/>
+    <!--Chunk: size=78892 Split on h3-->
+    <item href="@public@vhost@g@gutenberg@html@files@61630@61630-h@61630-h-8.htm.html" id="IV_CHAPTER_VIII" media-type="application/xhtml+xml"/>
+    <!--Chunk: size=70084-->
+    <item href="@public@vhost@g@gutenberg@html@files@61630@61630-h@61630-h-9.htm.html" id="IV_CHAPTER_XIV" media-type="application/xhtml+xml"/>
+    <item href="toc.ncx" id="ncx" media-type="application/x-dtbncx+xml"/>
+    <item href="wrap0000.html" id="coverpage-wrapper" media-type="application/xhtml+xml"/>
+  </manifest>
+  <spine toc="ncx">
+    <itemref idref="coverpage-wrapper" linear="yes"/>
+    <itemref idref="item6" linear="yes"/>
+    <itemref idref="I_CHAPTER_III" linear="yes"/>
+    <itemref idref="I_CHAPTER_V" linear="yes"/>
+    <itemref idref="II_CHAPTER_II" linear="yes"/>
+    <itemref idref="II_CHAPTER_V" linear="yes"/>
+    <itemref idref="BOOK_III" linear="yes"/>
+    <itemref idref="III_CHAPTER_IV" linear="yes"/>
+    <itemref idref="BOOK_IV" linear="yes"/>
+    <itemref idref="IV_CHAPTER_VIII" linear="yes"/>
+    <itemref idref="IV_CHAPTER_XIV" linear="yes"/>
+  </spine>
+  <guide>
+    <reference type="toc" title="CONTENTS" href="@public@vhost@g@gutenberg@html@files@61630@61630-h@61630-h-0.htm.html#pgepubid00002"/>
+    <reference type="cover" title="Cover" href="wrap0000.html"/>
+  </guide>
+</package>

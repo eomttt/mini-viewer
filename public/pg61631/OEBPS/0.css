@@ -1,0 +1,161 @@
+/**/
+p {
+    margin-top: 0.75em;
+    text-align: justify;
+    margin-bottom: 0.75em
+    }
+p.bold {
+    text-align: center;
+    font-weight: bold
+    }
+p.bold2 {
+    text-align: center;
+    font-weight: bold;
+    font-size: 150%
+    }
+h1, h2, h3, h4, h5, h6 {
+    text-align: center;
+    /* all headings centered */
+    clear: both
+    }
+h1 span, h2 span {
+    display: block;
+    text-align: center
+    }
+#id1 {
+    font-size: smaller
+    }
+hr {
+    width: 33%;
+    margin-top: 2em;
+    margin-bottom: 2em;
+    margin-left: 33.5%;
+    margin-right: 33.5%;
+    clear: both
+    }
+hr.smler {
+    width: 5%;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    margin-left: 47.5%;
+    margin-right: 47.5%;
+    clear: both
+    }
+body {
+    margin-left: 10%;
+    margin-right: 10%
+    }
+table {
+    margin-left: auto;
+    margin-right: auto;
+    border-collapse: collapse;
+    border: none;
+    text-align: right
+    }
+.pagenum {
+    /* uncomment the next line for invisible page numbers */
+    /*  visibility: hidden;  */
+    font-size: smaller;
+    text-align: right;
+    text-indent: 0
+    }
+/* page numbers */
+.center {
+    text-align: center
+    }
+.smaller {
+    font-size: smaller
+    }
+.smcap {
+    font-variant: small-caps
+    }
+.mynote {
+    background-color: #DDE;
+    color: black;
+    padding: 0.5em;
+    margin-left: 20%;
+    margin-right: 20%
+    }
+/* colored box for notes at beginning of file */
+.space-above {
+    margin-top: 3em
+    }
+.right {
+    text-align: right
+    }
+.left {
+    text-align: left
+    }
+.poem {
+    display: inline-block;
+    text-align: left
+    }
+.poem br {
+    display: none
+    }
+.poem .stanza {
+    margin: 1em 0 1em 0
+    }
+.poem div {
+    margin: 0;
+    padding-left: 3em;
+    text-indent: -3em
+    }
+h1.pgx {
+    text-align: center;
+    clear: both;
+    font-weight: bold;
+    font-size: 190%;
+    margin-top: 0;
+    margin-bottom: 1em;
+    word-spacing: 0;
+    letter-spacing: 0;
+    line-height: 1
+    }
+h2.pgx {
+    text-align: center;
+    clear: both;
+    font-weight: bold;
+    font-size: 135%;
+    margin-top: 2em;
+    margin-bottom: 1em;
+    word-spacing: 0;
+    letter-spacing: 0;
+    page-break-before: avoid;
+    line-height: 1
+    }
+h3.pgx {
+    text-align: center;
+    clear: both;
+    font-weight: bold;
+    font-size: 110%;
+    margin-top: 2em;
+    margin-bottom: 1em;
+    word-spacing: 0;
+    letter-spacing: 0;
+    line-height: 1
+    }
+h4.pgx {
+    text-align: center;
+    clear: both;
+    font-weight: bold;
+    font-size: 100%;
+    margin-top: 2em;
+    margin-bottom: 1em;
+    word-spacing: 0;
+    letter-spacing: 0;
+    line-height: 1
+    }
+hr.pgx {
+    width: 100%;
+    margin-top: 3em;
+    margin-bottom: 0;
+    margin-left: auto;
+    margin-right: auto;
+    border-width: 4px 0 0 0;
+    /* remove all borders except the top one */
+    border-style: solid;
+    border-color: #000;
+    clear: both
+    }
+/**/

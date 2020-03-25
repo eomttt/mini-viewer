@@ -4,13 +4,5 @@
 node_modules
 public/epub
 
-public/jikji/
-public/pg61121/
-public/pg61625/
-public/pg61627/
-public/pg61628/
-public/pg61629/
-public/pg61630/
-public/pg61631/
 
 .now

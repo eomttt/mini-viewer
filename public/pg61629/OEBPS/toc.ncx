@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!DOCTYPE ncx PUBLIC '-//NISO//DTD ncx 2005-1//EN' 'http://www.daisy.org/z3986/2005/ncx-2005-1.dtd'>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="fi">
+  <head>
+    <meta name="dtb:uid" content="http://www.gutenberg.org/61629"/>
+    <meta name="dtb:depth" content="2"/>
+    <meta name="dtb:generator" content="Ebookmaker 0.8.8 by Project Gutenberg"/>
+    <meta name="dtb:totalPageCount" content="0"/>
+    <meta name="dtb:maxPageNumber" content="0"/>
+  </head>
+  <docTitle>
+    <text>Etsijän tarina</text>
+  </docTitle>
+  <navMap>
+    <navPoint id="np-1" playOrder="1">
+      <navLabel>
+        <text>ETSIJÄN TARINA</text>
+      </navLabel>
+      <content src="@public@vhost@g@gutenberg@html@files@61629@61629-8-0.txt.html#id00008"/>
+      <navPoint id="np-2" playOrder="2">
+        <navLabel>
+          <text>I</text>
+        </navLabel>
+        <content src="@public@vhost@g@gutenberg@html@files@61629@61629-8-0.txt.html#id00013"/>
+      </navPoint>
+      <navPoint id="np-3" playOrder="3">
+        <navLabel>
+          <text>II</text>
+        </navLabel>
+        <content src="@public@vhost@g@gutenberg@html@files@61629@61629-8-0.txt.html#id00016"/>
+      </navPoint>
+      <navPoint id="np-4" playOrder="4">
+        <navLabel>
+          <text>III</text>
+        </navLabel>
+        <content src="@public@vhost@g@gutenberg@html@files@61629@61629-8-0.txt.html#id00019"/>
+      </navPoint>
+      <navPoint id="np-5" playOrder="5">
+        <navLabel>
+          <text>IV</text>
+        </navLabel>
+        <content src="@public@vhost@g@gutenberg@html@files@61629@61629-8-0.txt.html#id00024"/>
+      </navPoint>
+      <navPoint id="np-6" playOrder="6">
+        <navLabel>
+          <text>V</text>
+        </navLabel>
+        <content src="@public@vhost@g@gutenberg@html@files@61629@61629-8-0.txt.html#id00028"/>
+      </navPoint>
+      <navPoint id="np-7" playOrder="7">
+        <navLabel>
+          <text>VI</text>
+        </navLabel>
+        <content src="@public@vhost@g@gutenberg@html@files@61629@61629-8-0.txt.html#id00031"/>
+      </navPoint>
+    </navPoint>
+    <navPoint id="np-8" playOrder="8">
+      <navLabel>
+        <text>VII</text>
+      </navLabel>
+      <content src="@public@vhost@g@gutenberg@html@files@61629@61629-8-0.txt.html#id00034"/>
+      <navPoint id="np-9" playOrder="9">
+        <navLabel>
+          <text>VIII</text>
+        </navLabel>
+        <content src="@public@vhost@g@gutenberg@html@files@61629@61629-8-0.txt.html#id00038"/>
+      </navPoint>
+      <navPoint id="np-10" playOrder="10">
+        <navLabel>
+          <text>IX</text>
+        </navLabel>
+        <content src="@public@vhost@g@gutenberg@html@files@61629@61629-8-0.txt.html#id00071"/>
+      </navPoint>
+      <navPoint id="np-11" playOrder="11">
+        <navLabel>
+          <text>X</text>
+        </navLabel>
+        <content src="@public@vhost@g@gutenberg@html@files@61629@61629-8-0.txt.html#id00075"/>
+      </navPoint>
+      <navPoint id="np-12" playOrder="12">
+        <navLabel>
+          <text>XI</text>
+        </navLabel>
+        <content src="@public@vhost@g@gutenberg@html@files@61629@61629-8-1.txt.html#id00081"/>
+      </navPoint>
+      <navPoint id="np-13" playOrder="13">
+        <navLabel>
+          <text>XII</text>
+        </navLabel>
+        <content src="@public@vhost@g@gutenberg@html@files@61629@61629-8-1.txt.html#id00086"/>
+      </navPoint>
+      <navPoint id="np-14" playOrder="14">
+        <navLabel>
+          <text>XIII</text>
+        </navLabel>
+        <content src="@public@vhost@g@gutenberg@html@files@61629@61629-8-1.txt.html#id00111"/>
+      </navPoint>
+    </navPoint>
+  </navMap>
+</ncx>

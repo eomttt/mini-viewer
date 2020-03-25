@@ -1,0 +1,186 @@
+/**/
+a {
+    text-decoration: none
+    }
+body {
+    margin-left: 10%;
+    margin-right: 10%
+    }
+h1, h2, h3 {
+    text-align: center;
+    clear: both
+    }
+hr {
+    margin-top: 2em;
+    margin-bottom: 2em;
+    clear: both;
+    width: 65%;
+    margin-left: 17.5%;
+    margin-right: 17.5%
+    }
+p {
+    margin-top: 0.5em;
+    text-align: justify;
+    margin-bottom: 0.5em;
+    text-indent: 1em
+    }
+table {
+    margin: 1em auto 1em auto;
+    max-width: 40em;
+    border-collapse: collapse
+    }
+td {
+    padding-left: 2.25em;
+    padding-right: 0.25em;
+    vertical-align: top;
+    text-indent: -2em
+    }
+.tdc {
+    text-align: center;
+    padding-top: 0.75em
+    }
+.tdr {
+    text-align: right
+    }
+.tdpg {
+    vertical-align: bottom;
+    text-align: right
+    }
+.blockquote {
+    margin: 1.5em 10%
+    }
+.epigraph {
+    margin: 1.5em auto;
+    max-width: 35em;
+    font-size: 90%;
+    font-style: italic
+    }
+.caption {
+    text-align: center;
+    margin-bottom: 1em;
+    font-size: 90%;
+    text-indent: 0
+    }
+.center {
+    text-align: center;
+    text-indent: 0
+    }
+.figcenter {
+    margin: auto;
+    text-align: center
+    }
+.hanging {
+    padding-left: 2em;
+    text-indent: -2em
+    }
+.larger {
+    font-size: 150%
+    }
+.pagenum {
+    font-size: smaller;
+    text-align: right;
+    font-style: normal
+    }
+.poetry-container {
+    text-align: center;
+    margin: 1em
+    }
+.poetry {
+    display: inline-block;
+    text-align: left
+    }
+.poetry .verse {
+    text-indent: -3em;
+    padding-left: 3em
+    }
+.smaller {
+    font-size: 80%
+    }
+.smcap {
+    font-variant: small-caps;
+    font-style: normal
+    }
+.tb {
+    margin-top: 2em
+    }
+.titlepage {
+    text-align: center;
+    margin-top: 3em;
+    text-indent: 0
+    }
+@media all {
+    /* was @media handheld */
+    img {
+        max-width: 100%;
+        width: auto;
+        height: auto
+        }
+    .poetry {
+        display: block;
+        margin-left: 1.5em
+        }
+    .blockquote {
+        margin: 1.5em 5%
+        }
+    }
+table.pgx {
+    max-width: 80%
+    }
+h1.pgx {
+    text-align: center;
+    clear: both;
+    font-weight: bold;
+    font-size: 190%;
+    margin-top: 0;
+    margin-bottom: 1em;
+    word-spacing: 0;
+    letter-spacing: 0;
+    line-height: 1
+    }
+h2.pgx {
+    text-align: center;
+    clear: both;
+    font-weight: bold;
+    font-size: 135%;
+    margin-top: 2em;
+    margin-bottom: 1em;
+    word-spacing: 0;
+    letter-spacing: 0;
+    page-break-before: avoid;
+    line-height: 1
+    }
+h3.pgx {
+    text-align: center;
+    clear: both;
+    font-weight: bold;
+    font-size: 110%;
+    margin-top: 2em;
+    margin-bottom: 1em;
+    word-spacing: 0;
+    letter-spacing: 0;
+    line-height: 1
+    }
+h4.pgx {
+    text-align: center;
+    clear: both;
+    font-weight: bold;
+    font-size: 100%;
+    margin-top: 2em;
+    margin-bottom: 1em;
+    word-spacing: 0;
+    letter-spacing: 0;
+    line-height: 1
+    }
+hr.pgx {
+    width: 100%;
+    margin-top: 3em;
+    margin-bottom: 0;
+    margin-left: auto;
+    margin-right: auto;
+    border-width: 4px 0 0 0;
+    /* remove all borders except the top one */
+    border-style: solid;
+    border-color: #000;
+    clear: both
+    }
+/**/
