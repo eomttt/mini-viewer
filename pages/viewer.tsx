@@ -14,12 +14,12 @@ import ViewerPage from '../components/viewer/ViewerPage';
 
 import * as viewerActions from '../reducers/viewer';
 
-import { getBookInfo } from '../lib/util';
+import { getBookInfo, isProduction } from '../lib/util';
 
 import { VIEWER_WIDTH_RATIO, VIEWER_HEIGHT_RATIO } from '../constants/viewer';
 
 import { ReducerState } from '../interfaces';
-import { EpubBook } from '../interfaces/books';
+import { EpubBook, BookInfo, BooksState } from '../interfaces/books';
 
 const Container = styled.div`
   padding: ${(100 - VIEWER_HEIGHT_RATIO) / 2}% ${(100 - VIEWER_WIDTH_RATIO) / 2}%;
@@ -155,45 +155,62 @@ const Viewer: NextPage<Props> = ({ book, viewers, styleText }) => {
   );
 };
 
+const parsingBook = async (fileName: string): Promise<BookInfo> => {
+  // Server side render
+  const fs = require('fs');
+  const path = require('path');
+  const { EpubParser } = require('@ridi/epub-parser');
+  const dirPath = isProduction() ? path.join(__dirname) : 'public';
+
+  try {
+    const bookInfo = await getBookInfo({
+      EpubParser,
+      FileSystem: fs,
+      dirPath,
+      fileName,
+    });
+
+    return {
+      ...bookInfo,
+    };
+  } catch (error) {
+    console.log('Error', error);
+  }
+
+  return null;
+};
+
+const getBookInfoInStore = (books: BooksState, fileName: string) => {
+  const { list } = books;
+
+  let selectedBookInfo = list[0];
+  list.some((bookInfo) => {
+    if (bookInfo.fileName === fileName) {
+      selectedBookInfo = bookInfo;
+      return true;
+    }
+    return false;
+  });
+
+  return {
+    ...selectedBookInfo,
+  };
+};
+
 // eslint-disable-next-line @typescript-eslint/unbound-method
 Viewer.getInitialProps = async (context: NextPageContext<any>): Promise<any> => {
   const { req, store, query } = context;
+  const { books }: ReducerState = store.getState();
   const { fileName } = query;
   const queryName = decodeURI(String(fileName || 'jikji'));
 
   if (req) {
-    // Server side render
-    const fs = require('fs');
-    const { EpubParser } = require('@ridi/epub-parser');
-
-    try {
-      const bookInfo = await getBookInfo(EpubParser, fs, fileName);
-
-      return {
-        ...bookInfo,
-      };
-    } catch (error) {
-      console.log('Error', error);
-    }
-  } else {
-    // Client side render
-    // Selected book from store
-    const { books }: ReducerState = store.getState();
-    const { list } = books;
-
-    let selectedBookInfo = list[0];
-    list.some((bookInfo) => {
-      if (bookInfo.fileName === queryName) {
-        selectedBookInfo = bookInfo;
-        return true;
-      }
-      return false;
-    });
-
-    return {
-      ...selectedBookInfo,
-    };
+    const bookInfo = await parsingBook(queryName);
+    return bookInfo;
   }
+
+  // Client side render
+  return getBookInfoInStore(books, queryName);
 };
 
 export default Viewer;

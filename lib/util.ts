@@ -39,12 +39,17 @@ export const getViewers = async (parser, {
   return [];
 };
 
-export const getBookInfo = async (EpubParser, fileSystem, fileName): Promise<BookInfo> => {
-  const parser = new EpubParser(`public/${fileName}.epub`);
+export const getBookInfo = async ({
+  EpubParser,
+  FileSystem,
+  dirPath,
+  fileName,
+}): Promise<BookInfo> => {
+  const parser = new EpubParser(`${dirPath}/${fileName}.epub`);
   const styleText = [];
   try {
     const book: EpubBook = await getBook(parser, {
-      unzipPath: `public/epub/${fileName}`,
+      unzipPath: `${dirPath}/epub/${fileName}`,
     });
 
     if (book) {
@@ -56,7 +61,7 @@ export const getBookInfo = async (EpubParser, fileSystem, fileName): Promise<Boo
       const { styles } = book;
       // eslint-disable-next-line no-restricted-syntax
       for (const style of styles) {
-        const text = fileSystem.readFileSync(`public/epub/${fileName}/${style.href}`, 'utf8');
+        const text = FileSystem.readFileSync(`${dirPath}/epub/${fileName}/${style.href}`, 'utf8');
         styleText.push(text);
       }
 
@@ -79,10 +84,6 @@ export const getBookInfo = async (EpubParser, fileSystem, fileName): Promise<Boo
   };
 };
 
-export const isProduction = () => {
-  return process.env.NODE_ENV === 'production';
-};
+export const isProduction = () => process.env.NODE_ENV === 'production';
 
-export const isEpubFile = (fileName) => {
-  return fileName.includes('.epub');
-};
+export const isEpubFile = (fileName) => fileName.includes('.epub');

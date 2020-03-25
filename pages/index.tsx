@@ -37,38 +37,44 @@ const Home: NextPage<Props> = ({ test }) => {
   );
 };
 
+const getBooksInfo = async (): Promise<BookInfo[]> => {
+  const fs = require('fs');
+  const path = require('path');
+  const { EpubParser } = require('@ridi/epub-parser');
+  const dirPath = isProduction() ? path.join(__dirname) : 'public';
+
+  const files = fs.readdirSync(dirPath);
+  const booksInfo: BookInfo[] = [];
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const file of files) {
+    if (isEpubFile(file)) {
+      const [fileName] = file.split('.epub');
+      try {
+        const bookInfo = await getBookInfo({
+          EpubParser,
+          FileSystem: fs,
+          dirPath,
+          fileName,
+        });
+
+        booksInfo.push({ ...bookInfo });
+      } catch (error) {
+        console.log('Error index.', error);
+      }
+    }
+  }
+
+  return booksInfo;
+};
+
 // eslint-disable-next-line @typescript-eslint/unbound-method
-Home.getInitialProps = async (context: NextPageContext<any>) => {
+Home.getInitialProps = async (context: NextPageContext<any>): Promise<any> => {
   const { req, store } = context;
   if (req) {
     // Server side render
-    const fs = require('fs');
-    const path = require('path');
-    const { EpubParser } = require('@ridi/epub-parser');
-
-    const dirPath = isProduction() ? path.join(__dirname) : 'public/';
-
-    const files = fs.readdirSync(dirPath);
-    console.log('files', files);
-    const booksInfo: BookInfo[] = [];
-
-    // eslint-disable-next-line no-restricted-syntax
-    for (const file of files) {
-      if (isEpubFile(file)) {
-        const [fileName] = file.split('.epub');
-        try {
-          const bookInfo = await getBookInfo(EpubParser, fs, fileName);
-
-          booksInfo.push({ ...bookInfo });
-        } catch (error) {
-          console.log('Error index.', error);
-        }
-      }
-    }
+    const booksInfo = await getBooksInfo();
     store.dispatch(booksActions.setBookList(booksInfo));
-    return {
-      test: files,
-    };
   }
   return {
     test: 'WOWO',
