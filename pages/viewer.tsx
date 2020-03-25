@@ -166,15 +166,13 @@ const Viewer: NextPage<Props> = ({ book, viewers, styleText }) => {
 const parsingBook = async (fileName: string): Promise<BookInfo> => {
   // Server side render
   const fs = require('fs');
-  const path = require('path');
   const { EpubParser } = require('@ridi/epub-parser');
-  const dirPath = isProduction() ? path.join(__dirname) : 'public';
 
   try {
     const bookInfo = await getBookInfo({
       EpubParser,
       FileSystem: fs,
-      dirPath,
+      dirPath: 'public',
       fileName,
     });
 

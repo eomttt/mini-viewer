@@ -12,15 +12,7 @@ import { getBookInfo, isEpubFile, isProduction } from '../lib/util';
 import { ReducerState } from '../interfaces';
 import { BookInfo } from '../interfaces/books';
 
-interface Props {
-  test: string[];
-  files: any[];
-}
-
-const Home: NextPage<Props> = ({ test, files }) => {
-
-  console.log('Test', test);
-  console.log('files', files);
+const Home: NextPage = () => {
   const { list } = useSelector((state: ReducerState) => state.books);
 
   useEffect(() => {
@@ -41,11 +33,9 @@ const Home: NextPage<Props> = ({ test, files }) => {
 
 const getBooksInfo = async (): Promise<BookInfo[]> => {
   const fs = require('fs');
-  const path = require('path');
   const { EpubParser } = require('@ridi/epub-parser');
-  const dirPath = isProduction() ? path.join(__dirname, 'public') : 'public';
 
-  const files = fs.readdirSync(dirPath);
+  const files = fs.readdirSync('public');
   const booksInfo: BookInfo[] = [];
 
   // eslint-disable-next-line no-restricted-syntax
@@ -56,7 +46,7 @@ const getBooksInfo = async (): Promise<BookInfo[]> => {
         const bookInfo = await getBookInfo({
           EpubParser,
           FileSystem: fs,
-          dirPath,
+          dirPath: 'public',
           fileName,
         });
 
@@ -74,23 +64,10 @@ const getBooksInfo = async (): Promise<BookInfo[]> => {
 Home.getInitialProps = async (context: NextPageContext<any>): Promise<any> => {
   const { req, store } = context;
   if (req) {
-    const fs = require('fs');
-    const path = require('path');
-    const dirPath = isProduction() ? 'public' : 'public';
-
-    const files = fs.readdirSync(dirPath);
     // Server side render
-    // const booksInfo = await getBooksInfo();
-    store.dispatch(booksActions.setBookList([]));
-    return {
-      test: 'WOWO',
-      files,
-    };
+    const booksInfo = await getBooksInfo();
+    store.dispatch(booksActions.setBookList([...booksInfo]));
   }
-  return {
-    test: 'WOWO',
-    files: [1, 2, 3],
-  };
 };
 
 export default Home;
