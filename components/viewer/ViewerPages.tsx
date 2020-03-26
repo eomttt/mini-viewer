@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useCallback, useReducer, useRef,
+  useEffect, useCallback, useReducer, useRef, useMemo,
 } from 'react';
 import styled from 'styled-components';
 
@@ -48,6 +48,10 @@ const ViewerPages: React.FunctionComponent<Props> = ({
 }) => {
   const [privateStates, privateDispatch] = useReducer(viewerPagesReducer, viewerPagesReducerStates);
   const containerRef = useRef(null);
+  const isAllCountItemsSet = useMemo(() => {
+    const { countItems } = privateStates;
+    return countItems.length >= viewers.length;
+  }, [privateStates, viewers]);
 
   /**
    * Calculate: Callback from single page, Set count in private store,
@@ -63,17 +67,11 @@ const ViewerPages: React.FunctionComponent<Props> = ({
   }, [spines]);
 
   useEffect(() => {
-    if (!isAnalyzedBook) {
-      privateDispatch(initCount());
-    }
-  }, [isAnalyzedBook]);
-
-  useEffect(() => {
     const { countItems } = privateStates;
-    if (countItems.length >= viewers.length) {
+    if (isAllCountItemsSet) {
       setViewerCountList(countItems);
     }
-  }, [setViewerCountList, privateStates, viewers]);
+  }, [setViewerCountList, isAllCountItemsSet, privateStates]);
 
   /**
    * Viewer: Set offset spine index, Click left or right

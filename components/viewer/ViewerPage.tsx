@@ -38,15 +38,17 @@ const ViewerPage: React.FunctionComponent<Props> = ({
    * Calculate: Column count
    */
   useEffect(() => {
-    setTimeout(() => {
-      if (viewerWidth > 0 && !isAnalyzedBook) {
-        const { current: viewArticleRefCurrent } = viewArticleRef;
-        const count = viewArticleRefCurrent.scrollWidth / (viewerWidth + VIEWER_PAGE_GAP);
-        setCountCallback(count);
-      }
-    });
+    const { current: viewArticleRefCurrent } = viewArticleRef;
+    if (viewArticleRefCurrent) {
+      setTimeout(() => {
+        if (viewerWidth > 0 && !isAnalyzedBook) {
+          const count = viewArticleRefCurrent.scrollWidth / (viewerWidth + VIEWER_PAGE_GAP);
+          setCountCallback(count);
+        }
+      });
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [viewerWidth, isAnalyzedBook]);
+  }, [viewArticleRef, viewerWidth, isAnalyzedBook]);
 
   /**
    * Viewer: Set offset scroll value
