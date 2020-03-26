@@ -22,7 +22,7 @@ import { ReducerState } from '../interfaces';
 import { EpubBook, BookInfo, BooksState } from '../interfaces/books';
 
 const Container = styled.div`
-  padding: ${(100 - VIEWER_HEIGHT_RATIO) / 2}% ${(100 - VIEWER_WIDTH_RATIO) / 2}%;
+  padding: ${(props) => props.styleProps.menuHeight}px ${(100 - VIEWER_WIDTH_RATIO) / 2}%;
   height: ${(props) => props.styleProps.height}px;
   background-color: ${(props) => props.styleProps.backgroundColor};
   text-align: center;
@@ -40,6 +40,8 @@ const Viewer: NextPage<Props> = ({ book, viewers = [], styleText = '' }) => {
 
   const [viewerWidth, setViewerWidth] = useState(0);
   const [viewerHeight, setViewerHeight] = useState(0);
+  const [wholeHeight, setWholeHeight] = useState(0);
+  const [menuHeight, setMenuHeight] = useState(0);
   const [nowSpineIndex, setNowSpineIndex] = useState(0);
   const [wholePageCount, setWholePageCount] = useState(0);
 
@@ -50,9 +52,11 @@ const Viewer: NextPage<Props> = ({ book, viewers = [], styleText = '' }) => {
     fontSize, widthRatio, lineHeight, backgroundColor,
   } = useSelector((state: ReducerState) => state.viewerSetting);
 
-  const isAnalyzedSpine = useMemo(() => viewerCountList.length >= viewers.length, [viewerCountList, viewers]);
+  const isAnalyzedBook = useMemo(() => viewerCountList.length >= viewers.length,
+    [viewerCountList, viewers]);
   const isFirstPage = useMemo(() => viewerPageCount === 0, [viewerPageCount]);
-  const isLastPage = useMemo(() => viewerPageCount === wholePageCount, [viewerPageCount, wholePageCount]);
+  const isLastPage = useMemo(() => viewerPageCount === wholePageCount,
+    [viewerPageCount, wholePageCount]);
   const selectedSpineIndex = useMemo(() => {
     let spineIndex = 0;
     let accurateCount = 0;
@@ -81,10 +85,15 @@ const Viewer: NextPage<Props> = ({ book, viewers = [], styleText = '' }) => {
   useEffect(() => {
     setViewerWidth(Math.floor(window.innerWidth * (VIEWER_WIDTH_RATIO / 100)));
     setViewerHeight(Math.floor(window.innerHeight * (VIEWER_HEIGHT_RATIO / 100)));
+    setWholeHeight(Math.floor(window.innerHeight));
     return () => {
       dispatch(viewerActions.initViewerState());
     };
   }, [dispatch]);
+
+  useEffect(() => {
+    setMenuHeight((wholeHeight - viewerHeight) / 2);
+  }, [wholeHeight, viewerHeight]);
 
   useEffect(() => {
     console.log('Now spine index', selectedSpineIndex);
@@ -92,12 +101,12 @@ const Viewer: NextPage<Props> = ({ book, viewers = [], styleText = '' }) => {
   }, [selectedSpineIndex]);
 
   useEffect(() => {
-    if (isAnalyzedSpine) {
+    if (isAnalyzedBook) {
       console.log('Set whole page count');
       const pageCount = viewerCountList.reduce((acc, cur) => acc + cur.count, 0);
       setWholePageCount(pageCount - 1);
     }
-  }, [isAnalyzedSpine, viewerCountList]);
+  }, [isAnalyzedBook, viewerCountList]);
 
   useEffect(() => {
     console.log('New style');
@@ -122,6 +131,7 @@ const Viewer: NextPage<Props> = ({ book, viewers = [], styleText = '' }) => {
       styleText={styleText}
     >
       <ViewerHeader
+        menuHeight={menuHeight}
         titles={book.titles}
         authors={book.contributors}
         ncxItem={book.ncx}
@@ -129,10 +139,11 @@ const Viewer: NextPage<Props> = ({ book, viewers = [], styleText = '' }) => {
       <Container
         styleProps={{
           height: viewerHeight,
+          menuHeight,
           backgroundColor,
         }}
       >
-        {isAnalyzedSpine
+        {isAnalyzedBook
         && (
         <ViewerPage
           viewerWidth={calculateViewerWidth(viewerWidth, widthRatio)}
@@ -143,17 +154,15 @@ const Viewer: NextPage<Props> = ({ book, viewers = [], styleText = '' }) => {
           isLastPage={isLastPage}
         />
         )}
-        {!isAnalyzedSpine
-        && (
         <ViewerCalculator
           viewerWidth={calculateViewerWidth(viewerWidth, widthRatio)}
           viewerHeight={viewerHeight}
           spines={book.spines}
           viewers={viewers}
         />
-        )}
       </Container>
       <ViewerBottom
+        menuHeight={menuHeight}
         sliderMaxValue={wholePageCount}
       />
     </Layout>

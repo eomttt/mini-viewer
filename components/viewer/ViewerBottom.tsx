@@ -7,16 +7,21 @@ import ViewerSlider from './ViewerSlider';
 import { ViewerMenu } from '../../styles/viewer';
 
 const Container = styled(ViewerMenu)`
+  height: ${(props) => props.styleProps.height - 10}px;
   bottom: 0;
-  font-family: initial;
 `;
 
 interface Props {
+  menuHeight: number;
   sliderMaxValue: number;
 }
 
-const ViewerBottom: React.FunctionComponent<Props> = ({ sliderMaxValue }) => (
-  <Container>
+const ViewerBottom: React.FunctionComponent<Props> = ({ menuHeight, sliderMaxValue }) => (
+  <Container
+    styleProps={{
+      height: menuHeight,
+    }}
+  >
     <ViewerSlider
       maxValue={sliderMaxValue}
     />

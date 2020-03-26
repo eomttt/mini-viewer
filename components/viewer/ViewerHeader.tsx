@@ -11,8 +11,8 @@ import { titleFontSize } from '../../styles';
 import { ViewerMenu } from '../../styles/viewer';
 
 const Container = styled(ViewerMenu)`
+  height: ${(props) => props.styleProps.height - 10}px;
   top: 0;
-  font-family: initial;
 `;
 
 const Info = styled.div`
@@ -45,16 +45,23 @@ const HeaderSetting = styled.div`
 `;
 
 interface Props {
+  menuHeight: number;
   titles: string[];
   authors: EpubAuthor[];
   ncxItem: EpubNcxItem;
 }
 
-const ViewerHeader: React.FunctionComponent<Props> = ({ titles, authors, ncxItem }) => {
+const ViewerHeader: React.FunctionComponent<Props> = ({
+  menuHeight, titles, authors, ncxItem,
+}) => {
   const getString = useCallback((items) => items.reduce((acc, cur, index) => `${acc}${index > 0 ? ', ' : ''}${cur}`, ''), []);
 
   return (
-    <Container>
+    <Container
+      styleProps={{
+        height: menuHeight,
+      }}
+    >
       <Info>
         <Title>
           {getString(titles)}

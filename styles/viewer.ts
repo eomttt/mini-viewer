@@ -1,17 +1,17 @@
 import styled from 'styled-components';
 
 import { defaultColor, subColor } from './index';
-import { VIEWER_HEIGHT_RATIO, VIEWER_PAGE_GAP } from '../constants/viewer';
+import { VIEWER_PAGE_GAP } from '../constants/viewer';
 
 export const ViewerMenu = styled.div`
   width: 100%;
-  height: ${(100 - VIEWER_HEIGHT_RATIO) / 2 - 1}%;
   position: fixed;
   display: flex;
   border-top: 1px solid ${subColor};
   border-bottom: 1px solid ${subColor};
   background-color: ${defaultColor};
   z-index: 5;
+  font-family: initial;
 `;
 
 export const ViewerArticle = styled.article`

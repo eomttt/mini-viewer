@@ -1,11 +1,14 @@
-import React, { useEffect, useCallback, useReducer } from 'react';
+import React, {
+  useEffect, useCallback, useReducer, useMemo,
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import * as viewerActions from '../../reducers/viewer';
 
-import ViewerCount from './ViewerCount';
+import ViewerCountComponent from './ViewerCount';
 
 import { ReducerState } from '../../interfaces';
+import { ViewerCount } from '../../interfaces/viewer';
 import { EpubSpineItem } from '../../interfaces/books';
 
 interface Props {
@@ -20,13 +23,38 @@ const initialState = {
   countItems: [],
 };
 
+// countItems 중복 제거
+const getNewCountItems = (wholeItem: ViewerCount[], newItem: ViewerCount): ViewerCount[] => {
+  const { index } = newItem;
+  let existIndex = -1;
+
+  wholeItem.some((item) => {
+    if (item.index === index) {
+      existIndex = index;
+      return true;
+    }
+    return false;
+  });
+
+  if (existIndex > -1) {
+    return wholeItem.map((item) => {
+      if (item.index === existIndex) {
+        return newItem;
+      }
+      return item;
+    });
+  }
+
+  return [...wholeItem, newItem];
+};
+
 const privateReducer = (state = initialState, action) => {
   switch (action.type) {
     case PRIVATE_ADD_COUNT_ACTION: {
       const data = action.payload;
       return {
         ...state,
-        countItems: [...state.countItems, data],
+        countItems: getNewCountItems(state.countItems, data),
       };
     }
     default: {
@@ -42,11 +70,15 @@ const ViewerCalculator: React.FunctionComponent<Props> = ({
   viewers, spines,
 }) => {
   const dispatch = useDispatch();
-  const [reducerState, dispatchReducer] = useReducer(privateReducer, initialState);
 
   const {
-    fontSize, widthRatio, lineHeight,
-  } = useSelector((state: ReducerState) => state.viewerSetting);
+    viewerCountList,
+  } = useSelector((state: ReducerState) => state.viewer);
+
+  const [reducerState, dispatchReducer] = useReducer(privateReducer, initialState);
+
+  const isAnalyzedBook = useMemo(() => viewerCountList.length >= viewers.length,
+    [viewerCountList, viewers]);
 
   const setCountCallback = useCallback((count: number, index: number) => {
     const spine = spines[index];
@@ -63,25 +95,21 @@ const ViewerCalculator: React.FunctionComponent<Props> = ({
 
   useEffect(() => {
     const { countItems } = reducerState;
-    if (countItems.length >= spines.length) {
+    if (countItems.length >= viewers.length) {
       dispatch(viewerActions.setViewerCountList(countItems));
     }
-  }, [dispatch, reducerState, spines]);
+  }, [dispatch, reducerState, viewers]);
 
   return (
     <>
       {
         viewers.map((viewer, index) => (
-          <ViewerCount
+          <ViewerCountComponent
             key={viewer}
+            isAnalyzedBook={isAnalyzedBook}
             viewerWidth={viewerWidth}
             viewerHeight={viewerHeight}
             viewer={viewer}
-            viewerStyle={{
-              fontSize,
-              widthRatio,
-              lineHeight,
-            }}
             setCountCallback={(count) => setCountCallback(count, index)}
           />
         ))

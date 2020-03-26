@@ -33,8 +33,12 @@
 
 ![](https://hyuntaeeom-personal.s3.ap-northeast-2.amazonaws.com/RIDI+mini-vewer/viewer-store-change-diagram.png)
 
-### Demo
-[Demo](https://mini-viewer.herokuapp.com/)
+### Deploy
+- Using Heroku
+  - Git push master
+  - Deploy in heroku
+  - Logs: $heroku logs --tail
+- [Demo](https://mini-viewer.herokuapp.com/)
 
 
 

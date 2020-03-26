@@ -1,4 +1,5 @@
 import React, { useRef, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
@@ -10,7 +11,7 @@ import {
 
 import { VIEWER_PAGE_GAP } from '../../constants/viewer';
 
-import { ViewerStyle } from '../../interfaces/viewer';
+import { ReducerState } from '../../interfaces';
 
 const HiddenArticle = styled(ViewerArticle)`
   overflow: scroll;
@@ -21,35 +22,41 @@ const HiddenSection = styled(ViewerSection)`
 `;
 
 interface Props {
+  isAnalyzedBook: boolean;
   viewerWidth: number;
   viewerHeight: number;
   viewer: string;
-  viewerStyle: ViewerStyle;
   setCountCallback: (count: number) => void;
 }
 
 const ViewerCount: React.FunctionComponent<Props> = ({
+  isAnalyzedBook,
   viewerWidth, viewerHeight,
   viewer,
-  viewerStyle, setCountCallback,
+  setCountCallback,
 }) => {
+  const {
+    fontSize, lineHeight,
+  } = useSelector((state: ReducerState) => state.viewerSetting);
+
   const hiddenViewContainerRef = useRef(null);
   const hiddenViewSectionRef = useRef(null);
 
   useEffect(() => {
-    if (viewerWidth) {
+    if (viewerWidth || !isAnalyzedBook) {
       const { current: hiddenViewContainerCurrent } = hiddenViewContainerRef;
       const count = hiddenViewContainerCurrent.scrollWidth / (viewerWidth + VIEWER_PAGE_GAP);
 
       setCountCallback(count);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [viewerWidth]);
+  }, [viewerWidth, isAnalyzedBook]);
 
   return (
     <HiddenArticle
       styleProps={{
-        ...viewerStyle,
+        fontSize,
+        lineHeight,
         width: viewerWidth,
         height: viewerHeight,
       }}
