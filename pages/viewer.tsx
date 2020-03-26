@@ -35,18 +35,7 @@ interface Props {
   styleText: string;
 }
 
-const Viewer: NextPage<Props> = ({ book, viewers, styleText }) => {
-  if (!book) {
-    return (
-      <div>
-        지원하지 않은 책입니다.
-      </div>
-    );
-  }
-
-  const {
-    spines, titles, ncx, contributors,
-  } = book;
+const Viewer: NextPage<Props> = ({ book, viewers = [], styleText = '' }) => {
   const dispatch = useDispatch();
 
   const [viewerWidth, setViewerWidth] = useState(0);
@@ -120,14 +109,22 @@ const Viewer: NextPage<Props> = ({ book, viewers, styleText }) => {
     [],
   );
 
+  if (!book) {
+    return (
+      <div>
+        지원하지 않은 책입니다.
+      </div>
+    );
+  }
+
   return (
     <Layout
       styleText={styleText}
     >
       <ViewerHeader
-        titles={titles}
-        authors={contributors}
-        ncxItem={ncx}
+        titles={book.titles}
+        authors={book.contributors}
+        ncxItem={book.ncx}
       />
       <Container
         styleProps={{
@@ -151,7 +148,7 @@ const Viewer: NextPage<Props> = ({ book, viewers, styleText }) => {
         <ViewerCalculator
           viewerWidth={calculateViewerWidth(viewerWidth, widthRatio)}
           viewerHeight={viewerHeight}
-          spines={spines}
+          spines={book.spines}
           viewers={viewers}
         />
         )}

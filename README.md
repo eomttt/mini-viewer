@@ -33,5 +33,8 @@
 
 ![](https://hyuntaeeom-personal.s3.ap-northeast-2.amazonaws.com/RIDI+mini-vewer/viewer-store-change-diagram.png)
 
+### Demo
+[Demo](https://mini-viewer.herokuapp.com/)
+
 
 
