@@ -1,10 +1,7 @@
 import React, {
   useEffect, useCallback, useReducer, useRef,
 } from 'react';
-import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-
-import * as viewerActions from '../../reducers/viewer';
 
 import {
   viewerPagesReducerStates,
@@ -14,21 +11,11 @@ import {
 import ViewerPage from './ViewerPage';
 
 import { EpubSpineItem } from '../../interfaces/books';
+import { ViewerCount } from '../../interfaces/viewer';
 
-import { ViewerButton } from '../../styles/viewer';
-import { VIEWER_PAGE_GAP } from '../../constants/viewer';
-
-interface Props {
-  isAnalyzedBook: boolean;
-  viewerWidth: number;
-  viewerHeight: number;
-  spines: EpubSpineItem[];
-  spineIndex: number;
-  pageOffset: number;
-  viewers: string[];
-  isFirstPage: boolean;
-  isLastPage: boolean;
-}
+import {
+  VIEWER_PAGE_GAP, FONT_SIZE_RANGE, LINE_HEIGHT_RANGE,
+} from '../../constants/viewer';
 
 const Container = styled.div`
   width: ${(props) => props.styleProps.width}px;
@@ -38,27 +25,34 @@ const Container = styled.div`
   overflow: hidden;
 `;
 
-const RightButton = styled(ViewerButton)`
-  right: 2em;
-`;
-
-const LeftButton = styled(ViewerButton)`
-  left: 2em;
-`;
+interface Props {
+  viewerWidth: number;
+  viewerHeight: number;
+  isAnalyzedBook: boolean;
+  viewers: string[];
+  spines: EpubSpineItem[];
+  spineIndex: number;
+  pageOffset: number;
+  setViewerCountList: (countItems: ViewerCount[]) => void;
+  viewerFontSize?: number;
+  viewerLineHeihgt?: number;
+}
 
 const ViewerPages: React.FunctionComponent<Props> = ({
-  isAnalyzedBook,
   viewerWidth, viewerHeight,
-  spines, spineIndex, pageOffset,
-  viewers,
-  isFirstPage, isLastPage,
+  isAnalyzedBook,
+  viewers, spines,
+  spineIndex, pageOffset,
+  setViewerCountList,
+  viewerFontSize, viewerLineHeihgt,
 }) => {
-  const dispatch = useDispatch();
-
   const [privateStates, privateDispatch] = useReducer(viewerPagesReducer, viewerPagesReducerStates);
-
   const containerRef = useRef(null);
 
+  /**
+   * Calculate: Callback from single page, Set count in private store,
+   * Set count in public store when calculated all in private store
+   */
   const setCountCallback = useCallback((count: number, index: number) => {
     const spine = spines[index];
     privateDispatch(addCount({
@@ -77,22 +71,17 @@ const ViewerPages: React.FunctionComponent<Props> = ({
   useEffect(() => {
     const { countItems } = privateStates;
     if (countItems.length >= viewers.length) {
-      dispatch(viewerActions.setViewerCountList(countItems));
+      setViewerCountList(countItems);
     }
-  }, [dispatch, privateStates, viewers]);
+  }, [setViewerCountList, privateStates, viewers]);
 
+  /**
+   * Viewer: Set offset spine index, Click left or right
+   */
   useEffect(() => {
     const { current: containerCurrent } = containerRef;
     containerCurrent.scrollLeft = spineIndex * (viewerWidth + VIEWER_PAGE_GAP);
   }, [viewerWidth, spineIndex, pageOffset]);
-
-  const clickLeft = useCallback(() => {
-    dispatch(viewerActions.setCountDownViewerPageCount());
-  }, [dispatch]);
-
-  const clickRight = useCallback(() => {
-    dispatch(viewerActions.setCountUpViewerPageCount());
-  }, [dispatch]);
 
   return (
     <>
@@ -111,13 +100,13 @@ const ViewerPages: React.FunctionComponent<Props> = ({
             viewerWidth={viewerWidth}
             viewerOffset={pageOffset}
             viewer={viewer}
+            fontSize={viewerFontSize || FONT_SIZE_RANGE.MIN}
+            lineHeight={viewerLineHeihgt || LINE_HEIGHT_RANGE.MIN}
             setCountCallback={(count) => setCountCallback(count, index)}
           />
         ))
       }
       </Container>
-      {!isFirstPage && <LeftButton onClick={clickLeft}>Left</LeftButton>}
-      {!isLastPage && <RightButton onClick={clickRight}>Right</RightButton>}
     </>
   );
 };

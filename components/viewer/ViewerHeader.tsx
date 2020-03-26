@@ -57,26 +57,33 @@ const ViewerHeader: React.FunctionComponent<Props> = ({
   const getString = useCallback((items) => items.reduce((acc, cur, index) => `${acc}${index > 0 ? ', ' : ''}${cur}`, ''), []);
 
   return (
-    <Container
-      styleProps={{
-        height: menuHeight,
-      }}
-    >
-      <Info>
-        <Title>
-          {getString(titles)}
-        </Title>
-        <Author>
-          {getString(authors.map((authorItem) => authorItem.name))}
-        </Author>
-      </Info>
-      <HeaderNcx>
-        <ViewerNcx ncxItem={ncxItem} />
-      </HeaderNcx>
-      <HeaderSetting>
-        <ViewerSetting />
-      </HeaderSetting>
-    </Container>
+    <>
+      {
+      menuHeight > 0
+      && (
+      <Container
+        styleProps={{
+          height: menuHeight,
+        }}
+      >
+        <Info>
+          <Title>
+            {getString(titles)}
+          </Title>
+          <Author>
+            {getString(authors.map((authorItem) => authorItem.name))}
+          </Author>
+        </Info>
+        <HeaderNcx>
+          <ViewerNcx ncxItem={ncxItem} />
+        </HeaderNcx>
+        <HeaderSetting>
+          <ViewerSetting />
+        </HeaderSetting>
+      </Container>
+      )
+    }
+    </>
   );
 };
 

@@ -1,6 +1,9 @@
 export interface ViewerState {
+  viewerWidth: number;
+  viewerHeight: number;
   viewerCountList: ViewerCount[];
   viewerPageCount: number;
+  viewerWholePageCount: number;
 }
 
 export interface ViewerSettingState extends ViewerStyle {

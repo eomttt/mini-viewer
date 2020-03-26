@@ -1,5 +1,4 @@
 import React, { useRef, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
@@ -11,8 +10,6 @@ import {
 
 import { VIEWER_PAGE_GAP } from '../../constants/viewer';
 
-import { ReducerState } from '../../interfaces';
-
 const Article = styled(ViewerArticle)`
   overflow: hidden;
   text-align: initial;
@@ -23,6 +20,8 @@ interface Props {
   viewerWidth: number;
   viewerOffset: number;
   viewer: string;
+  fontSize: number;
+  lineHeight: number;
   setCountCallback: (count: number) => void;
 }
 
@@ -30,14 +29,14 @@ const ViewerPage: React.FunctionComponent<Props> = ({
   isAnalyzedBook,
   viewerWidth,
   viewerOffset, viewer,
+  fontSize, lineHeight,
   setCountCallback,
 }) => {
-  const {
-    fontSize, lineHeight,
-  } = useSelector((state: ReducerState) => state.viewerSetting);
-
   const viewArticleRef = useRef(null);
 
+  /**
+   * Calculate: Column count
+   */
   useEffect(() => {
     setTimeout(() => {
       if (viewerWidth > 0 && !isAnalyzedBook) {
@@ -49,6 +48,9 @@ const ViewerPage: React.FunctionComponent<Props> = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [viewerWidth, isAnalyzedBook]);
 
+  /**
+   * Viewer: Set offset scroll value
+   */
   useEffect(() => {
     const { current: viewArticleRefCurrent } = viewArticleRef;
     viewArticleRefCurrent.scrollLeft = viewerOffset * (viewerWidth + VIEWER_PAGE_GAP);

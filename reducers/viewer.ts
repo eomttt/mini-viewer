@@ -2,14 +2,21 @@ import { ReducerAction } from '../interfaces';
 import { ViewerState, ViewerCount } from '../interfaces/viewer';
 
 export const initialState: ViewerState = {
+  viewerWidth: 0,
+  viewerHeight: 0,
   viewerCountList: [],
   viewerPageCount: 0,
+  viewerWholePageCount: 0,
 };
 
 // Action types
 export const INIT_VIEWER_STATE = 'viewer/INIT_VIEWER_STATE';
 export const SET_VIEWER_COLUMN_COUNT_LIST = 'viewer/SET_VIEWER_COLUMN_COUNT_LIST';
 
+export const SET_VIEWER_WIDTH = 'viewer/SET_VIEWER_WIDTH';
+export const SET_VIEWER_HEIGHT = 'viewer/SET_VIEWER_HEIGHT';
+
+export const SET_VIEWER_PAGE_WHOLE_COUNT = 'viewer/SET_VIEWER_PAGE_WHOLE_COUNT';
 export const SET_VIEWER_PAGE_COUNT = 'viewer/SET_VIEWER_PAGE_COUNT';
 export const SET_COUNT_UP_VIEWER_PAGE_COUNT = 'viewer/SET_COUNT_UP_VIEWER_PAGE_COUNT';
 export const SET_COUNT_DOWN_VIEWER_PAGE_COUNT = 'viewer/SET_COUNT_DOWN_VIEWER_PAGE_COUNT';
@@ -23,6 +30,27 @@ export const setViewerCountList = (countList: ViewerCount[]) => ({
   type: SET_VIEWER_COLUMN_COUNT_LIST,
   payload: {
     countList,
+  },
+});
+
+export const setViewerWidth = (width: number) => ({
+  type: SET_VIEWER_WIDTH,
+  payload: {
+    width,
+  },
+});
+
+export const setViewerHeight = (height: number) => ({
+  type: SET_VIEWER_HEIGHT,
+  payload: {
+    height,
+  },
+});
+
+export const setViewerPageWholeCount = (wholeCount: number) => ({
+  type: SET_VIEWER_PAGE_WHOLE_COUNT,
+  payload: {
+    wholeCount,
   },
 });
 
@@ -49,6 +77,7 @@ export default (state = initialState, action: ReducerAction): ViewerState => {
         ...state,
         viewerCountList: [],
         viewerPageCount: 0,
+        viewerWholePageCount: 0,
       };
     }
     case SET_VIEWER_COLUMN_COUNT_LIST: {
@@ -58,11 +87,32 @@ export default (state = initialState, action: ReducerAction): ViewerState => {
         viewerCountList: [...countList],
       };
     }
+    case SET_VIEWER_WIDTH: {
+      const { width } = payload;
+      return {
+        ...state,
+        viewerWidth: width,
+      };
+    }
+    case SET_VIEWER_HEIGHT: {
+      const { height } = payload;
+      return {
+        ...state,
+        viewerHeight: height,
+      };
+    }
     case SET_VIEWER_PAGE_COUNT: {
       const { pageCount } = payload;
       return {
         ...state,
         viewerPageCount: pageCount,
+      };
+    }
+    case SET_VIEWER_PAGE_WHOLE_COUNT: {
+      const { wholeCount } = payload;
+      return {
+        ...state,
+        viewerWholePageCount: wholeCount,
       };
     }
     case SET_COUNT_UP_VIEWER_PAGE_COUNT: {
