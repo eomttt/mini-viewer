@@ -21,7 +21,6 @@ const Article = styled(ViewerArticle)`
 interface Props {
   isAnalyzedBook: boolean;
   viewerWidth: number;
-  viewerHeight: number;
   viewerOffset: number;
   viewer: string;
   setCountCallback: (count: number) => void;
@@ -29,7 +28,7 @@ interface Props {
 
 const ViewerPage: React.FunctionComponent<Props> = ({
   isAnalyzedBook,
-  viewerWidth, viewerHeight,
+  viewerWidth,
   viewerOffset, viewer,
   setCountCallback,
 }) => {
@@ -43,7 +42,8 @@ const ViewerPage: React.FunctionComponent<Props> = ({
     if (viewerWidth || !isAnalyzedBook) {
       const { current: viewArticleRefCurrent } = viewArticleRef;
       const count = viewArticleRefCurrent.scrollWidth / (viewerWidth + VIEWER_PAGE_GAP);
-
+      console.log("viewArticleRefCurrent.scrollWidth", viewArticleRefCurrent.scrollWidth);
+      console.log('viewerWidth + VIEWER_PAGE_GAP', viewerWidth + VIEWER_PAGE_GAP)
       setCountCallback(count);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -60,8 +60,6 @@ const ViewerPage: React.FunctionComponent<Props> = ({
       styleProps={{
         fontSize,
         lineHeight,
-        width: viewerWidth,
-        height: viewerHeight,
       }}
     >
       <ViewerSection
@@ -69,7 +67,6 @@ const ViewerPage: React.FunctionComponent<Props> = ({
           fontSize,
           lineHeight,
           width: viewerWidth,
-          height: viewerHeight,
         }}
       >
         <ViewerContents dangerouslySetInnerHTML={{ __html: viewer }} />

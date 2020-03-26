@@ -28,7 +28,7 @@ interface Props {
 
 const Container = styled.div`
   width: ${(props) => props.styleProps.width}px;
-  height: 100%;
+  height:  ${(props) => props.styleProps.height}px;
   white-space: nowrap;
   text-align: initial;
   overflow: hidden;
@@ -110,7 +110,7 @@ const ViewerPages: React.FunctionComponent<Props> = ({
 
   const setCountCallback = useCallback((count: number, index: number) => {
     const spine = spines[index];
-
+    console.log("Count", count, index);
     dispatchReducer({
       type: PRIVATE_ADD_COUNT_ACTION,
       payload: {
@@ -147,6 +147,7 @@ const ViewerPages: React.FunctionComponent<Props> = ({
         ref={containerRef}
         styleProps={{
           width: viewerWidth,
+          height: viewerHeight,
         }}
       >
         {
@@ -155,7 +156,6 @@ const ViewerPages: React.FunctionComponent<Props> = ({
             key={viewer}
             isAnalyzedBook={isAnalyzedBook}
             viewerWidth={viewerWidth}
-            viewerHeight={viewerHeight}
             viewerOffset={pageOffset}
             viewer={viewer}
             setCountCallback={(count) => setCountCallback(count, index)}

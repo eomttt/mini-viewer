@@ -25,7 +25,6 @@ const Container = styled.div`
   height: ${(props) => props.styleProps.height}px;
   background-color: ${(props) => props.styleProps.backgroundColor};
   text-align: center;
-  // overflow: hidden;
 `;
 
 interface Props {
@@ -39,9 +38,7 @@ const Viewer: NextPage<Props> = ({ book, viewers = [], styleText = '' }) => {
 
   const [viewerWidth, setViewerWidth] = useState(0);
   const [viewerHeight, setViewerHeight] = useState(0);
-  const [wholeHeight, setWholeHeight] = useState(0);
   const [menuHeight, setMenuHeight] = useState(0);
-  const [nowSpineIndex, setNowSpineIndex] = useState(0);
   const [wholePageCount, setWholePageCount] = useState(0);
 
   const {
@@ -51,12 +48,10 @@ const Viewer: NextPage<Props> = ({ book, viewers = [], styleText = '' }) => {
     fontSize, widthRatio, lineHeight, backgroundColor,
   } = useSelector((state: ReducerState) => state.viewerSetting);
 
-  const isAnalyzedBook = useMemo(() => viewerCountList.length >= viewers.length,
-    [viewerCountList, viewers]);
   const isFirstPage = useMemo(() => viewerPageCount === 0, [viewerPageCount]);
   const isLastPage = useMemo(() => viewerPageCount === wholePageCount,
     [viewerPageCount, wholePageCount]);
-  const selectedSpineIndex = useMemo(() => {
+  const nowSpineIndex = useMemo(() => {
     let spineIndex = 0;
     let accurateCount = 0;
     viewerCountList.some((viewerCount) => {
@@ -82,30 +77,24 @@ const Viewer: NextPage<Props> = ({ book, viewers = [], styleText = '' }) => {
   }, [viewerCountList, viewerPageCount, nowSpineIndex]);
 
   useEffect(() => {
-    setViewerWidth(Math.floor(window.innerWidth * (VIEWER_WIDTH_RATIO / 100)));
-    setViewerHeight(Math.floor(window.innerHeight * (VIEWER_HEIGHT_RATIO / 100)));
-    setWholeHeight(Math.floor(window.innerHeight));
+    const windowWidth = Math.floor(window.innerWidth);
+    const windowHeight = Math.floor(window.innerHeight);
+
+    setViewerWidth(windowWidth * (VIEWER_WIDTH_RATIO / 100));
+    setViewerHeight(windowHeight * (VIEWER_HEIGHT_RATIO / 100));
+
+    setMenuHeight((windowHeight - (windowHeight * (VIEWER_HEIGHT_RATIO / 100))) / 2);
     return () => {
       dispatch(viewerActions.initViewerState());
     };
   }, [dispatch]);
 
-  useEffect(() => {
-    setMenuHeight((wholeHeight - viewerHeight) / 2);
-  }, [wholeHeight, viewerHeight]);
 
   useEffect(() => {
-    console.log('Now spine index', selectedSpineIndex);
-    setNowSpineIndex(selectedSpineIndex);
-  }, [selectedSpineIndex]);
-
-  useEffect(() => {
-    if (isAnalyzedBook) {
-      console.log('Set whole page count');
-      const pageCount = viewerCountList.reduce((acc, cur) => acc + cur.count, 0);
-      setWholePageCount(pageCount - 1);
-    }
-  }, [isAnalyzedBook, viewerCountList]);
+    console.log('Set whole page count');
+    const pageCount = viewerCountList.reduce((acc, cur) => acc + cur.count, 0);
+    setWholePageCount(pageCount > 0 ? pageCount - 1 : 0);
+  }, [viewerCountList]);
 
   useEffect(() => {
     console.log('New style');

@@ -20,8 +20,8 @@ export const ViewerArticle = styled.div`
   vertical-align: top;
   white-space: initial;
   display: inline-block;
-  width: ${(props) => props.styleProps.width}px;
-  height: ${(props) => props.styleProps.height}px;
+  width: 100%;
+  height: 100%;
   font-size: ${(props) => props.styleProps.fontSize}em;
   line-height: ${(props) => props.styleProps.lineHeight}em;
 `;
