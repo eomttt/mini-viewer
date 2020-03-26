@@ -39,13 +39,13 @@ const ViewerPage: React.FunctionComponent<Props> = ({
   const viewArticleRef = useRef(null);
 
   useEffect(() => {
-    if (viewerWidth || !isAnalyzedBook) {
-      const { current: viewArticleRefCurrent } = viewArticleRef;
-      const count = viewArticleRefCurrent.scrollWidth / (viewerWidth + VIEWER_PAGE_GAP);
-      console.log("viewArticleRefCurrent.scrollWidth", viewArticleRefCurrent.scrollWidth);
-      console.log('viewerWidth + VIEWER_PAGE_GAP', viewerWidth + VIEWER_PAGE_GAP)
-      setCountCallback(count);
-    }
+    setTimeout(() => {
+      if (viewerWidth > 0 && !isAnalyzedBook) {
+        const { current: viewArticleRefCurrent } = viewArticleRef;
+        const count = viewArticleRefCurrent.scrollWidth / (viewerWidth + VIEWER_PAGE_GAP);
+        setCountCallback(count);
+      }
+    });
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [viewerWidth, isAnalyzedBook]);
 
@@ -69,7 +69,9 @@ const ViewerPage: React.FunctionComponent<Props> = ({
           width: viewerWidth,
         }}
       >
-        <ViewerContents dangerouslySetInnerHTML={{ __html: viewer }} />
+        <ViewerContents
+          dangerouslySetInnerHTML={{ __html: viewer }}
+        />
       </ViewerSection>
     </Article>
   );

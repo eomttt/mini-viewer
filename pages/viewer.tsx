@@ -20,11 +20,23 @@ import { VIEWER_WIDTH_RATIO, VIEWER_HEIGHT_RATIO } from '../constants/viewer';
 import { ReducerState } from '../interfaces';
 import { EpubBook, BookInfo, BooksState } from '../interfaces/books';
 
+import { subColor } from '../styles';
+
 const Container = styled.div`
   padding: ${(props) => props.styleProps.menuHeight}px ${(100 - VIEWER_WIDTH_RATIO) / 2}%;
   height: ${(props) => props.styleProps.height}px;
   background-color: ${(props) => props.styleProps.backgroundColor};
   text-align: center;
+`;
+
+const Loading = styled.div`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: ${subColor};
+  z-index: 6;
 `;
 
 interface Props {
@@ -48,6 +60,8 @@ const Viewer: NextPage<Props> = ({ book, viewers = [], styleText = '' }) => {
     fontSize, widthRatio, lineHeight, backgroundColor,
   } = useSelector((state: ReducerState) => state.viewerSetting);
 
+  const isAnalyzedBook = useMemo(() => viewerCountList.length >= viewers.length,
+    [viewerCountList, viewers]);
   const isFirstPage = useMemo(() => viewerPageCount === 0, [viewerPageCount]);
   const isLastPage = useMemo(() => viewerPageCount === wholePageCount,
     [viewerPageCount, wholePageCount]);
@@ -91,15 +105,15 @@ const Viewer: NextPage<Props> = ({ book, viewers = [], styleText = '' }) => {
 
 
   useEffect(() => {
-    console.log('Set whole page count');
-    const pageCount = viewerCountList.reduce((acc, cur) => acc + cur.count, 0);
-    setWholePageCount(pageCount > 0 ? pageCount - 1 : 0);
-  }, [viewerCountList]);
-
-  useEffect(() => {
-    console.log('New style');
     dispatch(viewerActions.initViewerState());
   }, [dispatch, fontSize, lineHeight, widthRatio]);
+
+  useEffect(() => {
+    if (isAnalyzedBook) {
+      const pageCount = viewerCountList.reduce((acc, cur) => acc + cur.count, 0);
+      setWholePageCount(pageCount > 0 ? pageCount - 1 : 0);
+    }
+  }, [viewerCountList, isAnalyzedBook]);
 
   const calculateViewerWidth = useCallback(
     (nowWidth, newRatio) => Math.floor(Number(nowWidth) * (Number(newRatio) / 100)),
@@ -118,6 +132,7 @@ const Viewer: NextPage<Props> = ({ book, viewers = [], styleText = '' }) => {
     <Layout
       styleText={styleText}
     >
+      {!isAnalyzedBook && <Loading>로딩 중</Loading>}
       <ViewerHeader
         menuHeight={menuHeight}
         titles={book.titles}
@@ -132,6 +147,7 @@ const Viewer: NextPage<Props> = ({ book, viewers = [], styleText = '' }) => {
         }}
       >
         <ViewerPages
+          isAnalyzedBook={isAnalyzedBook}
           viewerWidth={calculateViewerWidth(viewerWidth, widthRatio)}
           viewerHeight={viewerHeight}
           spines={book.spines}

@@ -1,21 +1,25 @@
 import React, {
-  useEffect, useCallback, useReducer, useMemo, useRef,
+  useEffect, useCallback, useReducer, useRef,
 } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 import * as viewerActions from '../../reducers/viewer';
 
+import {
+  viewerPagesReducerStates,
+  viewerPagesReducer,
+  initCount, addCount,
+} from './ViewerPagesReducer';
 import ViewerPage from './ViewerPage';
 
-import { ReducerState } from '../../interfaces';
-import { ViewerCount } from '../../interfaces/viewer';
 import { EpubSpineItem } from '../../interfaces/books';
 
 import { ViewerButton } from '../../styles/viewer';
 import { VIEWER_PAGE_GAP } from '../../constants/viewer';
 
 interface Props {
+  isAnalyzedBook: boolean;
   viewerWidth: number;
   viewerHeight: number;
   spines: EpubSpineItem[];
@@ -42,54 +46,8 @@ const LeftButton = styled(ViewerButton)`
   left: 2em;
 `;
 
-const PRIVATE_ADD_COUNT_ACTION = 'AddCount';
-const initialState = {
-  countItems: [],
-};
-
-// countItems 중복 제거
-const getNewCountItems = (wholeItem: ViewerCount[], newItem: ViewerCount): ViewerCount[] => {
-  const { index } = newItem;
-  let existIndex = -1;
-
-  wholeItem.some((item) => {
-    if (item.index === index) {
-      existIndex = index;
-      return true;
-    }
-    return false;
-  });
-
-  if (existIndex > -1) {
-    return wholeItem.map((item) => {
-      if (item.index === existIndex) {
-        return newItem;
-      }
-      return item;
-    });
-  }
-
-  return [...wholeItem, newItem];
-};
-
-const privateReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case PRIVATE_ADD_COUNT_ACTION: {
-      const data = action.payload;
-      return {
-        ...state,
-        countItems: getNewCountItems(state.countItems, data),
-      };
-    }
-    default: {
-      return {
-        ...state,
-      };
-    }
-  }
-};
-
 const ViewerPages: React.FunctionComponent<Props> = ({
+  isAnalyzedBook,
   viewerWidth, viewerHeight,
   spines, spineIndex, pageOffset,
   viewers,
@@ -97,36 +55,31 @@ const ViewerPages: React.FunctionComponent<Props> = ({
 }) => {
   const dispatch = useDispatch();
 
-  const {
-    viewerCountList,
-  } = useSelector((state: ReducerState) => state.viewer);
-
-  const [reducerState, dispatchReducer] = useReducer(privateReducer, initialState);
-
-  const isAnalyzedBook = useMemo(() => viewerCountList.length >= viewers.length,
-    [viewerCountList, viewers]);
+  const [privateStates, privateDispatch] = useReducer(viewerPagesReducer, viewerPagesReducerStates);
 
   const containerRef = useRef(null);
 
   const setCountCallback = useCallback((count: number, index: number) => {
     const spine = spines[index];
-    console.log("Count", count, index);
-    dispatchReducer({
-      type: PRIVATE_ADD_COUNT_ACTION,
-      payload: {
-        index,
-        count,
-        spineId: spine.id,
-      },
-    });
+    privateDispatch(addCount({
+      index,
+      count,
+      spineId: spine.id,
+    }));
   }, [spines]);
 
   useEffect(() => {
-    const { countItems } = reducerState;
+    if (!isAnalyzedBook) {
+      privateDispatch(initCount());
+    }
+  }, [isAnalyzedBook]);
+
+  useEffect(() => {
+    const { countItems } = privateStates;
     if (countItems.length >= viewers.length) {
       dispatch(viewerActions.setViewerCountList(countItems));
     }
-  }, [dispatch, reducerState, viewers]);
+  }, [dispatch, privateStates, viewers]);
 
   useEffect(() => {
     const { current: containerCurrent } = containerRef;
