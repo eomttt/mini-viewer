@@ -14,7 +14,7 @@ export const ViewerMenu = styled.div`
   font-family: initial;
 `;
 
-export const ViewerArticle = styled.article`
+export const ViewerArticle = styled.div`
   box-sizing: border-box;
   visibility: visible;
   vertical-align: top;
@@ -26,7 +26,7 @@ export const ViewerArticle = styled.article`
   line-height: ${(props) => props.styleProps.lineHeight}em;
 `;
 
-export const ViewerSection = styled.section`
+export const ViewerSection = styled.div`
   height: 100%;
   column-gap: ${VIEWER_PAGE_GAP}px;
   column-fill: auto;

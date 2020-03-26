@@ -1,20 +1,13 @@
-
-/* eslint-disable react/no-danger */
-import React, {
-  useState, useRef, useCallback, useEffect,
-} from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useRef, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
 import {
-  ViewerButton,
   ViewerArticle,
   ViewerSection,
   ViewerContents,
 } from '../../styles/viewer';
-
-import * as viewerActions from '../../reducers/viewer';
 
 import { VIEWER_PAGE_GAP } from '../../constants/viewer';
 
@@ -25,88 +18,63 @@ const Article = styled(ViewerArticle)`
   text-align: initial;
 `;
 
-const RightButton = styled(ViewerButton)`
-  right: 2em;
-`;
-
-const LeftButton = styled(ViewerButton)`
-  left: 2em;
-`;
-
 interface Props {
+  isAnalyzedBook: boolean;
   viewerWidth: number;
   viewerHeight: number;
-  pageColumnOffset: number;
-  viewerSpine: string;
-  isFirstPage: boolean;
-  isLastPage: boolean;
+  viewerOffset: number;
+  viewer: string;
+  setCountCallback: (count: number) => void;
 }
 
 const ViewerPage: React.FunctionComponent<Props> = ({
+  isAnalyzedBook,
   viewerWidth, viewerHeight,
-  pageColumnOffset,
-  viewerSpine,
-  isFirstPage, isLastPage,
+  viewerOffset, viewer,
+  setCountCallback,
 }) => {
-  const dispatch = useDispatch();
-
-  const [nowViewerCount, setNowViewerCount] = useState(0);
-
   const {
-    fontSize, widthRatio, lineHeight,
+    fontSize, lineHeight,
   } = useSelector((state: ReducerState) => state.viewerSetting);
 
   const viewArticleRef = useRef(null);
 
   useEffect(() => {
-    const { current: viewArticleRefCurrent } = viewArticleRef;
-    viewArticleRefCurrent.scrollLeft = pageColumnOffset * (viewerWidth + VIEWER_PAGE_GAP);
-    setNowViewerCount(pageColumnOffset);
-  }, [viewerSpine, pageColumnOffset, viewerWidth]);
+    if (viewerWidth || !isAnalyzedBook) {
+      const { current: viewArticleRefCurrent } = viewArticleRef;
+      const count = viewArticleRefCurrent.scrollWidth / (viewerWidth + VIEWER_PAGE_GAP);
 
-  const clickRight = useCallback(() => {
-    const { current: viewArticleRefCurrent } = viewArticleRef;
+      setCountCallback(count);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [viewerWidth, isAnalyzedBook]);
 
-    setNowViewerCount(nowViewerCount + 1);
-    viewArticleRefCurrent.scrollLeft += (viewerWidth + VIEWER_PAGE_GAP);
-    dispatch(viewerActions.setCountUpViewerPageCount());
-  }, [dispatch, nowViewerCount, viewerWidth]);
-
-  const clickLeft = useCallback(() => {
+  useEffect(() => {
     const { current: viewArticleRefCurrent } = viewArticleRef;
-    setNowViewerCount(nowViewerCount - 1);
-    viewArticleRefCurrent.scrollLeft -= (viewerWidth + VIEWER_PAGE_GAP);
-    dispatch(viewerActions.setCountDownViewerPageCount());
-  }, [dispatch, nowViewerCount, viewerWidth]);
+    viewArticleRefCurrent.scrollLeft = viewerOffset * (viewerWidth + VIEWER_PAGE_GAP);
+  }, [viewerOffset, viewerWidth]);
 
   return (
-    <>
-      <Article
-        ref={viewArticleRef}
-        onClick={clickRight}
+    <Article
+      ref={viewArticleRef}
+      styleProps={{
+        fontSize,
+        lineHeight,
+        width: viewerWidth,
+        height: viewerHeight,
+      }}
+    >
+      <ViewerSection
         styleProps={{
-          widthRatio,
           fontSize,
           lineHeight,
           width: viewerWidth,
           height: viewerHeight,
         }}
       >
-        <ViewerSection
-          styleProps={{
-            widthRatio,
-            fontSize,
-            lineHeight,
-            width: viewerWidth,
-            height: viewerHeight,
-          }}
-        >
-          <ViewerContents dangerouslySetInnerHTML={{ __html: viewerSpine }} />
-        </ViewerSection>
-      </Article>
-      {!isFirstPage && <LeftButton onClick={clickLeft}>Left</LeftButton>}
-      {!isLastPage && <RightButton onClick={clickRight}>Right</RightButton>}
-    </>
+        <ViewerContents dangerouslySetInnerHTML={{ __html: viewer }} />
+      </ViewerSection>
+    </Article>
   );
 };
 

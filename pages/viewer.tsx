@@ -8,9 +8,8 @@ import styled from 'styled-components';
 
 import Layout from '../components/Layout';
 import ViewerBottom from '../components/viewer/ViewerBottom';
-import ViewerCalculator from '../components/viewer/ViewerCalculator';
+import ViewerPages from '../components/viewer/ViewerPages';
 import ViewerHeader from '../components/viewer/ViewerHeader';
-import ViewerPage from '../components/viewer/ViewerPage';
 
 import * as viewerActions from '../reducers/viewer';
 
@@ -26,7 +25,7 @@ const Container = styled.div`
   height: ${(props) => props.styleProps.height}px;
   background-color: ${(props) => props.styleProps.backgroundColor};
   text-align: center;
-  overflow: hidden;
+  // overflow: hidden;
 `;
 
 interface Props {
@@ -143,22 +142,15 @@ const Viewer: NextPage<Props> = ({ book, viewers = [], styleText = '' }) => {
           backgroundColor,
         }}
       >
-        {isAnalyzedBook
-        && (
-        <ViewerPage
-          viewerWidth={calculateViewerWidth(viewerWidth, widthRatio)}
-          viewerHeight={viewerHeight}
-          pageColumnOffset={pageColumnOffset}
-          viewerSpine={viewers[nowSpineIndex]}
-          isFirstPage={isFirstPage}
-          isLastPage={isLastPage}
-        />
-        )}
-        <ViewerCalculator
+        <ViewerPages
           viewerWidth={calculateViewerWidth(viewerWidth, widthRatio)}
           viewerHeight={viewerHeight}
           spines={book.spines}
+          spineIndex={nowSpineIndex}
+          pageOffset={pageColumnOffset}
           viewers={viewers}
+          isFirstPage={isFirstPage}
+          isLastPage={isLastPage}
         />
       </Container>
       <ViewerBottom
