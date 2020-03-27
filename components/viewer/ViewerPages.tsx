@@ -73,6 +73,12 @@ const ViewerPages: React.FunctionComponent<Props> = ({
     }
   }, [setViewerCountList, isAllCountItemsSet, privateStates]);
 
+  useEffect(() => {
+    if (!isAnalyzedBook) {
+      privateDispatch(initCount());
+    }
+  }, [isAnalyzedBook]);
+
   /**
    * Viewer: Set offset spine index, Click left or right
    */

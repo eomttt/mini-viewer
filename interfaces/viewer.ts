@@ -8,6 +8,7 @@ export interface ViewerState {
 
 export interface ViewerSettingState extends ViewerStyle {
   backgroundColor: string;
+  settingChangeToggle: boolean;
 }
 
 export interface ViewerStyle {

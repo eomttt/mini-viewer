@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import styled from 'styled-components';
@@ -47,8 +47,26 @@ const ViewerSetting: React.FunctionComponent = () => {
   } = useSelector((state: ReducerState) => state.viewerSetting);
   const dispatch = useDispatch();
 
-  const [isShowSetting, setIsShowSetting] = useState(false);
+  const [isShow, setIsShow] = useState(false);
+  const [beforeValue, setBeforeValue] = useState({
+    fontSize,
+    widthRatio,
+    lineHeight,
+  });
   const [settingItems, setSettingItems] = useState<SettingItem[]>([]);
+
+  const isSettingChange = useMemo(() => {
+    if (beforeValue.fontSize !== fontSize) {
+      return true;
+    }
+    if (beforeValue.lineHeight !== lineHeight) {
+      return true;
+    }
+    if (beforeValue.widthRatio !== widthRatio) {
+      return true;
+    }
+    return false;
+  }, [beforeValue, fontSize, lineHeight, widthRatio]);
 
   useEffect(() => {
     setSettingItems([
@@ -94,9 +112,20 @@ const ViewerSetting: React.FunctionComponent = () => {
     ]);
   }, [dispatch, fontSize, widthRatio, lineHeight, backgroundColor]);
 
+  useEffect(() => {
+    if (!isShow && isSettingChange) {
+      dispatch(settingActions.toggleSettingChanged());
+      setBeforeValue({
+        fontSize,
+        lineHeight,
+        widthRatio,
+      });
+    }
+  }, [dispatch, isShow, isSettingChange, fontSize, lineHeight, widthRatio]);
+
   const toggleShowNcs = useCallback(() => {
-    setIsShowSetting(!isShowSetting);
-  }, [isShowSetting]);
+    setIsShow(!isShow);
+  }, [isShow]);
 
   const renderSettingItem = useCallback((settingItem: SettingItem) => {
     const {
@@ -133,7 +162,7 @@ const ViewerSetting: React.FunctionComponent = () => {
         설정
       </ToggleButton>
       {
-        isShowSetting
+        isShow
         && (
         <SettingItems>
           {

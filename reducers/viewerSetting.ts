@@ -9,6 +9,7 @@ export const initialState: ViewerSettingState = {
   widthRatio: WIDTH_RATIO_RANGE.MAX,
   lineHeight: LINE_HEIGHT_RANGE.MIN,
   backgroundColor: defaultColor,
+  settingChangeToggle: false,
 };
 
 // Action types
@@ -16,6 +17,8 @@ export const SET_FONT_SIZE = 'viewerSetting/SET_FONT_SIZE';
 export const SET_WIDTH_RATIO = 'viewerSetting/SET_WIDTH_RATIO';
 export const SET_LINE_HEIGHT = 'viewerSetting/SET_LINE_HEIGHT';
 export const SET_BACKGROUND_COLOR = 'viewerSetting/SET_VIEWER_SETTING_BACKGROUND_COLOR';
+
+export const TOGGLE_SETTING_CHANGED = 'viewerSetting/TOGGLE_SETTING_CHANGED';
 
 // Action creators
 export const setViewerSettingFontSize = (fontSize: number) => ({
@@ -46,6 +49,11 @@ export const setViewerSettingBackgroundColor = (color: string) => ({
   },
 });
 
+export const toggleSettingChanged = () => ({
+  type: TOGGLE_SETTING_CHANGED,
+});
+
+
 export default (state = initialState, action: ReducerAction): ViewerSettingState => {
   const { type, payload } = action;
   switch (type) {
@@ -75,6 +83,12 @@ export default (state = initialState, action: ReducerAction): ViewerSettingState
       return {
         ...state,
         backgroundColor,
+      };
+    }
+    case TOGGLE_SETTING_CHANGED: {
+      return {
+        ...state,
+        settingChangeToggle: !state.settingChangeToggle,
       };
     }
     default: {

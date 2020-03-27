@@ -37,7 +37,7 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
     viewerCountList, viewerPageCount, viewerWholePageCount,
   } = useSelector((state: ReducerState) => state.viewer);
   const {
-    fontSize, lineHeight, widthRatio,
+    fontSize, lineHeight, widthRatio, settingChangeToggle,
   } = useSelector((state: ReducerState) => state.viewerSetting);
 
   const isAnalyzedBook = useMemo(() => viewerCountList.length >= viewers.length,
@@ -96,7 +96,7 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
 
   useEffect(() => {
     dispatch(viewerActions.initViewerState());
-  }, [dispatch, fontSize, lineHeight, widthRatio]);
+  }, [dispatch, settingChangeToggle]);
 
   const calculateViewerWidth = useCallback(
     (nowWidth, newRatio) => Math.floor(Number(nowWidth) * (Number(newRatio) / 100)),

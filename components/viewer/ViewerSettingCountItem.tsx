@@ -55,9 +55,9 @@ const ViewerSettingCountItem: React.FunctionComponent<Props> = ({
 
     if (expectedValue <= maxValue) {
       const newValue = isIntegerNumber(expectedValue) ? expectedValue : expectedValue.toFixed(1);
-
-      setShowValue(newValue);
-      debounceAction(newValue);
+      console.log('New value', +newValue);
+      setShowValue(+newValue);
+      debounceAction(+newValue);
     } else {
       alert('변경 할 수 있는 최대값 입니다.');
     }
@@ -69,8 +69,8 @@ const ViewerSettingCountItem: React.FunctionComponent<Props> = ({
     if (expectedValue >= minValue) {
       const newValue = isIntegerNumber(expectedValue) ? expectedValue : expectedValue.toFixed(1);
 
-      setShowValue(newValue);
-      debounceAction(newValue);;
+      setShowValue(+newValue);
+      debounceAction(+newValue);
     } else {
       alert('변경 할 수 있는 최소값 입니다.');
     }
