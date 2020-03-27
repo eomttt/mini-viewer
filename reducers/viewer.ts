@@ -1,5 +1,6 @@
 import { ReducerAction } from '../interfaces';
 import { ViewerState, ViewerCount } from '../interfaces/viewer';
+import { BookInfo } from '../interfaces/books';
 
 export const initialState: ViewerState = {
   viewerWidth: 0,
@@ -20,6 +21,8 @@ export const SET_VIEWER_PAGE_WHOLE_COUNT = 'viewer/SET_VIEWER_PAGE_WHOLE_COUNT';
 export const SET_VIEWER_PAGE_COUNT = 'viewer/SET_VIEWER_PAGE_COUNT';
 export const SET_COUNT_UP_VIEWER_PAGE_COUNT = 'viewer/SET_COUNT_UP_VIEWER_PAGE_COUNT';
 export const SET_COUNT_DOWN_VIEWER_PAGE_COUNT = 'viewer/SET_COUNT_DOWN_VIEWER_PAGE_COUNT';
+
+export const SET_CURRENT_BOOK_INFO = 'viewer/SET_CURRENT_BOOK_INFO';
 
 // Action creators
 export const initViewerState = () => ({
@@ -67,6 +70,13 @@ export const setCountUpViewerPageCount = () => ({
 
 export const setCountDownViewerPageCount = () => ({
   type: SET_COUNT_DOWN_VIEWER_PAGE_COUNT,
+});
+
+export const setCurrentBookInfo = (bookInfo: BookInfo) => ({
+  type: SET_CURRENT_BOOK_INFO,
+  payload: {
+    bookInfo,
+  },
 });
 
 export default (state = initialState, action: ReducerAction): ViewerState => {
@@ -125,6 +135,13 @@ export default (state = initialState, action: ReducerAction): ViewerState => {
       return {
         ...state,
         viewerPageCount: state.viewerPageCount - 1,
+      };
+    }
+    case SET_CURRENT_BOOK_INFO: {
+      const { bookInfo } = payload;
+      return {
+        ...state,
+        currentBookInfo: bookInfo,
       };
     }
     default: {

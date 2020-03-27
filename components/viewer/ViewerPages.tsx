@@ -34,6 +34,7 @@ interface Props {
   spines: EpubSpineItem[];
   pageOffset: number;
   setViewerCountList: (countItems: ViewerCount[]) => void;
+  clickLink: (viewerIndex: string, hashTag: string) => void;
   viewerFontSize?: number;
   viewerLineHeihgt?: number;
 }
@@ -43,7 +44,7 @@ const ViewerPages: React.FunctionComponent<Props> = ({
   isAnalyzedBook,
   viewers, viewerIndex,
   spines, pageOffset,
-  setViewerCountList,
+  clickLink, setViewerCountList,
   viewerFontSize, viewerLineHeihgt,
 }) => {
   const [privateStates, privateDispatch] = useReducer(viewerPagesReducer, viewerPagesReducerStates);
@@ -87,6 +88,16 @@ const ViewerPages: React.FunctionComponent<Props> = ({
     containerCurrent.scrollLeft = viewerIndex * (viewerWidth + VIEWER_PAGE_GAP);
   }, [viewerWidth, viewerIndex, pageOffset]);
 
+  const testClick = (e) => {
+    e.preventDefault();
+
+    const anchorHref = e.target.getAttribute('href');
+    if (anchorHref) {
+      const [hrefLink, hashId] = anchorHref.split('#');
+      clickLink(hrefLink, hashId);
+    }
+  };
+
   return (
     <>
       <Container
@@ -95,6 +106,7 @@ const ViewerPages: React.FunctionComponent<Props> = ({
           width: viewerWidth,
           height: viewerHeight,
         }}
+        onClick={testClick}
       >
         {
         viewers.map((viewer, index) => (

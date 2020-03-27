@@ -9,11 +9,11 @@ import * as booksActions from '../reducers/books';
 
 import { getBookInfo, isEpubFile } from '../lib/util';
 
-import { ReducerState } from '../interfaces';
+import { ReducerStates } from '../interfaces';
 import { BookInfo } from '../interfaces/books';
 
 const Home: NextPage = () => {
-  const { list } = useSelector((state: ReducerState) => state.books);
+  const { list } = useSelector((state: ReducerStates) => state.books);
 
   useEffect(() => {
     if (!list) {

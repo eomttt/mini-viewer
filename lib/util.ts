@@ -26,7 +26,6 @@ export const getViewers = async (parser, {
     const viewers = await parser.readItems(bookSpines, {
       force: true,
       extractBody: true,
-      serializedAnchor: true,
       ignoreScript: true,
       basePath: publicPath,
     });

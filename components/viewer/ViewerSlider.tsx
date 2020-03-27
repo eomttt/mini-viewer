@@ -7,7 +7,7 @@ import * as viewerActions from '../../reducers/viewer';
 
 import { VIEWER_SLIDER_LEN_RATIO } from '../../constants/viewer';
 
-import { ReducerState } from '../../interfaces';
+import { ReducerStates } from '../../interfaces';
 
 const Container = styled.div`
   width: 100%;
@@ -34,7 +34,7 @@ const ViewerSlider: React.FunctionComponent<Props> = ({ maxValue }) => {
   const dispatch = useDispatch();
   const [value, setValue] = useState(0);
 
-  const { viewerPageCount } = useSelector((state: ReducerState) => state.viewer);
+  const { viewerPageCount } = useSelector((state: ReducerStates) => state.viewer);
 
   const hasMaxValue = useMemo(() => !!maxValue, [maxValue]);
 

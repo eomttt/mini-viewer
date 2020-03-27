@@ -1,9 +1,12 @@
+import { BookInfo } from './books';
+
 export interface ViewerState {
   viewerWidth: number;
   viewerHeight: number;
   viewerCountList: ViewerCount[];
   viewerPageCount: number;
   viewerWholePageCount: number;
+  currentBookInfo?: BookInfo;
 }
 
 export interface ViewerSettingState extends ViewerStyle {

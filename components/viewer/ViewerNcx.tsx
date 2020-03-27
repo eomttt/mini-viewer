@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import styled from 'styled-components';
@@ -7,8 +7,9 @@ import { subColor, defaultColor } from '../../styles';
 
 import * as viewerActions from '../../reducers/viewer';
 
-import { ReducerState } from '../../interfaces';
+import { ReducerStates } from '../../interfaces';
 import { EpubNcxItem, EpubNavPoint } from '../../interfaces/books';
+import { usePageCountBySpineId } from '../../hooks';
 
 const Container = styled.div`
   position: relative;
@@ -51,32 +52,19 @@ const ViewerNcx: React.FunctionComponent<Props> = ({ ncxItem }) => {
   const { navPoints } = ncxItem;
 
   const dispatch = useDispatch();
-  const { viewerCountList } = useSelector((state: ReducerState) => state.viewer);
+
   const [isShowNcx, setIsShowNcx] = useState(false);
+  const [nowSpineId, setNowSpineId] = useState('');
 
-  const setViewerPage = useCallback((viewerSpineId: string) => {
-    // 목차에서 선택할 때에 pageCount 업데이트 해준다.
-    let spineIndex = -1;
-    let spinePageCount = 0;
-    viewerCountList.some((viewrCount, index) => {
-      if (viewrCount.spineId === viewerSpineId) {
-        spineIndex = index;
-        return true;
-      }
-      return false;
-    });
+  const { viewerCountList } = useSelector((state: ReducerStates) => state.viewer);
 
-    if (spineIndex > -1) {
-      viewerCountList.some((viewerCount, index) => {
-        if (index < spineIndex) {
-          spinePageCount += viewerCount.count;
-          return false;
-        }
-        return true;
-      });
-      dispatch(viewerActions.setViewerPageCount(spinePageCount));
+  const pageCountBySpineId = usePageCountBySpineId(viewerCountList, nowSpineId);
+
+  useEffect(() => {
+    if (pageCountBySpineId > -1) {
+      dispatch(viewerActions.setViewerPageCount(pageCountBySpineId));
     }
-  }, [dispatch, viewerCountList]);
+  }, [dispatch, pageCountBySpineId]);
 
   const toggleShowNcs = useCallback(() => {
     setIsShowNcx(!isShowNcx);
@@ -84,8 +72,8 @@ const ViewerNcx: React.FunctionComponent<Props> = ({ ncxItem }) => {
 
   const selectNavPoint = useCallback((point: EpubNavPoint) => {
     setIsShowNcx(false);
-    setViewerPage(point.spine.id);
-  }, [setViewerPage]);
+    setNowSpineId(point.spine.id);
+  }, []);
 
   return (
     <Container>

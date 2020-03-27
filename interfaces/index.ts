@@ -6,7 +6,7 @@ export interface ReducerAction {
   payload: any;
 }
 
-export interface ReducerState {
+export interface ReducerStates {
   books: BooksState;
   viewer: ViewerState;
   viewerSetting: ViewerSettingState;

@@ -1,6 +1,7 @@
 import React, {
   useState, useEffect,
 } from 'react';
+import { useDispatch } from 'react-redux';
 import { NextPageContext, NextPage } from 'next';
 
 import Layout from '../components/Layout';
@@ -9,29 +10,34 @@ import ViewerBottom from '../components/viewer/ViewerBottom';
 import ViewerHeader from '../components/viewer/ViewerHeader';
 import ViewerNotSupport from '../components/viewer/ViewerNotSupport';
 
+import * as viewerActions from '../reducers/viewer';
+
 import { getBookInfo } from '../lib/util';
 
 import { VIEWER_HEIGHT_RATIO } from '../constants/viewer';
 
-import { ReducerState } from '../interfaces';
-import { EpubBook, BookInfo, BooksState } from '../interfaces/books';
+import { ReducerStates } from '../interfaces';
+import { BookInfo, BooksState } from '../interfaces/books';
 
 
-interface Props {
-  book: EpubBook;
-  viewers: string[];
-  styleText: string;
-}
-
-const Viewer: NextPage<Props> = ({ book, viewers = [], styleText = '' }) => {
+const Viewer: NextPage<BookInfo> = (bookInfo) => {
+  const dispatch = useDispatch();
   const [menuHeight, setMenuHeight] = useState(0);
+
+  const { book, viewers, styleText } = bookInfo;
+
+  useEffect(() => {
+    if (bookInfo.book) {
+      dispatch(viewerActions.setCurrentBookInfo(bookInfo));
+    }
+  }, [dispatch, bookInfo]);
 
   useEffect(() => {
     const windowHeight = window.innerHeight;
     setMenuHeight((windowHeight - Math.floor(windowHeight * (VIEWER_HEIGHT_RATIO / 100))) / 2);
   }, []);
 
-  if (!book) {
+  if (!bookInfo.book) {
     return (
       <ViewerNotSupport />
     );
@@ -102,7 +108,7 @@ const getBookInfoInStore = (books: BooksState, fileName: string) => {
 // eslint-disable-next-line @typescript-eslint/unbound-method
 Viewer.getInitialProps = async (context: NextPageContext<any>): Promise<any> => {
   const { req, store, query } = context;
-  const { books }: ReducerState = store.getState();
+  const { books }: ReducerStates = store.getState();
   const { fileName } = query;
   const queryName = decodeURI(String(fileName || 'jikji'));
 

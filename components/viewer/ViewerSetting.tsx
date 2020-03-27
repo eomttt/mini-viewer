@@ -17,7 +17,7 @@ import {
   FONT_SIZE_RANGE, WIDTH_RATIO_RANGE, LINE_HEIGHT_RANGE, BACKGROUND_COLORS,
 } from '../../constants/viewer';
 
-import { ReducerState } from '../../interfaces';
+import { ReducerStates } from '../../interfaces';
 import { SettingItem } from '../../interfaces/viewer';
 
 const Container = styled.div`
@@ -44,7 +44,7 @@ const SettingItems = styled.ul`
 const ViewerSetting: React.FunctionComponent = () => {
   const {
     fontSize, widthRatio, lineHeight, backgroundColor,
-  } = useSelector((state: ReducerState) => state.viewerSetting);
+  } = useSelector((state: ReducerStates) => state.viewerSetting);
   const dispatch = useDispatch();
 
   const [isShow, setIsShow] = useState(false);

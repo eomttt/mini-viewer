@@ -6,7 +6,7 @@ import { ViewerMenu } from '../../styles/viewer';
 
 import ViewerSlider from './ViewerSlider';
 
-import { ReducerState } from '../../interfaces';
+import { ReducerStates } from '../../interfaces';
 
 const Container = styled(ViewerMenu)`
   height: ${(props) => props.styleProps.height - 10}px;
@@ -20,7 +20,7 @@ interface Props {
 const ViewerBottom: React.FunctionComponent<Props> = ({ menuHeight }) => {
   const {
     viewerWholePageCount,
-  } = useSelector((state: ReducerState) => state.viewer);
+  } = useSelector((state: ReducerStates) => state.viewer);
 
   return (
     <>
