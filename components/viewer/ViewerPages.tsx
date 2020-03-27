@@ -22,7 +22,7 @@ const Container = styled.div`
   height:  ${(props) => props.styleProps.height}px;
   white-space: nowrap;
   text-align: initial;
-  overflow: hidden;
+  overflow: scroll;
 `;
 
 interface Props {
@@ -109,18 +109,23 @@ const ViewerPages: React.FunctionComponent<Props> = ({
         onClick={testClick}
       >
         {
-        viewers.map((viewer, index) => (
-          <ViewerPage
-            key={viewer}
-            isAnalyzedBook={isAnalyzedBook}
-            viewerWidth={viewerWidth}
-            viewerOffset={pageOffset}
-            viewer={viewer}
-            fontSize={viewerFontSize || FONT_SIZE_RANGE.MIN}
-            lineHeight={viewerLineHeihgt || LINE_HEIGHT_RANGE.MIN}
-            setCountCallback={(count) => setCountCallback(count, index)}
-          />
-        ))
+        viewers.map((viewer, index) => {
+          // if (index === 2) {
+            return (
+              <ViewerPage
+                key={viewer}
+                isAnalyzedBook={isAnalyzedBook}
+                viewerWidth={viewerWidth}
+                viewerOffset={pageOffset}
+                viewer={viewer}
+                viewerIndex={index}
+                fontSize={viewerFontSize || FONT_SIZE_RANGE.MIN}
+                lineHeight={viewerLineHeihgt || LINE_HEIGHT_RANGE.MIN}
+                setCountCallback={(count) => setCountCallback(count, index)}
+              />
+            );
+          // }
+        })
       }
       </Container>
     </>

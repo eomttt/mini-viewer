@@ -18,7 +18,7 @@ import { ViewerButton } from '../../styles/viewer';
 import { useViewerIndex, usePageOffset, usePageCountBySpineId } from '../../hooks';
 
 const Container = styled.div`
-  padding: ${(props) => props.styleProps.menuHeight}px ${(100 - VIEWER_WIDTH_RATIO) / 2}%;
+  padding: ${(props) => props.styleProps.menuHeight}px 0;
   background-color: ${(props) => props.styleProps.backgroundColor};
   text-align: center;
 `;
@@ -140,7 +140,7 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
         backgroundColor,
       }}
     >
-      {!isAnalyzedBook && <Loading text="로딩 중..." />}
+      {/* {!isAnalyzedBook && <Loading text="로딩 중..." />} */}
       <ViewerPages
         viewerWidth={calculateViewerWidth(viewerWidth, widthRatio)}
         viewerHeight={viewerHeight}
