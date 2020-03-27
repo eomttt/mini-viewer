@@ -1,11 +1,7 @@
 import React, {
   useState, useEffect,
 } from 'react';
-import { useSelector } from 'react-redux';
 import { NextPageContext, NextPage } from 'next';
-
-import styled from 'styled-components';
-
 
 import Layout from '../components/Layout';
 import ViewerPagesController from '../components/viewer/ViewerPagesController';
@@ -15,16 +11,11 @@ import ViewerNotSupport from '../components/viewer/ViewerNotSupport';
 
 import { getBookInfo } from '../lib/util';
 
-import { VIEWER_WIDTH_RATIO, VIEWER_HEIGHT_RATIO } from '../constants/viewer';
+import { VIEWER_HEIGHT_RATIO } from '../constants/viewer';
 
 import { ReducerState } from '../interfaces';
 import { EpubBook, BookInfo, BooksState } from '../interfaces/books';
 
-const Container = styled.div`
-  padding: ${(props) => props.styleProps.menuHeight}px ${(100 - VIEWER_WIDTH_RATIO) / 2}%;
-  background-color: ${(props) => props.styleProps.backgroundColor};
-  text-align: center;
-`;
 
 interface Props {
   book: EpubBook;
@@ -34,11 +25,10 @@ interface Props {
 
 const Viewer: NextPage<Props> = ({ book, viewers = [], styleText = '' }) => {
   const [menuHeight, setMenuHeight] = useState(0);
-  const { backgroundColor } = useSelector((state: ReducerState) => state.viewerSetting);
 
   useEffect(() => {
     const windowHeight = window.innerHeight;
-    setMenuHeight((windowHeight - (windowHeight * (VIEWER_HEIGHT_RATIO / 100))) / 2);
+    setMenuHeight((windowHeight - Math.floor(windowHeight * (VIEWER_HEIGHT_RATIO / 100))) / 2);
   }, []);
 
   if (!book) {
@@ -57,17 +47,11 @@ const Viewer: NextPage<Props> = ({ book, viewers = [], styleText = '' }) => {
         authors={book.contributors}
         ncxItem={book.ncx}
       />
-      <Container
-        styleProps={{
-          menuHeight,
-          backgroundColor,
-        }}
-      >
-        <ViewerPagesController
-          spines={book.spines}
-          viewers={viewers}
-        />
-      </Container>
+      <ViewerPagesController
+        menuHeight={menuHeight}
+        spines={book.spines}
+        viewers={viewers}
+      />
       <ViewerBottom
         menuHeight={menuHeight}
       />

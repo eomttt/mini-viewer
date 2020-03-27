@@ -30,8 +30,8 @@ interface Props {
   viewerHeight: number;
   isAnalyzedBook: boolean;
   viewers: string[];
+  viewerIndex: number;
   spines: EpubSpineItem[];
-  spineIndex: number;
   pageOffset: number;
   setViewerCountList: (countItems: ViewerCount[]) => void;
   viewerFontSize?: number;
@@ -41,8 +41,8 @@ interface Props {
 const ViewerPages: React.FunctionComponent<Props> = ({
   viewerWidth, viewerHeight,
   isAnalyzedBook,
-  viewers, spines,
-  spineIndex, pageOffset,
+  viewers, viewerIndex,
+  spines, pageOffset,
   setViewerCountList,
   viewerFontSize, viewerLineHeihgt,
 }) => {
@@ -84,8 +84,8 @@ const ViewerPages: React.FunctionComponent<Props> = ({
    */
   useEffect(() => {
     const { current: containerCurrent } = containerRef;
-    containerCurrent.scrollLeft = spineIndex * (viewerWidth + VIEWER_PAGE_GAP);
-  }, [viewerWidth, spineIndex, pageOffset]);
+    containerCurrent.scrollLeft = viewerIndex * (viewerWidth + VIEWER_PAGE_GAP);
+  }, [viewerWidth, viewerIndex, pageOffset]);
 
   return (
     <>
