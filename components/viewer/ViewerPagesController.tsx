@@ -80,28 +80,6 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
     dispatch(viewerActions.initViewerState());
   }, [dispatch, settingChangeToggle]);
 
-  const getSpineId = useCallback((selectedHref: string): null | string => {
-    let selectedSpineId = null;
-
-    book.spines.some((spine) => {
-      const { href, id } = spine;
-      if (href && selectedHref.includes(href)) {
-        selectedSpineId = id;
-        return true;
-      }
-      return false;
-    });
-
-    return selectedSpineId;
-  }, [book.spines]);
-
-  const setPageCountBySpineId = useCallback((selectedSpineId) => {
-    const pageCountBySpineId = getPageCountBySpineId(viewerCountList, selectedSpineId);
-    if (pageCountBySpineId > -1) {
-      dispatch(viewerActions.setViewerPageCount(pageCountBySpineId));
-    }
-  }, [dispatch, viewerCountList]);
-
   const clickLeft = useCallback(() => {
     dispatch(viewerActions.setCountDownViewerPageCount());
   }, [dispatch]);
@@ -109,17 +87,6 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
   const clickRight = useCallback(() => {
     dispatch(viewerActions.setCountUpViewerPageCount());
   }, [dispatch]);
-
-  const clickLink = useCallback((spineHref, hashTag) => {
-    const spineId = getSpineId(spineHref);
-    if (spineId) {
-      setPageCountBySpineId(spineId);
-      dispatch(viewerActions.setViewerTag({
-        spineId,
-        tag: hashTag,
-      }));
-    }
-  }, [dispatch, getSpineId, setPageCountBySpineId]);
 
   return (
     <Container
@@ -140,7 +107,6 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
           spines={book.spines}
           spineViewers={book.spineViewers}
           setViewerCountList={setViewerCountList}
-          clickLink={clickLink}
         />
         {!isFirstPage && <LeftButton onClick={clickLeft}>Left</LeftButton>}
         {!isLastPage && <RightButton onClick={clickRight}>Right</RightButton>}

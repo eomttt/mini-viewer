@@ -1,4 +1,6 @@
-import React, { useRef, useEffect, useCallback } from 'react';
+import React, {
+  useRef, useEffect, useCallback, useMemo,
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import styled from 'styled-components';
@@ -53,29 +55,35 @@ const ViewerPage: React.FunctionComponent<Props> = ({
 
   const viewArticleRef = useRef(null);
 
+  const isSelectedSpineByLink = useMemo(() => viewerLink && viewerLink.spineId === spine.id,
+    [viewerLink, spine]);
+
   const pageOffset = usePageOffset(viewerCountList, viewerPageCount, spineIndex);
   const widthWithRatio = usePageWithWithRatio(viewerWidth, widthRatio);
 
   /**
    * When click a tag in spine(page), Calculate new page count
    */
+
+  const setPageCountByTag = useCallback((tagElement, tagElementPageCount) => {
+    const tagElementScroll = tagElement.offsetLeft;
+    const pageScroll = Math.floor(
+      tagElementScroll - (spineIndex * widthWithRatio),
+    );
+    const pageCount = Math.floor(pageScroll / widthWithRatio);
+    dispatch(viewerActions.setViewerPageCount(tagElementPageCount + pageCount));
+  }, [dispatch, spineIndex, widthWithRatio]);
+
   useEffect(() => {
-    if (widthWithRatio > 0 && viewerLink) {
-      const { spineId, tag } = viewerLink;
-      if (spineId === spine.id) {
-        const { current: viewArticleRefCurrent } = viewArticleRef;
-        const selectedIdEleInPage = viewArticleRefCurrent.querySelector(`#${tag}`);
-        if (selectedIdEleInPage) {
-          const pageScroll = Math.floor(
-            selectedIdEleInPage.offsetLeft - (spineIndex * widthWithRatio),
-          );
-          const pageCount = Math.floor(pageScroll / widthWithRatio);
-          dispatch(viewerActions.setViewerPageCount(viewerPageCount + pageCount));
-        }
+    if (widthWithRatio > 0 && isSelectedSpineByLink) {
+      const { current: viewArticleRefCurrent } = viewArticleRef;
+      const tagElement = viewArticleRefCurrent.querySelector(`#${viewerLink.tag}`);
+      if (tagElement) {
+        setPageCountByTag(tagElement, viewerPageCount);
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, widthWithRatio, spineIndex, spine, viewerLink]);
+  }, [dispatch, widthWithRatio, viewerLink, isSelectedSpineByLink, setPageCountByTag]);
 
   /**
    * Calculate: Column count

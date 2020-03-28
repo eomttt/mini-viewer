@@ -1,8 +1,10 @@
 import React, {
   useEffect, useCallback, useReducer, useRef, useMemo,
 } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+
+import * as viewerActions from '../../reducers/viewer';
 
 import {
   viewerPagesReducerStates,
@@ -19,6 +21,8 @@ import {
   VIEWER_PAGE_GAP,
 } from '../../constants/viewer';
 
+import { getPageCountBySpineId } from '../../lib/util';
+
 import { usePageWithWithRatio, usePagesOffset } from '../../hooks';
 
 const Container = styled.div`
@@ -34,14 +38,14 @@ interface Props {
   spines: EpubSpineItem[];
   spineViewers: string[];
   setViewerCountList: (countItems: ViewerCount[]) => void;
-  clickLink: (spineHref: string, hashTag: string) => void;
 }
 
 const ViewerPages: React.FunctionComponent<Props> = ({
   isAnalyzedBook,
   spines, spineViewers,
-  clickLink, setViewerCountList,
+  setViewerCountList,
 }) => {
+  const dispatch = useDispatch();
   const [privateStates, privateDispatch] = useReducer(viewerPagesReducer, viewerPagesReducerStates);
 
   const {
@@ -60,6 +64,39 @@ const ViewerPages: React.FunctionComponent<Props> = ({
 
   const pagesOffset = usePagesOffset(viewerCountList, viewerPageCount);
   const widthWithRatio = usePageWithWithRatio(viewerWidth, widthRatio);
+
+  const getSpineId = useCallback((selectedHref: string): null | string => {
+    let selectedSpineId = null;
+
+    spines.some((spine) => {
+      const { href, id } = spine;
+      if (href && selectedHref.includes(href)) {
+        selectedSpineId = id;
+        return true;
+      }
+      return false;
+    });
+
+    return selectedSpineId;
+  }, [spines]);
+
+  const setPageCount = useCallback((spineId) => {
+    const pageCount = getPageCountBySpineId(viewerCountList, spineId);
+    if (pageCount > -1) {
+      dispatch(viewerActions.setViewerPageCount(pageCount));
+    }
+  }, [dispatch, viewerCountList]);
+
+  const clickLink = useCallback((spineHref, hashTag) => {
+    const spineId = getSpineId(spineHref);
+    if (spineId) {
+      setPageCount(spineId);
+      dispatch(viewerActions.setViewerTag({
+        spineId,
+        tag: hashTag,
+      }));
+    }
+  }, [dispatch, getSpineId, setPageCount]);
 
   /**
    * Calculate: Callback from single page, Set count in private store,
