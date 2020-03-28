@@ -1,7 +1,6 @@
 import React, {
   useState, useEffect,
 } from 'react';
-import { useDispatch } from 'react-redux';
 import { NextPageContext, NextPage } from 'next';
 
 import Layout from '../components/Layout';
@@ -9,8 +8,6 @@ import ViewerPagesController from '../components/viewer/ViewerPagesController';
 import ViewerBottom from '../components/viewer/ViewerBottom';
 import ViewerHeader from '../components/viewer/ViewerHeader';
 import ViewerNotSupport from '../components/viewer/ViewerNotSupport';
-
-import * as viewerActions from '../reducers/viewer';
 
 import { getBookInfo } from '../lib/util';
 
@@ -21,16 +18,9 @@ import { BookInfo, BooksState } from '../interfaces/books';
 
 
 const Viewer: NextPage<BookInfo> = (bookInfo) => {
-  const dispatch = useDispatch();
   const [menuHeight, setMenuHeight] = useState(0);
 
   const { book, viewers, styleText } = bookInfo;
-
-  useEffect(() => {
-    if (bookInfo.book) {
-      dispatch(viewerActions.setCurrentBookInfo(bookInfo));
-    }
-  }, [dispatch, bookInfo]);
 
   useEffect(() => {
     const windowHeight = window.innerHeight;

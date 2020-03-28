@@ -9,6 +9,10 @@ export interface BookInfo {
   styleText: string;
 }
 
+export interface EpubBookViewer {
+
+}
+
 export interface EpubBook {
   titles: string[];
   creators: EpubAuthor[];

@@ -22,7 +22,7 @@ const Container = styled.div`
   height:  ${(props) => props.styleProps.height}px;
   white-space: nowrap;
   text-align: initial;
-  overflow: scroll;
+  overflow: hidden;
 `;
 
 interface Props {
@@ -105,11 +105,12 @@ const ViewerPages: React.FunctionComponent<Props> = ({
             isAnalyzedBook={isAnalyzedBook}
             viewerWidth={viewerWidth}
             pageOffset={pageOffset}
+            spineIndex={index}
             spineViewer={spineViewer}
             spine={spines[index]}
             fontSize={viewerFontSize || FONT_SIZE_RANGE.MIN}
             lineHeight={viewerLineHeihgt || LINE_HEIGHT_RANGE.MIN}
-            setCountCallback={(count) => setCountCallback(count, index)}
+            setCountCallback={setCountCallback}
             clickLink={clickLink}
           />
         ))

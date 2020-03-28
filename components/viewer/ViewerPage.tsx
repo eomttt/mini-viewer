@@ -1,4 +1,5 @@
 import React, { useRef, useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
@@ -8,12 +9,16 @@ import {
   ViewerContents,
 } from '../../styles/viewer';
 
+import * as viewerActions from '../../reducers/viewer';
+
 import { VIEWER_PAGE_GAP } from '../../constants/viewer';
 
 import { EpubSpineItem } from '../../interfaces/books';
+import { ReducerStates } from '../../interfaces';
+import { ViewerState } from '../../interfaces/viewer';
 
 const Article = styled(ViewerArticle)`
-  overflow: scroll;
+  overflow: hidden;
   text-align: initial;
 `;
 
@@ -21,38 +26,49 @@ interface Props {
   isAnalyzedBook: boolean;
   viewerWidth: number;
   pageOffset: number;
+  spineIndex: number;
   spineViewer: string;
   spine: EpubSpineItem;
   fontSize: number;
   lineHeight: number;
-  setCountCallback: (count: number) => void;
+  setCountCallback: (count: number, index: number) => void;
   clickLink: (spineHref: string, hashId: string) => void;
 }
 
 const ViewerPage: React.FunctionComponent<Props> = ({
   isAnalyzedBook,
   viewerWidth,
-  pageOffset, spineViewer,
-  spine,
+  pageOffset,
+  spineIndex, spineViewer, spine,
   fontSize, lineHeight,
   setCountCallback,
   clickLink,
 }) => {
+  const dispatch = useDispatch();
+
+  const {
+    viewerLink, viewerPageCount,
+  }: ViewerState = useSelector((state: ReducerStates) => state.viewer);
+
   const viewArticleRef = useRef(null);
 
   useEffect(() => {
-    const { current: viewArticleRefCurrent } = viewArticleRef;
-    if (viewerWidth > 0) {
-      const selectedIdEleInPage = viewArticleRefCurrent.querySelector('#fnref-319f4450fc8db72330a2ed9f1f218f4e53f716eb');
-
-      if (selectedIdEleInPage) {
-        console.log('selectedIdEleInPage.offsetLeft', selectedIdEleInPage.offsetLeft);
-        // const pageScroll = Math.floor(selectedIdEleInPage.offsetLeft - (viewerIndex * viewerWidth));
-        // const pageCount = Math.floor(pageScroll / viewerWidth);
-        // console.log('pageCount', viewerIndex, pageCount);
+    if (viewerWidth > 0 && viewerLink) {
+      const { spineId, tag } = viewerLink;
+      if (spineId === spine.id) {
+        const { current: viewArticleRefCurrent } = viewArticleRef;
+        const selectedIdEleInPage = viewArticleRefCurrent.querySelector(`#${tag}`);
+        if (selectedIdEleInPage) {
+          const pageScroll = Math.floor(
+            selectedIdEleInPage.offsetLeft - (spineIndex * viewerWidth),
+          );
+          const pageCount = Math.floor(pageScroll / viewerWidth);
+          dispatch(viewerActions.setViewerPageCount(viewerPageCount + pageCount));
+        }
       }
     }
-  }, [viewerWidth]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, viewerWidth, spineIndex, spine, viewerLink]);
 
   /**
    * Calculate: Column count
@@ -63,12 +79,12 @@ const ViewerPage: React.FunctionComponent<Props> = ({
       setTimeout(() => {
         if (viewerWidth > 0 && !isAnalyzedBook) {
           const count = viewArticleRefCurrent.scrollWidth / (viewerWidth + VIEWER_PAGE_GAP);
-          setCountCallback(count);
+          setCountCallback(count, spineIndex);
         }
       });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [viewArticleRef, viewerWidth, isAnalyzedBook]);
+  }, [viewArticleRef, viewerWidth, isAnalyzedBook, spineIndex]);
 
   /**
    * Viewer: Set offset scroll value
@@ -79,18 +95,17 @@ const ViewerPage: React.FunctionComponent<Props> = ({
   }, [pageOffset, viewerWidth]);
 
   const clickPage = useCallback((e) => {
-    e.preventDefault();
-
-    const anchorHref = e.target.getAttribute('href');
-    if (anchorHref) {
-      const [spineHref, hashId] = anchorHref.split('#');
-
-      if (spineHref) {
-        clickLink(spineHref, hashId);
-      } else {
-        clickLink(spine.href, hashId);
-      }
+    let node = e.target;
+    while (node && node.localName !== 'a') {
+      node = node.parentNode;
     }
+    if (node) {
+      e.preventDefault();
+      const [spineHref, hashId] = node.href.split('#');
+      clickLink(spineHref || spine.href, hashId);
+      return false; // stop handling the click
+    }
+    return true; // handle other clicks
   }, [clickLink, spine]);
 
   return (
@@ -100,7 +115,7 @@ const ViewerPage: React.FunctionComponent<Props> = ({
         fontSize,
         lineHeight,
       }}
-      onClick={clickPage}
+      onClickCapture={clickPage}
     >
       <ViewerSection
         styleProps={{

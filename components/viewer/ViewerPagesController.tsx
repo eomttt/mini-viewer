@@ -21,6 +21,7 @@ import { usePagesOffset, usePageOffset } from '../../hooks';
 import { getPageCountBySpineId } from '../../lib/util';
 
 const Container = styled.div`
+  margin: 0 ${(100 - VIEWER_WIDTH_RATIO) / 2}%;
   padding: ${(props) => props.styleProps.menuHeight}px 0;
   background-color: ${(props) => props.styleProps.backgroundColor};
   text-align: center;
@@ -46,7 +47,6 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
   const dispatch = useDispatch();
 
   const {
-    currentBookInfo,
     viewerWidth, viewerHeight,
     viewerCountList, viewerPageCount, viewerWholePageCount,
   }: ViewerState = useSelector((state: ReducerStates) => state.viewer);
@@ -91,6 +91,21 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
     dispatch(viewerActions.initViewerState());
   }, [dispatch, settingChangeToggle]);
 
+  const getSpineId = useCallback((selectedHref: string): null | string => {
+    let selectedSpineId = null;
+
+    spines.some((spine) => {
+      const { href, id } = spine;
+      if (href && selectedHref.includes(href)) {
+        selectedSpineId = id;
+        return true;
+      }
+      return false;
+    });
+
+    return selectedSpineId;
+  }, [spines]);
+
   const setPageCountBySpineId = useCallback((selectedSpineId) => {
     const pageCountBySpineId = getPageCountBySpineId(viewerCountList, selectedSpineId);
     if (pageCountBySpineId > -1) {
@@ -112,27 +127,15 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
   }, [dispatch]);
 
   const clickLink = useCallback((spineHref, hashTag) => {
-    console.log(spineHref, hashTag);
-
-    if (currentBookInfo) {
-      const { book } = currentBookInfo;
-      const { items } = book;
-      let selectedSpineId = null;
-
-      items.some((item) => {
-        const { href } = item;
-        if (spineHref.includes(href)) {
-          selectedSpineId = item.id;
-          return true;
-        }
-        return false;
-      });
-
-      if (selectedSpineId) {
-        setPageCountBySpineId(selectedSpineId);
-      }
+    const spineId = getSpineId(spineHref);
+    if (spineId) {
+      setPageCountBySpineId(spineId);
+      dispatch(viewerActions.setViewerTag({
+        spineId,
+        tag: hashTag,
+      }));
     }
-  }, [currentBookInfo, setPageCountBySpineId]);
+  }, [dispatch, getSpineId, setPageCountBySpineId]);
 
   return (
     <Container
@@ -141,7 +144,7 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
         backgroundColor,
       }}
     >
-      {/* {!isAnalyzedBook && <Loading text="로딩 중..." />} */}
+      {!isAnalyzedBook && <Loading text="로딩 중..." />}
       <ViewerPages
         viewerWidth={calculateViewerWidth(viewerWidth, widthRatio)}
         viewerHeight={viewerHeight}
