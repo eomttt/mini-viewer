@@ -86,3 +86,27 @@ export const getBookInfo = async ({
 export const isProduction = () => process.env.NODE_ENV === 'production';
 
 export const isEpubFile = (fileName) => fileName.includes('.epub');
+
+export const getPageCountBySpineId = (viewerCountList, spineId) => {
+  let pageCountIndex = -1;
+  let pageCount = -1;
+  viewerCountList.some((viewerCount, index) => {
+    if (viewerCount.spineId === spineId) {
+      pageCountIndex = index;
+      return true;
+    }
+    return false;
+  });
+
+  if (pageCountIndex > -1) {
+    pageCount = 0;
+    viewerCountList.some((viewerCount, index) => {
+      if (index < pageCountIndex) {
+        pageCount += viewerCount.count;
+        return false;
+      }
+      return true;
+    });
+  }
+  return pageCount;
+};

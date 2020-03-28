@@ -56,7 +56,7 @@ const Viewer: NextPage<BookInfo> = (bookInfo) => {
       <ViewerPagesController
         menuHeight={menuHeight}
         spines={book.spines}
-        viewers={viewers}
+        spineViewers={viewers}
       />
       <ViewerBottom
         menuHeight={menuHeight}

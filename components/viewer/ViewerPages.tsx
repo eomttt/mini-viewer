@@ -29,12 +29,12 @@ interface Props {
   viewerWidth: number;
   viewerHeight: number;
   isAnalyzedBook: boolean;
-  viewers: string[];
-  viewerIndex: number;
+  spineViewers: string[];
   spines: EpubSpineItem[];
+  pagesOffset: number;
   pageOffset: number;
   setViewerCountList: (countItems: ViewerCount[]) => void;
-  clickLink: (viewerIndex: string, hashTag: string) => void;
+  clickLink: (spineHref: string, hashTag: string) => void;
   viewerFontSize?: number;
   viewerLineHeihgt?: number;
 }
@@ -42,8 +42,8 @@ interface Props {
 const ViewerPages: React.FunctionComponent<Props> = ({
   viewerWidth, viewerHeight,
   isAnalyzedBook,
-  viewers, viewerIndex,
-  spines, pageOffset,
+  spineViewers, spines,
+  pagesOffset, pageOffset,
   clickLink, setViewerCountList,
   viewerFontSize, viewerLineHeihgt,
 }) => {
@@ -51,14 +51,15 @@ const ViewerPages: React.FunctionComponent<Props> = ({
   const containerRef = useRef(null);
   const isAllCountItemsSet = useMemo(() => {
     const { countItems } = privateStates;
-    return countItems.length >= viewers.length;
-  }, [privateStates, viewers]);
+    return countItems.length >= spineViewers.length;
+  }, [privateStates, spineViewers]);
 
   /**
    * Calculate: Callback from single page, Set count in private store,
    * Set count in public store when calculated all in private store
    */
   const setCountCallback = useCallback((count: number, index: number) => {
+    // console.log("AAAA", ref);
     const spine = spines[index];
     privateDispatch(addCount({
       index,
@@ -85,18 +86,8 @@ const ViewerPages: React.FunctionComponent<Props> = ({
    */
   useEffect(() => {
     const { current: containerCurrent } = containerRef;
-    containerCurrent.scrollLeft = viewerIndex * (viewerWidth + VIEWER_PAGE_GAP);
-  }, [viewerWidth, viewerIndex, pageOffset]);
-
-  const testClick = (e) => {
-    e.preventDefault();
-
-    const anchorHref = e.target.getAttribute('href');
-    if (anchorHref) {
-      const [hrefLink, hashId] = anchorHref.split('#');
-      clickLink(hrefLink, hashId);
-    }
-  };
+    containerCurrent.scrollLeft = pagesOffset * (viewerWidth + VIEWER_PAGE_GAP);
+  }, [viewerWidth, pagesOffset, pageOffset]);
 
   return (
     <>
@@ -106,26 +97,22 @@ const ViewerPages: React.FunctionComponent<Props> = ({
           width: viewerWidth,
           height: viewerHeight,
         }}
-        onClick={testClick}
       >
         {
-        viewers.map((viewer, index) => {
-          // if (index === 2) {
-            return (
-              <ViewerPage
-                key={viewer}
-                isAnalyzedBook={isAnalyzedBook}
-                viewerWidth={viewerWidth}
-                viewerOffset={pageOffset}
-                viewer={viewer}
-                viewerIndex={index}
-                fontSize={viewerFontSize || FONT_SIZE_RANGE.MIN}
-                lineHeight={viewerLineHeihgt || LINE_HEIGHT_RANGE.MIN}
-                setCountCallback={(count) => setCountCallback(count, index)}
-              />
-            );
-          // }
-        })
+        spineViewers.map((spineViewer, index) => (
+          <ViewerPage
+            key={spineViewer}
+            isAnalyzedBook={isAnalyzedBook}
+            viewerWidth={viewerWidth}
+            pageOffset={pageOffset}
+            spineViewer={spineViewer}
+            spine={spines[index]}
+            fontSize={viewerFontSize || FONT_SIZE_RANGE.MIN}
+            lineHeight={viewerLineHeihgt || LINE_HEIGHT_RANGE.MIN}
+            setCountCallback={(count) => setCountCallback(count, index)}
+            clickLink={clickLink}
+          />
+        ))
       }
       </Container>
     </>

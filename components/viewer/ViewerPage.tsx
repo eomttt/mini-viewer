@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 
 import styled from 'styled-components';
 
@@ -10,6 +10,8 @@ import {
 
 import { VIEWER_PAGE_GAP } from '../../constants/viewer';
 
+import { EpubSpineItem } from '../../interfaces/books';
+
 const Article = styled(ViewerArticle)`
   overflow: scroll;
   text-align: initial;
@@ -18,41 +20,39 @@ const Article = styled(ViewerArticle)`
 interface Props {
   isAnalyzedBook: boolean;
   viewerWidth: number;
-  viewerOffset: number;
-  viewer: string;
-  viewerIndex: number;
+  pageOffset: number;
+  spineViewer: string;
+  spine: EpubSpineItem;
   fontSize: number;
   lineHeight: number;
   setCountCallback: (count: number) => void;
+  clickLink: (spineHref: string, hashId: string) => void;
 }
 
 const ViewerPage: React.FunctionComponent<Props> = ({
   isAnalyzedBook,
   viewerWidth,
-  viewerOffset, viewer, viewerIndex,
+  pageOffset, spineViewer,
+  spine,
   fontSize, lineHeight,
   setCountCallback,
+  clickLink,
 }) => {
   const viewArticleRef = useRef(null);
 
-  /**
-   * viewer padding 도 offsetLeft 에 포함된다.
-   * viewerWidth 를 통해서 몇번째 페이지에 있는지 계산 할 수 있을듯
-   * viewerIndex 도 알아야할듯
-   */
   useEffect(() => {
     const { current: viewArticleRefCurrent } = viewArticleRef;
-    if (viewArticleRefCurrent.querySelector('#fnref-319f4450fc8db72330a2ed9f1f218f4e53f716eb')) {
-      console.log('Offset left', document.getElementById('fnref-319f4450fc8db72330a2ed9f1f218f4e53f716eb').offsetLeft);
-      console.log('viewerIndex', viewerIndex);
-      console.log('viewer width', viewerWidth);
+    if (viewerWidth > 0) {
+      const selectedIdEleInPage = viewArticleRefCurrent.querySelector('#fnref-319f4450fc8db72330a2ed9f1f218f4e53f716eb');
 
-
-      // const tagScroll = document.getElementById('fnref-319f4450fc8db72330a2ed9f1f218f4e53f716eb').offsetLeft - (viewerIndex * viewerWidth);
-      // const pageCount = Math.floor(tagScroll / viewerWidth);
-      // console.log("viewerIndex", pageCount);
+      if (selectedIdEleInPage) {
+        console.log('selectedIdEleInPage.offsetLeft', selectedIdEleInPage.offsetLeft);
+        // const pageScroll = Math.floor(selectedIdEleInPage.offsetLeft - (viewerIndex * viewerWidth));
+        // const pageCount = Math.floor(pageScroll / viewerWidth);
+        // console.log('pageCount', viewerIndex, pageCount);
+      }
     }
-  }, [viewerIndex, viewerWidth]);
+  }, [viewerWidth]);
 
   /**
    * Calculate: Column count
@@ -75,8 +75,23 @@ const ViewerPage: React.FunctionComponent<Props> = ({
    */
   useEffect(() => {
     const { current: viewArticleRefCurrent } = viewArticleRef;
-    viewArticleRefCurrent.scrollLeft = viewerOffset * (viewerWidth + VIEWER_PAGE_GAP);
-  }, [viewerOffset, viewerWidth]);
+    viewArticleRefCurrent.scrollLeft = pageOffset * (viewerWidth + VIEWER_PAGE_GAP);
+  }, [pageOffset, viewerWidth]);
+
+  const clickPage = useCallback((e) => {
+    e.preventDefault();
+
+    const anchorHref = e.target.getAttribute('href');
+    if (anchorHref) {
+      const [spineHref, hashId] = anchorHref.split('#');
+
+      if (spineHref) {
+        clickLink(spineHref, hashId);
+      } else {
+        clickLink(spine.href, hashId);
+      }
+    }
+  }, [clickLink, spine]);
 
   return (
     <Article
@@ -85,6 +100,7 @@ const ViewerPage: React.FunctionComponent<Props> = ({
         fontSize,
         lineHeight,
       }}
+      onClick={clickPage}
     >
       <ViewerSection
         styleProps={{
@@ -94,7 +110,7 @@ const ViewerPage: React.FunctionComponent<Props> = ({
         }}
       >
         <ViewerContents
-          dangerouslySetInnerHTML={{ __html: viewer }}
+          dangerouslySetInnerHTML={{ __html: spineViewer }}
         />
       </ViewerSection>
     </Article>

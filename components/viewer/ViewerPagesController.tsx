@@ -1,4 +1,6 @@
-import React, { useMemo, useEffect, useCallback, useState } from 'react';
+import React, {
+  useMemo, useEffect, useCallback,
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 
@@ -15,7 +17,8 @@ import { VIEWER_WIDTH_RATIO, VIEWER_HEIGHT_RATIO } from '../../constants/viewer'
 
 import { ViewerButton } from '../../styles/viewer';
 
-import { useViewerIndex, usePageOffset, usePageCountBySpineId } from '../../hooks';
+import { usePagesOffset, usePageOffset } from '../../hooks';
+import { getPageCountBySpineId } from '../../lib/util';
 
 const Container = styled.div`
   padding: ${(props) => props.styleProps.menuHeight}px 0;
@@ -34,15 +37,13 @@ const LeftButton = styled(ViewerButton)`
 interface Props {
   menuHeight: number;
   spines: EpubSpineItem[];
-  viewers: string[];
+  spineViewers: string[];
 }
 
 const ViewerPagesController: React.FunctionComponent<Props> = ({
-  menuHeight, spines, viewers,
+  menuHeight, spines, spineViewers,
 }) => {
   const dispatch = useDispatch();
-
-  const [nowSpineId, setNowSpineId] = useState('');
 
   const {
     currentBookInfo,
@@ -53,15 +54,14 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
     fontSize, lineHeight, widthRatio, backgroundColor, settingChangeToggle,
   }: ViewerSettingState = useSelector((state: ReducerStates) => state.viewerSetting);
 
-  const isAnalyzedBook = useMemo(() => viewerCountList.length >= viewers.length,
-    [viewerCountList, viewers]);
+  const isAnalyzedBook = useMemo(() => viewerCountList.length >= spineViewers.length,
+    [viewerCountList, spineViewers]);
   const isFirstPage = useMemo(() => viewerPageCount === 0, [viewerPageCount]);
   const isLastPage = useMemo(() => viewerPageCount === viewerWholePageCount,
     [viewerPageCount, viewerWholePageCount]);
 
-  const viewerIndex = useViewerIndex(viewerCountList, viewerPageCount);
-  const pageCountBySpineId = usePageCountBySpineId(viewerCountList, nowSpineId);
-  const pageOffset = usePageOffset(viewerCountList, viewerPageCount, viewerIndex);
+  const pagesOffset = usePagesOffset(viewerCountList, viewerPageCount);
+  const pageOffset = usePageOffset(viewerCountList, viewerPageCount, pagesOffset);
 
   const setViewerCountList = useCallback((countItems: ViewerCount[]) => {
     dispatch(viewerActions.setViewerCountList(countItems));
@@ -91,11 +91,12 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
     dispatch(viewerActions.initViewerState());
   }, [dispatch, settingChangeToggle]);
 
-  useEffect(() => {
+  const setPageCountBySpineId = useCallback((selectedSpineId) => {
+    const pageCountBySpineId = getPageCountBySpineId(viewerCountList, selectedSpineId);
     if (pageCountBySpineId > -1) {
       dispatch(viewerActions.setViewerPageCount(pageCountBySpineId));
     }
-  }, [dispatch, pageCountBySpineId]);
+  }, [dispatch, viewerCountList]);
 
   const calculateViewerWidth = useCallback(
     (nowWidth, newRatio) => Math.floor(Number(nowWidth) * (Number(newRatio) / 100)),
@@ -110,8 +111,8 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
     dispatch(viewerActions.setCountUpViewerPageCount());
   }, [dispatch]);
 
-  const clickLink = useCallback((hrefLink, hashTag) => {
-    console.log(hrefLink, hashTag);
+  const clickLink = useCallback((spineHref, hashTag) => {
+    console.log(spineHref, hashTag);
 
     if (currentBookInfo) {
       const { book } = currentBookInfo;
@@ -120,7 +121,7 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
 
       items.some((item) => {
         const { href } = item;
-        if (hrefLink.includes(href)) {
+        if (spineHref.includes(href)) {
           selectedSpineId = item.id;
           return true;
         }
@@ -128,10 +129,10 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
       });
 
       if (selectedSpineId) {
-        setNowSpineId(selectedSpineId);
+        setPageCountBySpineId(selectedSpineId);
       }
     }
-  }, [currentBookInfo]);
+  }, [currentBookInfo, setPageCountBySpineId]);
 
   return (
     <Container
@@ -145,9 +146,9 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
         viewerWidth={calculateViewerWidth(viewerWidth, widthRatio)}
         viewerHeight={viewerHeight}
         isAnalyzedBook={isAnalyzedBook}
-        viewers={viewers}
-        viewerIndex={viewerIndex}
+        spineViewers={spineViewers}
         spines={spines}
+        pagesOffset={pagesOffset}
         pageOffset={pageOffset}
         setViewerCountList={setViewerCountList}
         clickLink={clickLink}

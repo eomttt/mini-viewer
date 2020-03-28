@@ -9,7 +9,8 @@ import * as viewerActions from '../../reducers/viewer';
 
 import { ReducerStates } from '../../interfaces';
 import { EpubNcxItem, EpubNavPoint } from '../../interfaces/books';
-import { usePageCountBySpineId } from '../../hooks';
+
+import { getPageCountBySpineId } from '../../lib/util';
 
 const Container = styled.div`
   position: relative;
@@ -54,17 +55,15 @@ const ViewerNcx: React.FunctionComponent<Props> = ({ ncxItem }) => {
   const dispatch = useDispatch();
 
   const [isShowNcx, setIsShowNcx] = useState(false);
-  const [nowSpineId, setNowSpineId] = useState('');
 
   const { viewerCountList } = useSelector((state: ReducerStates) => state.viewer);
 
-  const pageCountBySpineId = usePageCountBySpineId(viewerCountList, nowSpineId);
-
-  useEffect(() => {
+  const setPageCountBySpineId = useCallback((selectedSpineId) => {
+    const pageCountBySpineId = getPageCountBySpineId(viewerCountList, selectedSpineId);
     if (pageCountBySpineId > -1) {
       dispatch(viewerActions.setViewerPageCount(pageCountBySpineId));
     }
-  }, [dispatch, pageCountBySpineId]);
+  }, [dispatch, viewerCountList]);
 
   const toggleShowNcs = useCallback(() => {
     setIsShowNcx(!isShowNcx);
@@ -72,8 +71,8 @@ const ViewerNcx: React.FunctionComponent<Props> = ({ ncxItem }) => {
 
   const selectNavPoint = useCallback((point: EpubNavPoint) => {
     setIsShowNcx(false);
-    setNowSpineId(point.spine.id);
-  }, []);
+    setPageCountBySpineId(point.spine.id);
+  }, [setPageCountBySpineId]);
 
   return (
     <Container>
