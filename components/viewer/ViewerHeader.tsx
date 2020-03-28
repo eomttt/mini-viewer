@@ -1,14 +1,17 @@
 import React, { useCallback } from 'react';
+import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
 
 import ViewerNcx from './ViewerNcx';
 import ViewerSetting from './ViewerSetting';
 
-import { EpubNcxItem, EpubAuthor } from '../../interfaces/books';
+import { EpubBookViewer } from '../../interfaces/books';
 
 import { titleFontSize } from '../../styles';
 import { ViewerMenu } from '../../styles/viewer';
+
+import { ReducerStates } from '../../interfaces';
 
 const Container = styled(ViewerMenu)`
   height: ${(props) => props.styleProps.height - 10}px;
@@ -46,20 +49,18 @@ const HeaderSetting = styled.div`
 
 interface Props {
   menuHeight: number;
-  titles: string[];
-  authors: EpubAuthor[];
-  ncxItem: EpubNcxItem;
 }
 
 const ViewerHeader: React.FunctionComponent<Props> = ({
-  menuHeight, titles, authors, ncxItem,
+  menuHeight,
 }) => {
+  const book: EpubBookViewer | null = useSelector((state: ReducerStates) => state.book);
   const getString = useCallback((items) => items.reduce((acc, cur, index) => `${acc}${index > 0 ? ', ' : ''}${cur}`, ''), []);
 
   return (
     <>
       {
-      menuHeight > 0
+      book && menuHeight > 0
       && (
       <Container
         styleProps={{
@@ -68,14 +69,14 @@ const ViewerHeader: React.FunctionComponent<Props> = ({
       >
         <Info>
           <Title>
-            {getString(titles)}
+            {getString(book.titles)}
           </Title>
           <Author>
-            {getString(authors.map((authorItem) => authorItem.name))}
+            {getString(book.contributors.map((authorItem) => authorItem.name))}
           </Author>
         </Info>
         <HeaderNcx>
-          <ViewerNcx ncxItem={ncxItem} />
+          <ViewerNcx ncxItem={book.ncx} />
         </HeaderNcx>
         <HeaderSetting>
           <ViewerSetting />

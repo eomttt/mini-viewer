@@ -9,8 +9,10 @@ export interface BookInfo {
   styleText: string;
 }
 
-export interface EpubBookViewer {
-
+export interface EpubBookViewer extends EpubBook {
+  fileName: string;
+  spineViewers: string[];
+  styleText: string;
 }
 
 export interface EpubBook {

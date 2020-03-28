@@ -10,20 +10,24 @@ import ViewerPages from './ViewerPages';
 import * as viewerActions from '../../reducers/viewer';
 
 import { ReducerStates } from '../../interfaces';
-import { EpubSpineItem } from '../../interfaces/books';
+import { EpubBookViewer } from '../../interfaces/books';
 import { ViewerCount, ViewerState, ViewerSettingState } from '../../interfaces/viewer';
-
-import { VIEWER_WIDTH_RATIO, VIEWER_HEIGHT_RATIO } from '../../constants/viewer';
 
 import { ViewerButton } from '../../styles/viewer';
 
-import { usePagesOffset, usePageOffset } from '../../hooks';
+import { usePageWithWithRatio } from '../../hooks';
+
 import { getPageCountBySpineId } from '../../lib/util';
 
 const Container = styled.div`
-  margin: 0 ${(100 - VIEWER_WIDTH_RATIO) / 2}%;
-  padding: ${(props) => props.styleProps.menuHeight}px 0;
   background-color: ${(props) => props.styleProps.backgroundColor};
+`;
+
+const Content = styled.div`
+  width: ${(props) => props.styleProps.width}px;
+  height: ${(props) => props.styleProps.height}px;
+  margin: 0 calc((100% - ${(props) => props.styleProps.width}px) / 2);
+  padding: ${(props) => props.styleProps.menuHeight}px 0;
   text-align: center;
 `;
 
@@ -37,12 +41,11 @@ const LeftButton = styled(ViewerButton)`
 
 interface Props {
   menuHeight: number;
-  spines: EpubSpineItem[];
-  spineViewers: string[];
+  book: EpubBookViewer;
 }
 
 const ViewerPagesController: React.FunctionComponent<Props> = ({
-  menuHeight, spines, spineViewers,
+  menuHeight, book,
 }) => {
   const dispatch = useDispatch();
 
@@ -51,33 +54,19 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
     viewerCountList, viewerPageCount, viewerWholePageCount,
   }: ViewerState = useSelector((state: ReducerStates) => state.viewer);
   const {
-    fontSize, lineHeight, widthRatio, backgroundColor, settingChangeToggle,
+    widthRatio, backgroundColor, settingChangeToggle,
   }: ViewerSettingState = useSelector((state: ReducerStates) => state.viewerSetting);
 
-  const isAnalyzedBook = useMemo(() => viewerCountList.length >= spineViewers.length,
-    [viewerCountList, spineViewers]);
+  const isAnalyzedBook = useMemo(() => viewerCountList.length >= book.spineViewers.length,
+    [viewerCountList, book.spineViewers]);
   const isFirstPage = useMemo(() => viewerPageCount === 0, [viewerPageCount]);
   const isLastPage = useMemo(() => viewerPageCount === viewerWholePageCount,
     [viewerPageCount, viewerWholePageCount]);
 
-  const pagesOffset = usePagesOffset(viewerCountList, viewerPageCount);
-  const pageOffset = usePageOffset(viewerCountList, viewerPageCount, pagesOffset);
+  const widthWithRatio = usePageWithWithRatio(viewerWidth, widthRatio);
 
   const setViewerCountList = useCallback((countItems: ViewerCount[]) => {
     dispatch(viewerActions.setViewerCountList(countItems));
-  }, [dispatch]);
-
-  useEffect(() => {
-    dispatch(viewerActions.setViewerWidth(
-      Math.floor(window.innerWidth * (VIEWER_WIDTH_RATIO / 100)),
-    ));
-    dispatch(viewerActions.setViewerHeight(
-      Math.floor(window.innerHeight * (VIEWER_HEIGHT_RATIO / 100)),
-    ));
-
-    return () => {
-      dispatch(viewerActions.initViewerState());
-    };
   }, [dispatch]);
 
   useEffect(() => {
@@ -94,7 +83,7 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
   const getSpineId = useCallback((selectedHref: string): null | string => {
     let selectedSpineId = null;
 
-    spines.some((spine) => {
+    book.spines.some((spine) => {
       const { href, id } = spine;
       if (href && selectedHref.includes(href)) {
         selectedSpineId = id;
@@ -104,7 +93,7 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
     });
 
     return selectedSpineId;
-  }, [spines]);
+  }, [book.spines]);
 
   const setPageCountBySpineId = useCallback((selectedSpineId) => {
     const pageCountBySpineId = getPageCountBySpineId(viewerCountList, selectedSpineId);
@@ -112,11 +101,6 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
       dispatch(viewerActions.setViewerPageCount(pageCountBySpineId));
     }
   }, [dispatch, viewerCountList]);
-
-  const calculateViewerWidth = useCallback(
-    (nowWidth, newRatio) => Math.floor(Number(nowWidth) * (Number(newRatio) / 100)),
-    [],
-  );
 
   const clickLeft = useCallback(() => {
     dispatch(viewerActions.setCountDownViewerPageCount());
@@ -140,26 +124,27 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
   return (
     <Container
       styleProps={{
-        menuHeight,
         backgroundColor,
       }}
     >
-      {!isAnalyzedBook && <Loading text="로딩 중..." />}
-      <ViewerPages
-        viewerWidth={calculateViewerWidth(viewerWidth, widthRatio)}
-        viewerHeight={viewerHeight}
-        isAnalyzedBook={isAnalyzedBook}
-        spineViewers={spineViewers}
-        spines={spines}
-        pagesOffset={pagesOffset}
-        pageOffset={pageOffset}
-        setViewerCountList={setViewerCountList}
-        clickLink={clickLink}
-        viewerFontSize={fontSize}
-        viewerLineHeihgt={lineHeight}
-      />
-      {!isFirstPage && <LeftButton onClick={clickLeft}>Left</LeftButton>}
-      {!isLastPage && <RightButton onClick={clickRight}>Right</RightButton>}
+      <Content
+        styleProps={{
+          width: widthWithRatio,
+          height: viewerHeight,
+          menuHeight,
+        }}
+      >
+        {!isAnalyzedBook && <Loading text="로딩 중..." />}
+        <ViewerPages
+          isAnalyzedBook={isAnalyzedBook}
+          spines={book.spines}
+          spineViewers={book.spineViewers}
+          setViewerCountList={setViewerCountList}
+          clickLink={clickLink}
+        />
+        {!isFirstPage && <LeftButton onClick={clickLeft}>Left</LeftButton>}
+        {!isLastPage && <RightButton onClick={clickRight}>Right</RightButton>}
+      </Content>
     </Container>
   );
 };

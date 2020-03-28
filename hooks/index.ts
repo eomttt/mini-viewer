@@ -25,3 +25,7 @@ export const usePageOffset = (viewerCountList, viewerPageCount, viewerIndex) => 
   });
   return columnOffset;
 }, [viewerCountList, viewerPageCount, viewerIndex]);
+
+export const usePageWithWithRatio = (nowWidth, newRatio) => useMemo(() => {
+  return Math.floor(Number(nowWidth) * (Number(newRatio) / 100));
+}, [nowWidth, newRatio]);

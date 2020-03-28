@@ -1,19 +1,23 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import Head from 'next/head';
+import { ReducerStates } from '../interfaces';
+import { EpubBookViewer } from '../interfaces/books';
 
-interface Props {
-  styleText?: string;
-}
 
-const Layout: React.FunctionComponent<Props> = ({ children, styleText }) => (
-  <>
-    <Head>
-      <style>
-        {styleText}
-      </style>
-    </Head>
-    {children}
-  </>
-);
+const Layout: React.FunctionComponent = ({ children }) => {
+  const book: EpubBookViewer | null = useSelector((state: ReducerStates) => state.book);
+
+  return (
+    <>
+      <Head>
+        <style>
+          {book.styleText ? book.styleText : ''}
+        </style>
+      </Head>
+      {children}
+    </>
+  );
+};
 
 export default Layout;
