@@ -1,10 +1,14 @@
 import { ReducerAction } from '../interfaces';
-import { ViewerState, ViewerCount, ViewerLink } from '../interfaces/viewer';
+import {
+  ViewerState, ViewerCount,
+  ViewerLink, ViewerPageOffsetInfo,
+} from '../interfaces/viewer';
 
 export const initialState: ViewerState = {
   viewerWidth: 0,
   viewerHeight: 0,
   viewerCountList: [],
+  viewerSpineId: '',
   viewerPageCount: 0,
   viewerWholePageCount: 0,
 };
@@ -16,12 +20,14 @@ export const SET_VIEWER_COLUMN_COUNT_LIST = 'viewer/SET_VIEWER_COLUMN_COUNT_LIST
 export const SET_VIEWER_WIDTH = 'viewer/SET_VIEWER_WIDTH';
 export const SET_VIEWER_HEIGHT = 'viewer/SET_VIEWER_HEIGHT';
 
+export const SET_VIEWER_SPINE_ID = 'viewer/SET_VIEWER_SPINE_ID';
 export const SET_VIEWER_PAGE_WHOLE_COUNT = 'viewer/SET_VIEWER_PAGE_WHOLE_COUNT';
 export const SET_VIEWER_PAGE_COUNT = 'viewer/SET_VIEWER_PAGE_COUNT';
 export const SET_COUNT_UP_VIEWER_PAGE_COUNT = 'viewer/SET_COUNT_UP_VIEWER_PAGE_COUNT';
 export const SET_COUNT_DOWN_VIEWER_PAGE_COUNT = 'viewer/SET_COUNT_DOWN_VIEWER_PAGE_COUNT';
 
 export const SET_VIEWER_LINK = 'viewer/SET_VIEWER_LINK';
+export const SET_VIEWER_PAGE_OFFSET_INFO = 'viewer/SET_VIEWR_PAGE_OFFSET_INFO';
 
 // Action creators
 export const initViewerState = () => ({
@@ -46,6 +52,13 @@ export const setViewerHeight = (height: number) => ({
   type: SET_VIEWER_HEIGHT,
   payload: {
     height,
+  },
+});
+
+export const setViewerSpineId = (spineId: string) => ({
+  type: SET_VIEWER_SPINE_ID,
+  payload: {
+    spineId,
   },
 });
 
@@ -78,6 +91,13 @@ export const setViewerTag = (params: ViewerLink) => ({
   },
 });
 
+export const setViewerPageOffsetInfo = (params: ViewerPageOffsetInfo) => ({
+  type: SET_VIEWER_PAGE_OFFSET_INFO,
+  payload: {
+    ...params,
+  },
+});
+
 export default (state = initialState, action: ReducerAction): ViewerState => {
   const { type, payload } = action;
   switch (type) {
@@ -87,6 +107,9 @@ export default (state = initialState, action: ReducerAction): ViewerState => {
         viewerCountList: [],
         viewerPageCount: 0,
         viewerWholePageCount: 0,
+        viewerSpineId: '',
+        viewerLink: null,
+        viewerPageOffsetInfo: null,
       };
     }
     case SET_VIEWER_COLUMN_COUNT_LIST: {
@@ -108,6 +131,13 @@ export default (state = initialState, action: ReducerAction): ViewerState => {
       return {
         ...state,
         viewerHeight: height,
+      };
+    }
+    case SET_VIEWER_SPINE_ID: {
+      const { spineId } = payload;
+      return {
+        ...state,
+        viewerSpineId: spineId,
       };
     }
     case SET_VIEWER_PAGE_COUNT: {
@@ -143,6 +173,16 @@ export default (state = initialState, action: ReducerAction): ViewerState => {
         viewerLink: {
           spineId,
           tag,
+        },
+      };
+    }
+    case SET_VIEWER_PAGE_OFFSET_INFO: {
+      const { spineId, offset } = payload;
+      return {
+        ...state,
+        viewerPageOffsetInfo: {
+          spineId,
+          offset,
         },
       };
     }

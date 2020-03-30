@@ -1,6 +1,9 @@
 import { useMemo } from 'react';
+import { ViewerCount } from '../interfaces/viewer';
 
-export const usePagesOffset = (viewerCountList, viewerPageCount) => useMemo(() => {
+export const usePagesOffset = (
+  viewerCountList: ViewerCount[], viewerPageCount: number,
+) => useMemo(() => {
   let spineIndex = 0;
   let accurateCount = 0;
   viewerCountList.some((viewerCount) => {
@@ -14,7 +17,11 @@ export const usePagesOffset = (viewerCountList, viewerPageCount) => useMemo(() =
   return spineIndex;
 }, [viewerCountList, viewerPageCount]);
 
-export const usePageOffset = (viewerCountList, viewerPageCount, viewerIndex) => useMemo(() => {
+export const usePageOffset = (
+  viewerCountList: ViewerCount[],
+  viewerPageCount: number,
+  viewerIndex: number,
+) => useMemo(() => {
   let columnOffset = viewerPageCount;
   viewerCountList.some((viewerCount, index) => {
     if (index < viewerIndex) {
@@ -26,6 +33,24 @@ export const usePageOffset = (viewerCountList, viewerPageCount, viewerIndex) => 
   return columnOffset;
 }, [viewerCountList, viewerPageCount, viewerIndex]);
 
-export const usePageWithWithRatio = (nowWidth, newRatio) => useMemo(() => {
-  return Math.floor(Number(nowWidth) * (Number(newRatio) / 100));
-}, [nowWidth, newRatio]);
+export const usePageWithWithRatio = (
+  nowWidth: number, newRatio: number,
+) => useMemo(() => Math.floor(Number(nowWidth) * (Number(newRatio) / 100)), [nowWidth, newRatio]);
+
+export const useViewerSpineId = (
+  viewerCountList: ViewerCount[],
+  viewerPageCount: number,
+) => useMemo(() => {
+  let spineId = '';
+  let accurateCount = 0;
+  viewerCountList.some((viewerCount) => {
+    if (accurateCount > viewerPageCount) {
+      return true;
+    }
+    accurateCount += viewerCount.count;
+    spineId = viewerCount.spineId;
+    return false;
+  });
+
+  return spineId;
+}, [viewerCountList, viewerPageCount]);

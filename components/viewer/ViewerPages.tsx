@@ -15,7 +15,7 @@ import ViewerPage from './ViewerPage';
 
 import { ReducerStates } from '../../interfaces';
 import { EpubSpineItem } from '../../interfaces/books';
-import { ViewerCount, ViewerState, ViewerSettingState } from '../../interfaces/viewer';
+import { ViewerState, ViewerSettingState } from '../../interfaces/viewer';
 
 import {
   VIEWER_PAGE_GAP,
@@ -37,19 +37,18 @@ interface Props {
   isAnalyzedBook: boolean;
   spines: EpubSpineItem[];
   spineViewers: string[];
-  setViewerCountList: (countItems: ViewerCount[]) => void;
 }
 
 const ViewerPages: React.FunctionComponent<Props> = ({
   isAnalyzedBook,
   spines, spineViewers,
-  setViewerCountList,
 }) => {
   const dispatch = useDispatch();
   const [privateStates, privateDispatch] = useReducer(viewerPagesReducer, viewerPagesReducerStates);
 
   const {
     viewerWidth, viewerCountList, viewerPageCount,
+    viewerPageOffsetInfo,
   }: ViewerState = useSelector((state: ReducerStates) => state.viewer);
   const {
     widthRatio,
@@ -67,7 +66,6 @@ const ViewerPages: React.FunctionComponent<Props> = ({
 
   const getSpineId = useCallback((selectedHref: string): null | string => {
     let selectedSpineId = null;
-
     spines.some((spine) => {
       const { href, id } = spine;
       if (href && selectedHref.includes(href)) {
@@ -80,23 +78,33 @@ const ViewerPages: React.FunctionComponent<Props> = ({
     return selectedSpineId;
   }, [spines]);
 
-  const setPageCount = useCallback((spineId) => {
+  const setPageCountBySpineId = useCallback((spineId: string, offset?: number) => {
     const pageCount = getPageCountBySpineId(viewerCountList, spineId);
     if (pageCount > -1) {
-      dispatch(viewerActions.setViewerPageCount(pageCount));
+      dispatch(viewerActions.setViewerPageCount(pageCount + offset));
     }
   }, [dispatch, viewerCountList]);
+
+  useEffect(() => {
+    if (viewerPageOffsetInfo) {
+      const { spineId, offset } = viewerPageOffsetInfo;
+      setPageCountBySpineId(spineId, offset);
+    }
+  }, [dispatch, viewerPageOffsetInfo, setPageCountBySpineId]);
 
   const clickLink = useCallback((spineHref, hashTag) => {
     const spineId = getSpineId(spineHref);
     if (spineId) {
-      setPageCount(spineId);
-      dispatch(viewerActions.setViewerTag({
-        spineId,
-        tag: hashTag,
-      }));
+      if (hashTag) {
+        dispatch(viewerActions.setViewerTag({
+          spineId,
+          tag: hashTag,
+        }));
+      } else {
+        setPageCountBySpineId(spineId, 0);
+      }
     }
-  }, [dispatch, getSpineId, setPageCount]);
+  }, [dispatch, getSpineId, setPageCountBySpineId]);
 
   /**
    * Calculate: Callback from single page, Set count in private store,
@@ -114,9 +122,9 @@ const ViewerPages: React.FunctionComponent<Props> = ({
   useEffect(() => {
     const { countItems } = privateStates;
     if (isAllCountItemsSet) {
-      setViewerCountList(countItems);
+      dispatch(viewerActions.setViewerCountList(countItems));
     }
-  }, [setViewerCountList, isAllCountItemsSet, privateStates]);
+  }, [dispatch, isAllCountItemsSet, privateStates]);
 
   useEffect(() => {
     if (!isAnalyzedBook) {

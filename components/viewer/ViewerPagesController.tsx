@@ -11,13 +11,11 @@ import * as viewerActions from '../../reducers/viewer';
 
 import { ReducerStates } from '../../interfaces';
 import { EpubBookViewer } from '../../interfaces/books';
-import { ViewerCount, ViewerState, ViewerSettingState } from '../../interfaces/viewer';
+import { ViewerState, ViewerSettingState } from '../../interfaces/viewer';
 
 import { ViewerButton } from '../../styles/viewer';
 
-import { usePageWithWithRatio } from '../../hooks';
-
-import { getPageCountBySpineId } from '../../lib/util';
+import { usePageWithWithRatio, useViewerSpineId } from '../../hooks';
 
 const Container = styled.div`
   background-color: ${(props) => props.styleProps.backgroundColor};
@@ -64,10 +62,7 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
     [viewerPageCount, viewerWholePageCount]);
 
   const widthWithRatio = usePageWithWithRatio(viewerWidth, widthRatio);
-
-  const setViewerCountList = useCallback((countItems: ViewerCount[]) => {
-    dispatch(viewerActions.setViewerCountList(countItems));
-  }, [dispatch]);
+  const nowSpineId = useViewerSpineId(viewerCountList, viewerPageCount);
 
   useEffect(() => {
     if (isAnalyzedBook) {
@@ -79,6 +74,10 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
   useEffect(() => {
     dispatch(viewerActions.initViewerState());
   }, [dispatch, settingChangeToggle]);
+
+  useEffect(() => {
+    dispatch(viewerActions.setViewerSpineId(nowSpineId));
+  }, [dispatch, nowSpineId]);
 
   const clickLeft = useCallback(() => {
     dispatch(viewerActions.setCountDownViewerPageCount());
@@ -106,7 +105,6 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
           isAnalyzedBook={isAnalyzedBook}
           spines={book.spines}
           spineViewers={book.spineViewers}
-          setViewerCountList={setViewerCountList}
         />
         {!isFirstPage && <LeftButton onClick={clickLeft}>Left</LeftButton>}
         {!isLastPage && <RightButton onClick={clickRight}>Right</RightButton>}

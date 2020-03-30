@@ -4,7 +4,9 @@ export interface ViewerState {
   viewerCountList: ViewerCount[];
   viewerPageCount: number;
   viewerWholePageCount: number;
+  viewerSpineId: string;
   viewerLink?: ViewerLink;
+  viewerPageOffsetInfo?: ViewerPageOffsetInfo;
 }
 
 export interface ViewerSettingState extends ViewerStyle {
@@ -27,6 +29,11 @@ export interface ViewerCount {
 export interface ViewerLink {
   spineId: string;
   tag: string;
+}
+
+export interface ViewerPageOffsetInfo {
+  spineId: string;
+  offset: number;
 }
 
 export interface SettingItem {

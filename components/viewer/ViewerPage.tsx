@@ -62,28 +62,26 @@ const ViewerPage: React.FunctionComponent<Props> = ({
   const widthWithRatio = usePageWithWithRatio(viewerWidth, widthRatio);
 
   /**
-   * When click a tag in spine(page), Calculate new page count
+   * When click a tag in spine(page), Calculate new page offset
    */
-
-  const setPageCountByTag = useCallback((tagElement, tagElementPageCount) => {
-    const tagElementScroll = tagElement.offsetLeft;
-    const pageScroll = Math.floor(
-      tagElementScroll - (spineIndex * widthWithRatio),
-    );
-    const pageCount = Math.floor(pageScroll / widthWithRatio);
-    dispatch(viewerActions.setViewerPageCount(tagElementPageCount + pageCount));
-  }, [dispatch, spineIndex, widthWithRatio]);
-
   useEffect(() => {
     if (widthWithRatio > 0 && isSelectedSpineByLink) {
       const { current: viewArticleRefCurrent } = viewArticleRef;
       const tagElement = viewArticleRefCurrent.querySelector(`#${viewerLink.tag}`);
       if (tagElement) {
-        setPageCountByTag(tagElement, viewerPageCount);
+        const tagElementScroll = tagElement.offsetLeft;
+        const pageScroll = Math.floor(
+          tagElementScroll - (spineIndex * widthWithRatio),
+        );
+        const pageCount = Math.floor(pageScroll / widthWithRatio);
+        dispatch(viewerActions.setViewerPageOffsetInfo({
+          spineId: viewerLink.spineId,
+          offset: pageCount,
+        }));
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, widthWithRatio, viewerLink, isSelectedSpineByLink, setPageCountByTag]);
+  }, [dispatch, viewerLink, spineIndex, isSelectedSpineByLink]);
 
   /**
    * Calculate: Column count
@@ -109,7 +107,7 @@ const ViewerPage: React.FunctionComponent<Props> = ({
       const { current: viewArticleRefCurrent } = viewArticleRef;
       viewArticleRefCurrent.scrollLeft = pageOffset * (widthWithRatio + VIEWER_PAGE_GAP);
     }
-  }, [pageOffset, widthWithRatio]);
+  }, [widthWithRatio, pageOffset]);
 
   const clickPage = useCallback((e) => {
     let node = e.target;
