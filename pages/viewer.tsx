@@ -1,8 +1,10 @@
 import React, {
-  useState, useEffect,
+  useState, useEffect, useCallback,
 } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { NextPageContext, NextPage } from 'next';
+
+import debounce from 'lodash.debounce';
 
 import Layout from '../components/Layout';
 import ViewerPagesController from '../components/viewer/ViewerPagesController';
@@ -25,6 +27,26 @@ const Viewer: NextPage = () => {
   const dispatch = useDispatch();
   const book = useSelector((state: ReducerStates) => state.book);
   const [menuHeight, setMenuHeight] = useState(0);
+
+  const resizeWindow = useCallback(() => {
+    dispatch(viewerActions.setViewerWidth(
+      Math.floor(window.innerWidth * (VIEWER_WIDTH_RATIO / 100)),
+    ));
+    dispatch(viewerActions.setViewerHeight(
+      Math.floor(window.innerHeight * (VIEWER_HEIGHT_RATIO / 100)),
+    ));
+    dispatch(viewerActions.initViewerState());
+  }, [dispatch]);
+
+  const debounceResizeWindow = useCallback(debounce(resizeWindow, 500), [resizeWindow]);
+
+  useEffect(() => {
+    window.addEventListener('resize', debounceResizeWindow);
+
+    return () => {
+      window.removeEventListener('resize', debounceResizeWindow);
+    };
+  }, [debounceResizeWindow]);
 
   useEffect(() => {
     const windowHeight = window.innerHeight;

@@ -55,7 +55,6 @@ const ViewerSettingCountItem: React.FunctionComponent<Props> = ({
 
     if (expectedValue <= maxValue) {
       const newValue = isIntegerNumber(expectedValue) ? expectedValue : expectedValue.toFixed(1);
-      console.log('New value', +newValue);
       setShowValue(+newValue);
       debounceAction(+newValue);
     } else {

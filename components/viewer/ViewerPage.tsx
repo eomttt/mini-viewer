@@ -90,12 +90,12 @@ const ViewerPage: React.FunctionComponent<Props> = ({
       setTimeout(() => {
         if (widthWithRatio > 0 && !isAnalyzedBook) {
           const count = viewArticleRefCurrent.scrollWidth / (widthWithRatio + VIEWER_PAGE_GAP);
-          setCountCallback(count, spineIndex);
+          setCountCallback(Math.floor(count), spineIndex);
         }
       });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [viewArticleRef, widthWithRatio, isAnalyzedBook, spineIndex]);
+  }, [viewArticleRef, widthWithRatio, isAnalyzedBook]);
 
   /**
    * Viewer: Set offset scroll value
