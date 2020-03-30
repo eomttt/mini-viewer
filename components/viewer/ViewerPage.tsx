@@ -22,10 +22,7 @@ import { ViewerState, ViewerSettingState } from '../../interfaces/viewer';
 import { usePageWithWithRatio, usePageOffset } from '../../hooks';
 
 const Article = styled(ViewerArticle)`
-  width: 100%;
-  height: 100%;
   overflow: hidden;
-  text-align: initial;
 `;
 
 interface Props {
@@ -70,8 +67,9 @@ const ViewerPage: React.FunctionComponent<Props> = ({
       const tagElement = viewArticleRefCurrent.querySelector(`#${viewerLink.tag}`);
       if (tagElement) {
         const tagElementScroll = tagElement.offsetLeft;
+        const pageMargin = (window.innerWidth - widthWithRatio) / 2;
         const pageScroll = Math.floor(
-          tagElementScroll - (spineIndex * widthWithRatio),
+          tagElementScroll - (spineIndex * widthWithRatio) - pageMargin,
         );
         const pageCount = Math.floor(pageScroll / widthWithRatio);
         dispatch(viewerActions.setViewerPageOffsetInfo({
