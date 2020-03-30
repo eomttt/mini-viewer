@@ -52,7 +52,7 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
     viewerCountList, viewerPageCount, viewerWholePageCount,
   }: ViewerState = useSelector((state: ReducerStates) => state.viewer);
   const {
-    widthRatio, backgroundColor, settingChangeToggle,
+    widthRatio, backgroundColor,
   }: ViewerSettingState = useSelector((state: ReducerStates) => state.viewerSetting);
 
   const isAnalyzedBook = useMemo(() => viewerCountList.length >= book.spineViewers.length,
@@ -70,10 +70,6 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
       dispatch(viewerActions.setViewerPageWholeCount(pageCount > 0 ? pageCount - 1 : 0));
     }
   }, [dispatch, viewerCountList, isAnalyzedBook]);
-
-  useEffect(() => {
-    dispatch(viewerActions.initViewerState());
-  }, [dispatch, settingChangeToggle]);
 
   useEffect(() => {
     dispatch(viewerActions.setViewerSpineId(nowSpineId));

@@ -21,12 +21,21 @@ import { VIEWER_HEIGHT_RATIO, VIEWER_WIDTH_RATIO } from '../constants/viewer';
 
 import { ReducerStates } from '../interfaces';
 import { BookInfo, BooksState, EpubBookViewer } from '../interfaces/books';
+import { ViewerSettingState } from '../interfaces/viewer';
 
 
 const Viewer: NextPage = () => {
   const dispatch = useDispatch();
+  const {
+    settingChangeToggle,
+  }: ViewerSettingState = useSelector((state: ReducerStates) => state.viewerSetting);
+
   const book = useSelector((state: ReducerStates) => state.book);
   const [menuHeight, setMenuHeight] = useState(0);
+
+  const initViewerState = useCallback(() => {
+    dispatch(viewerActions.initViewerState());
+  }, [dispatch]);
 
   const resizeWindow = useCallback(() => {
     dispatch(viewerActions.setViewerWidth(
@@ -35,18 +44,21 @@ const Viewer: NextPage = () => {
     dispatch(viewerActions.setViewerHeight(
       Math.floor(window.innerHeight * (VIEWER_HEIGHT_RATIO / 100)),
     ));
-    dispatch(viewerActions.initViewerState());
-  }, [dispatch]);
+    initViewerState();
+  }, [dispatch, initViewerState]);
 
   const debounceResizeWindow = useCallback(debounce(resizeWindow, 500), [resizeWindow]);
 
   useEffect(() => {
     window.addEventListener('resize', debounceResizeWindow);
-
     return () => {
       window.removeEventListener('resize', debounceResizeWindow);
     };
   }, [debounceResizeWindow]);
+
+  useEffect(() => {
+    initViewerState();
+  }, [settingChangeToggle, initViewerState]);
 
   useEffect(() => {
     const windowHeight = window.innerHeight;
@@ -62,9 +74,9 @@ const Viewer: NextPage = () => {
     ));
 
     return () => {
-      dispatch(viewerActions.initViewerState());
+      initViewerState();
     };
-  }, [dispatch]);
+  }, [dispatch, initViewerState]);
 
   if (!book) {
     return (
