@@ -97,6 +97,10 @@ const ViewerPage: React.FunctionComponent<Props> = ({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [viewArticleRef, widthWithRatio, isAnalyzedBook]);
 
+  useEffect(() => {
+    // Before setting set
+  }, [fontSize, lineHeight, widthRatio]);
+
   /**
    * Viewer: Set offset scroll value
    */

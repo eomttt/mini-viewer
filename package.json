@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "next",
+    "dev": "node server.js",
     "build": "next build",
-    "start": "next start -p $PORT",
+    "start": "node server.js -p $PORT",
     "heroku-postbuild": "npm run build"
   },
   "author": "",
@@ -14,6 +14,7 @@
   "dependencies": {
     "@ridi/epub-parser": "^0.6.14",
     "axios": "^0.19.2",
+    "express": "^4.17.1",
     "fs": "0.0.1-security",
     "lodash.debounce": "^4.0.8",
     "next": "^9.3.0",

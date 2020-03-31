@@ -16,6 +16,10 @@ module.exports = {
       }
     }
   },
+  parserOptions: {
+    project: './tsconfig.json',
+    createDefaultProgram: true,
+  },
   rules: {
     'react/jsx-props-no-spreading': 0,
     'react/prop-types': 0,
