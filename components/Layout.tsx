@@ -12,7 +12,7 @@ const Layout: React.FunctionComponent = ({ children }) => {
     <>
       <Head>
         <style>
-          {book.styleText ? book.styleText : ''}
+          {book && book.styleText ? book.styleText : ''}
         </style>
       </Head>
       {children}
