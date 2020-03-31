@@ -21,9 +21,14 @@ import {
   VIEWER_PAGE_GAP,
 } from '../../constants/viewer';
 
-import { getPageCountBySpineId } from '../../lib/util';
+import { getPageCountBySpineId, getMaxPageOffset } from '../../lib/util';
 
-import { usePageWithWithRatio, usePagesOffset } from '../../hooks';
+import {
+  usePageWithWithRatio,
+  usePagesOffset,
+  useViewerSpineId,
+  useSetBookCount,
+} from '../../hooks';
 
 const Container = styled.div`
   width: 100%;
@@ -34,13 +39,11 @@ const Container = styled.div`
 `;
 
 interface Props {
-  isAnalyzedBook: boolean;
   spines: EpubSpineItem[];
   spineViewers: string[];
 }
 
 const ViewerPages: React.FunctionComponent<Props> = ({
-  isAnalyzedBook,
   spines, spineViewers,
 }) => {
   const dispatch = useDispatch();
@@ -49,6 +52,7 @@ const ViewerPages: React.FunctionComponent<Props> = ({
   const {
     viewerCountList, viewerPageCount,
     viewerLinkPageOffset,
+    viewerSpineId, viewerSpineOffset,
   }: ViewerState = useSelector((state: ReducerStates) => state.viewer);
   const {
     viewerWidth, widthRatio,
@@ -61,8 +65,10 @@ const ViewerPages: React.FunctionComponent<Props> = ({
     return countItems.length >= spineViewers.length;
   }, [privateStates, spineViewers]);
 
+  const nowSpineId = useViewerSpineId(viewerCountList, viewerPageCount);
   const pagesOffset = usePagesOffset(viewerCountList, viewerPageCount);
   const widthWithRatio = usePageWithWithRatio(viewerWidth, widthRatio);
+  const isSetCountList = useSetBookCount(viewerCountList, spines);
 
   const getSpineId = useCallback((selectedHref: string): null | string => {
     let selectedSpineId = null;
@@ -86,11 +92,26 @@ const ViewerPages: React.FunctionComponent<Props> = ({
   }, [dispatch, viewerCountList]);
 
   useEffect(() => {
+    if (isSetCountList && viewerSpineId) {
+      const maxPageOffset = getMaxPageOffset(viewerCountList, viewerSpineId);
+      const pageOffset = viewerSpineOffset >= maxPageOffset ? maxPageOffset - 1 : viewerSpineOffset;
+      setPageCountBySpineId(viewerSpineId, pageOffset);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, isSetCountList, setPageCountBySpineId]);
+
+  useEffect(() => {
     if (viewerLinkPageOffset) {
       const { spineId, offset } = viewerLinkPageOffset;
       setPageCountBySpineId(spineId, offset);
     }
   }, [dispatch, viewerLinkPageOffset, setPageCountBySpineId]);
+
+  useEffect(() => {
+    if (nowSpineId) {
+      dispatch(viewerActions.setViewerSpineId(nowSpineId));
+    }
+  }, [dispatch, nowSpineId]);
 
   const clickLink = useCallback((spineHref, hashTag) => {
     const spineId = getSpineId(spineHref);
@@ -127,10 +148,10 @@ const ViewerPages: React.FunctionComponent<Props> = ({
   }, [dispatch, isAllCountItemsSet, privateStates]);
 
   useEffect(() => {
-    if (!isAnalyzedBook) {
+    if (!isSetCountList) {
       privateDispatch(initCount());
     }
-  }, [isAnalyzedBook]);
+  }, [isSetCountList]);
 
   /**
    * Viewer: Set offset spine index, Click left or right
@@ -148,7 +169,7 @@ const ViewerPages: React.FunctionComponent<Props> = ({
         spineViewers.map((spineViewer, index) => (
           <ViewerPage
             key={spineViewer}
-            isAnalyzedBook={isAnalyzedBook}
+            isSetCountList={isSetCountList}
             spineIndex={index}
             spineViewer={spineViewer}
             spine={spines[index]}

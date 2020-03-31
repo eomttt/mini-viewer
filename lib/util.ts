@@ -1,6 +1,8 @@
+import { ViewerCount } from '../interfaces/viewer';
+
 export const isProduction = () => process.env.NODE_ENV === 'production';
 
-export const getPageCountBySpineId = (viewerCountList, spineId) => {
+export const getPageCountBySpineId = (viewerCountList: ViewerCount[], spineId: string) => {
   let pageCountIndex = -1;
   let pageCount = -1;
   viewerCountList.some((viewerCount, index) => {
@@ -22,4 +24,17 @@ export const getPageCountBySpineId = (viewerCountList, spineId) => {
     });
   }
   return pageCount;
+};
+
+export const getMaxPageOffset = (viewerCountList: ViewerCount[], spineId: string) => {
+  let pageOffset = 0;
+  viewerCountList.some((viewerCount) => {
+    if (viewerCount.spineId === spineId) {
+      pageOffset = viewerCount.count;
+      return true;
+    }
+    return false;
+  });
+
+  return pageOffset;
 };

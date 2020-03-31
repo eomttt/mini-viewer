@@ -26,7 +26,7 @@ const Article = styled(ViewerArticle)`
 `;
 
 interface Props {
-  isAnalyzedBook: boolean;
+  isSetCountList: boolean;
   spineIndex: number;
   spineViewer: string;
   spine: EpubSpineItem;
@@ -35,7 +35,7 @@ interface Props {
 }
 
 const ViewerPage: React.FunctionComponent<Props> = ({
-  isAnalyzedBook,
+  isSetCountList,
   spineIndex, spineViewer, spine,
   setCountCallback,
   clickLink,
@@ -91,14 +91,14 @@ const ViewerPage: React.FunctionComponent<Props> = ({
     const { current: viewArticleRefCurrent } = viewArticleRef;
     if (viewArticleRefCurrent) {
       setTimeout(() => {
-        if (widthWithRatio > 0 && !isAnalyzedBook) {
+        if (widthWithRatio > 0 && !isSetCountList) {
           const count = viewArticleRefCurrent.scrollWidth / (widthWithRatio + VIEWER_PAGE_GAP);
           setCountCallback(Math.floor(count), spineIndex);
         }
       });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [viewArticleRef, widthWithRatio, isAnalyzedBook]);
+  }, [viewArticleRef, widthWithRatio, isSetCountList]);
 
   useEffect(() => {
     // Before setting set

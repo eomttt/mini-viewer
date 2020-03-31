@@ -1,4 +1,6 @@
 import { useMemo } from 'react';
+
+import { EpubSpineItem } from '../interfaces/books';
 import { ViewerCount } from '../interfaces/viewer';
 
 export const usePagesOffset = (
@@ -22,20 +24,19 @@ export const usePageOffset = (
   viewerPageCount: number,
   viewerIndex: number,
 ) => useMemo(() => {
-  let columnOffset = viewerPageCount;
-  viewerCountList.some((viewerCount, index) => {
-    if (index < viewerIndex) {
-      columnOffset -= (viewerCount.count);
-      return false;
-    }
-    return true;
-  });
-  return columnOffset;
+  if (viewerCountList.length > 0) {
+    let columnOffset = viewerPageCount;
+    viewerCountList.some((viewerCount, index) => {
+      if (index < viewerIndex) {
+        columnOffset -= (viewerCount.count);
+        return false;
+      }
+      return true;
+    });
+    return columnOffset;
+  }
+  return -1;
 }, [viewerCountList, viewerPageCount, viewerIndex]);
-
-export const usePageWithWithRatio = (
-  nowWidth: number, newRatio: number,
-) => useMemo(() => Math.floor(Number(nowWidth) * (Number(newRatio) / 100)), [nowWidth, newRatio]);
 
 export const useViewerSpineId = (
   viewerCountList: ViewerCount[],
@@ -54,3 +55,12 @@ export const useViewerSpineId = (
 
   return spineId;
 }, [viewerCountList, viewerPageCount]);
+
+export const useSetBookCount = (
+  viewerCountList: ViewerCount[],
+  spines: EpubSpineItem[],
+) => useMemo(() => viewerCountList.length >= spines.length, [viewerCountList, spines]);
+
+export const usePageWithWithRatio = (
+  nowWidth: number, newRatio: number,
+) => useMemo(() => Math.floor(Number(nowWidth) * (Number(newRatio) / 100)), [nowWidth, newRatio]);

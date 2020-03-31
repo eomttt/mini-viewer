@@ -96,9 +96,7 @@ export default (state = initialState, action: ReducerAction): ViewerState => {
       return {
         ...state,
         viewerCountList: [],
-        viewerPageCount: 0,
         viewerWholePageCount: 0,
-        viewerSpineId: '',
         viewerLink: null,
         viewerLinkPageOffset: null,
       };

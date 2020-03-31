@@ -15,7 +15,7 @@ import { ViewerState, ViewerSettingState } from '../../interfaces/viewer';
 
 import { ViewerButton } from '../../styles/viewer';
 
-import { usePageWithWithRatio, useViewerSpineId } from '../../hooks';
+import { usePageWithWithRatio, useSetBookCount } from '../../hooks';
 
 const Container = styled.div`
   background-color: ${(props) => props.styleProps.backgroundColor};
@@ -55,25 +55,19 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
     widthRatio, backgroundColor,
   }: ViewerSettingState = useSelector((state: ReducerStates) => state.viewerSetting);
 
-  const isAnalyzedBook = useMemo(() => viewerCountList.length >= book.spineViewers.length,
-    [viewerCountList, book.spineViewers]);
   const isFirstPage = useMemo(() => viewerPageCount === 0, [viewerPageCount]);
   const isLastPage = useMemo(() => viewerPageCount === viewerWholePageCount,
     [viewerPageCount, viewerWholePageCount]);
 
+  const isSetCountList = useSetBookCount(viewerCountList, book.spines);
   const widthWithRatio = usePageWithWithRatio(viewerWidth, widthRatio);
-  const nowSpineId = useViewerSpineId(viewerCountList, viewerPageCount);
 
   useEffect(() => {
-    if (isAnalyzedBook) {
+    if (isSetCountList) {
       const pageCount = viewerCountList.reduce((acc, cur) => acc + cur.count, 0);
       dispatch(viewerActions.setViewerPageWholeCount(pageCount > 0 ? pageCount - 1 : 0));
     }
-  }, [dispatch, viewerCountList, isAnalyzedBook]);
-
-  useEffect(() => {
-    dispatch(viewerActions.setViewerSpineId(nowSpineId));
-  }, [dispatch, nowSpineId]);
+  }, [dispatch, viewerCountList, isSetCountList]);
 
   const clickLeft = useCallback(() => {
     dispatch(viewerActions.setCountDownViewerPageCount());
@@ -96,9 +90,8 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
           menuHeight,
         }}
       >
-        {!isAnalyzedBook && <Loading text="로딩 중..." />}
+        {!isSetCountList && <Loading text="로딩 중..." />}
         <ViewerPages
-          isAnalyzedBook={isAnalyzedBook}
           spines={book.spines}
           spineViewers={book.spineViewers}
         />
