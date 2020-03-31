@@ -3,6 +3,8 @@ import Router from 'next/router';
 
 import styled from 'styled-components';
 
+import { setLibraryOrder } from '../../lib/localStorage';
+
 import { subColor } from '../../styles';
 
 import { BookInfo } from '../../interfaces/books';
@@ -63,6 +65,7 @@ const BookList: React.FunctionComponent<Props> = ({ books }) => {
     const newSortedBooks = bookList.filter((item) => item.fileName !== draggedItem.fileName);
     newSortedBooks.splice(index, 0, draggedItem);
     setBookList(newSortedBooks);
+    setLibraryOrder(newSortedBooks.map((item) => item.fileName));
   }, [bookList, draggedItem]);
 
   const dragEnd = useCallback((e) => {
