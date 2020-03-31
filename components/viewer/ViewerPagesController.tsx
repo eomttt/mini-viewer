@@ -48,10 +48,10 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
   const dispatch = useDispatch();
 
   const {
-    viewerWidth, viewerHeight,
     viewerCountList, viewerPageCount, viewerWholePageCount,
   }: ViewerState = useSelector((state: ReducerStates) => state.viewer);
   const {
+    viewerWidth, viewerHeight,
     widthRatio, backgroundColor,
   }: ViewerSettingState = useSelector((state: ReducerStates) => state.viewerSetting);
 

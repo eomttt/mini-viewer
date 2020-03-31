@@ -43,10 +43,11 @@ const ViewerPage: React.FunctionComponent<Props> = ({
   const dispatch = useDispatch();
 
   const {
-    viewerWidth, viewerHeight,
     viewerLink, viewerPageCount, viewerCountList,
+    viewerSpineId,
   }: ViewerState = useSelector((state: ReducerStates) => state.viewer);
   const {
+    viewerWidth, viewerHeight,
     fontSize, lineHeight, widthRatio,
   }: ViewerSettingState = useSelector((state: ReducerStates) => state.viewerSetting);
 
@@ -54,12 +55,13 @@ const ViewerPage: React.FunctionComponent<Props> = ({
 
   const isSelectedSpineByLink = useMemo(() => viewerLink && viewerLink.spineId === spine.id,
     [viewerLink, spine]);
+  const isShowSpineViewer = useMemo(() => viewerSpineId === spine.id, [viewerSpineId, spine]);
 
   const pageOffset = usePageOffset(viewerCountList, viewerPageCount, spineIndex);
   const widthWithRatio = usePageWithWithRatio(viewerWidth, widthRatio);
 
   /**
-   * When click a tag in spine(page), Calculate new page offset
+   * When click a link in spine(page), Calculate new page offset
    */
   useEffect(() => {
     if (widthWithRatio > 0 && isSelectedSpineByLink) {
@@ -72,8 +74,9 @@ const ViewerPage: React.FunctionComponent<Props> = ({
           tagElementScroll - (spineIndex * widthWithRatio) - pageMargin,
         );
         const pageCount = Math.floor(pageScroll / widthWithRatio);
-        dispatch(viewerActions.setViewerPageOffsetInfo({
+        dispatch(viewerActions.setViewerLinkPageOffset({
           spineId: viewerLink.spineId,
+          tag: viewerLink.tag,
           offset: pageCount,
         }));
       }
@@ -105,11 +108,12 @@ const ViewerPage: React.FunctionComponent<Props> = ({
    * Viewer: Set offset scroll value
    */
   useEffect(() => {
-    if (pageOffset >= 0) {
+    if (pageOffset >= 0 && isShowSpineViewer) {
       const { current: viewArticleRefCurrent } = viewArticleRef;
       viewArticleRefCurrent.scrollLeft = pageOffset * (widthWithRatio + VIEWER_PAGE_GAP);
+      dispatch(viewerActions.setViewerSpineOffset(pageOffset));
     }
-  }, [widthWithRatio, pageOffset]);
+  }, [dispatch, widthWithRatio, pageOffset, isShowSpineViewer]);
 
   const clickPage = useCallback((e) => {
     let node = e.target;

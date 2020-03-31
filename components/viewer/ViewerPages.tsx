@@ -47,11 +47,11 @@ const ViewerPages: React.FunctionComponent<Props> = ({
   const [privateStates, privateDispatch] = useReducer(viewerPagesReducer, viewerPagesReducerStates);
 
   const {
-    viewerWidth, viewerCountList, viewerPageCount,
-    viewerPageOffsetInfo,
+    viewerCountList, viewerPageCount,
+    viewerLinkPageOffset,
   }: ViewerState = useSelector((state: ReducerStates) => state.viewer);
   const {
-    widthRatio,
+    viewerWidth, widthRatio,
   }: ViewerSettingState = useSelector((state: ReducerStates) => state.viewerSetting);
 
   const containerRef = useRef(null);
@@ -86,17 +86,17 @@ const ViewerPages: React.FunctionComponent<Props> = ({
   }, [dispatch, viewerCountList]);
 
   useEffect(() => {
-    if (viewerPageOffsetInfo) {
-      const { spineId, offset } = viewerPageOffsetInfo;
+    if (viewerLinkPageOffset) {
+      const { spineId, offset } = viewerLinkPageOffset;
       setPageCountBySpineId(spineId, offset);
     }
-  }, [dispatch, viewerPageOffsetInfo, setPageCountBySpineId]);
+  }, [dispatch, viewerLinkPageOffset, setPageCountBySpineId]);
 
   const clickLink = useCallback((spineHref, hashTag) => {
     const spineId = getSpineId(spineHref);
     if (spineId) {
       if (hashTag) {
-        dispatch(viewerActions.setViewerTag({
+        dispatch(viewerActions.setViewerLink({
           spineId,
           tag: hashTag,
         }));

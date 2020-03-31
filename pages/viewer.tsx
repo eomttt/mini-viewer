@@ -16,6 +16,7 @@ import ViewerNotSupport from '../components/viewer/ViewerNotSupport';
 
 import * as bookActions from '../reducers/book';
 import * as viewerActions from '../reducers/viewer';
+import * as settingActions from '../reducers/viewerSetting';
 
 import { VIEWER_HEIGHT_RATIO, VIEWER_WIDTH_RATIO } from '../constants/viewer';
 
@@ -37,15 +38,19 @@ const Viewer: NextPage = () => {
     dispatch(viewerActions.initViewerState());
   }, [dispatch]);
 
-  const resizeWindow = useCallback(() => {
-    dispatch(viewerActions.setViewerWidth(
+  const setiewerSize = useCallback(() => {
+    dispatch(settingActions.setViewerWidth(
       Math.floor(window.innerWidth * (VIEWER_WIDTH_RATIO / 100)),
     ));
-    dispatch(viewerActions.setViewerHeight(
+    dispatch(settingActions.setViewerHeight(
       Math.floor(window.innerHeight * (VIEWER_HEIGHT_RATIO / 100)),
     ));
+  }, [dispatch]);
+
+  const resizeWindow = useCallback(() => {
+    setiewerSize();
     initViewerState();
-  }, [dispatch, initViewerState]);
+  }, [setiewerSize, initViewerState]);
 
   const debounceResizeWindow = useCallback(debounce(resizeWindow, 500), [resizeWindow]);
 
@@ -66,17 +71,12 @@ const Viewer: NextPage = () => {
   }, []);
 
   useEffect(() => {
-    dispatch(viewerActions.setViewerWidth(
-      Math.floor(window.innerWidth * (VIEWER_WIDTH_RATIO / 100)),
-    ));
-    dispatch(viewerActions.setViewerHeight(
-      Math.floor(window.innerHeight * (VIEWER_HEIGHT_RATIO / 100)),
-    ));
-
+    setiewerSize();
     return () => {
       initViewerState();
     };
-  }, [dispatch, initViewerState]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!book) {
     return (
