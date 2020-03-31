@@ -7,6 +7,7 @@
 ### Project stack
 - TypeScript
 - Next JS
+- Express JS
 - Style-component
 - Redux
 
