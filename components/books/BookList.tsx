@@ -4,13 +4,11 @@ import Router from 'next/router';
 import styled from 'styled-components';
 
 import { setLibraryOrder } from '../../lib/localStorage';
-import { getString } from '../../lib/util';
 
 import { subColor } from '../../styles';
 
-import { BookInfo } from '../../interfaces/books';
+import { BookListItem } from '../../interfaces/books';
 
-import { DEFAULT_IMAGE } from '../../constants/books';
 import { VIEWER_PATH_NAME } from '../../constants/viewer';
 
 const Container = styled.ul``;
@@ -37,12 +35,12 @@ const CoverImage = styled.li`
 `;
 
 interface Props {
-  books: BookInfo[];
+  bookListItems: BookListItem[];
 }
 
-const BookList: React.FunctionComponent<Props> = ({ books }) => {
-  const [bookList, setBookList] = useState(books);
-  const [draggedItem, setDraggedItem] = useState<BookInfo>(null);
+const BookList: React.FunctionComponent<Props> = ({ bookListItems }) => {
+  const [bookList, setBookList] = useState(bookListItems);
+  const [draggedItem, setDraggedItem] = useState<BookListItem>(null);
 
   const openBook = useCallback((bookIndex: number) => {
     const selectedBook = bookList[bookIndex];
@@ -83,21 +81,21 @@ const BookList: React.FunctionComponent<Props> = ({ books }) => {
   return (
     <Container>
       {
-        bookList.map(({ book, fileName }, index) => (
+        bookListItems.map(({ fileName, coverImage, title }, index) => (
           <CoverImage
             onClick={() => openBook(index)}
             onDragOver={(e) => dragOver(e, index)}
             key={fileName}
           >
             <img
-              src={book.cover ? `${fileName}/${book.cover.href}` : DEFAULT_IMAGE}
+              src={coverImage}
               draggable
               onDragStart={(e) => dragStart(e, index)}
               onDragEnd={dragEnd}
               alt="Cover"
             />
             <div>
-              {getString(book.titles)}
+              {title}
             </div>
           </CoverImage>
         ))

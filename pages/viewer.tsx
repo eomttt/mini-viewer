@@ -72,6 +72,7 @@ const Viewer: NextPage = () => {
   useEffect(() => {
     setViewerSize();
     return () => {
+      // Page out
       dispatch(viewerActions.initViewerState());
       dispatch(bookActions.clearShowingBook());
     };
@@ -99,51 +100,19 @@ const Viewer: NextPage = () => {
   );
 };
 
-const getBookInfoInStore = (books: BooksState, fileName: string): EpubBookViewer => {
-  const { list } = books;
-
-  if (!list) {
-    return null;
-  }
-
-  let selectedBookInfo = list[0];
-  list.some((bookInfo) => {
-    if (bookInfo.fileName === fileName) {
-      selectedBookInfo = bookInfo;
-      return true;
-    }
-    return false;
-  });
-
-  const {
-    book, styleText, viewers, fileName: bookInfoFileName,
-  } = selectedBookInfo;
-
-  return {
-    ...book,
-    styleText,
-    spineViewers: viewers,
-    fileName: bookInfoFileName,
-  };
-};
-
 // eslint-disable-next-line @typescript-eslint/unbound-method
 Viewer.getInitialProps = async (context: NextPageContext<any>): Promise<any> => {
   const { req, store, query } = context;
-  const { books }: ReducerStates = store.getState();
   const { fileName } = query;
   const queryName = decodeURI(String(fileName || 'jikji'));
 
-  let book = null;
+  let book: EpubBookViewer = null;
 
   if (req) {
     const { getBook } = require('../server.util');
     book = await getBook(queryName);
   } else {
-    book = getBookInfoInStore(books, queryName);
-    if (!book) {
-      book = await fetchGetBook(queryName);
-    }
+    book = await fetchGetBook(queryName);
   }
   store.dispatch(bookActions.setShowingBook(book));
 };
