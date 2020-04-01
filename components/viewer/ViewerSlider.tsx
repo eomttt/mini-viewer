@@ -44,7 +44,7 @@ const ViewerSlider: React.FunctionComponent<Props> = ({ maxValue }) => {
 
   const onChangeSlider = useCallback((e) => {
     dispatch(viewerActions.setViewerPageCount(Number(e.target.value)));
-  }, [dispatch]);
+  }, []);
 
   return (
     <Container>

@@ -3,8 +3,27 @@ import { useMemo } from 'react';
 import { EpubSpineItem } from '../interfaces/books';
 import { ViewerCount } from '../interfaces/viewer';
 
+export const useViewerSpineId = (
+  viewerCountList: ViewerCount[],
+  viewerPageCount: number,
+) => useMemo(() => {
+  let spineId = '';
+  let accurateCount = 0;
+  viewerCountList.some((viewerCount) => {
+    if (accurateCount > viewerPageCount) {
+      return true;
+    }
+    accurateCount += viewerCount.count;
+    spineId = viewerCount.spineId;
+    return false;
+  });
+
+  return spineId;
+}, [viewerPageCount]);
+
 export const usePagesOffset = (
-  viewerCountList: ViewerCount[], viewerPageCount: number,
+  viewerCountList: ViewerCount[],
+  viewerPageCount: number,
 ) => useMemo(() => {
   let spineIndex = 0;
   let accurateCount = 0;
@@ -17,7 +36,7 @@ export const usePagesOffset = (
     return false;
   });
   return spineIndex;
-}, [viewerCountList, viewerPageCount]);
+}, [viewerPageCount]);
 
 export const usePageOffset = (
   viewerCountList: ViewerCount[],
@@ -36,25 +55,7 @@ export const usePageOffset = (
     return columnOffset;
   }
   return -1;
-}, [viewerCountList, viewerPageCount, viewerIndex]);
-
-export const useViewerSpineId = (
-  viewerCountList: ViewerCount[],
-  viewerPageCount: number,
-) => useMemo(() => {
-  let spineId = '';
-  let accurateCount = 0;
-  viewerCountList.some((viewerCount) => {
-    if (accurateCount > viewerPageCount) {
-      return true;
-    }
-    accurateCount += viewerCount.count;
-    spineId = viewerCount.spineId;
-    return false;
-  });
-
-  return spineId;
-}, [viewerCountList, viewerPageCount]);
+}, [viewerPageCount, viewerIndex]);
 
 export const useSetBookCount = (
   viewerCountList: ViewerCount[],

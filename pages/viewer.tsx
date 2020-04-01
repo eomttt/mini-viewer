@@ -36,7 +36,7 @@ const Viewer: NextPage = () => {
 
   const resizeViewer = useCallback(() => {
     dispatch(viewerActions.resizeViewerState());
-  }, [dispatch]);
+  }, []);
 
   const setViewerSize = useCallback(() => {
     const windowWidth = window.innerWidth;
@@ -49,7 +49,7 @@ const Viewer: NextPage = () => {
       Math.floor(windowHeight * (VIEWER_HEIGHT_RATIO / 100)),
     ));
     setMenuHeight((windowHeight - Math.floor(windowHeight * (VIEWER_HEIGHT_RATIO / 100))) / 2);
-  }, [dispatch]);
+  }, []);
 
   const resizeWindow = useCallback(() => {
     setViewerSize();
@@ -67,7 +67,7 @@ const Viewer: NextPage = () => {
 
   useEffect(() => {
     resizeViewer();
-  }, [settingChangeToggle, resizeViewer]);
+  }, [settingChangeToggle]);
 
   useEffect(() => {
     setViewerSize();
@@ -75,7 +75,6 @@ const Viewer: NextPage = () => {
       dispatch(viewerActions.initViewerState());
       dispatch(bookActions.clearShowingBook());
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!book) {

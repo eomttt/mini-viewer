@@ -111,7 +111,7 @@ const ViewerSetting: React.FunctionComponent = () => {
         },
       },
     ]);
-  }, [dispatch, fontSize, widthRatio, lineHeight, backgroundColor]);
+  }, [fontSize, widthRatio, lineHeight, backgroundColor]);
 
   useEffect(() => {
     if (!isShow && isSettingChange) {
@@ -122,7 +122,7 @@ const ViewerSetting: React.FunctionComponent = () => {
         widthRatio,
       });
     }
-  }, [dispatch, isShow, isSettingChange, fontSize, lineHeight, widthRatio]);
+  }, [isShow, isSettingChange, fontSize, lineHeight, widthRatio]);
 
   const toggleShowNcs = useCallback(() => {
     setIsShow(!isShow);

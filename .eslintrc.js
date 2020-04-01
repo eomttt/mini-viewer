@@ -23,6 +23,7 @@ module.exports = {
   rules: {
     'react/jsx-props-no-spreading': 0,
     'react/prop-types': 0,
+    'react-hooks/exhaustive-deps': 0,
     '@typescript-eslint/no-explicit-any': 0,
     '@typescript-eslint/no-var-requires': 0,
     '@typescript-eslint/explicit-function-return-type': 0,
