@@ -36,7 +36,7 @@
 
 ### API
 - ***GET /books***
-- ***GET /book?${fileName}***
+- ***GET /book?fileName=${fileName}***
 
 ### Deploy
 - Using Heroku
