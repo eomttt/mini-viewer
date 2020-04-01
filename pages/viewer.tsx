@@ -38,19 +38,23 @@ const Viewer: NextPage = () => {
     dispatch(viewerActions.initViewerState());
   }, [dispatch]);
 
-  const setiewerSize = useCallback(() => {
+  const setViewerSize = useCallback(() => {
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+
     dispatch(settingActions.setViewerWidth(
-      Math.floor(window.innerWidth * (VIEWER_WIDTH_RATIO / 100)),
+      Math.floor(windowWidth * (VIEWER_WIDTH_RATIO / 100)),
     ));
     dispatch(settingActions.setViewerHeight(
-      Math.floor(window.innerHeight * (VIEWER_HEIGHT_RATIO / 100)),
+      Math.floor(windowHeight * (VIEWER_HEIGHT_RATIO / 100)),
     ));
+    setMenuHeight((windowHeight - Math.floor(windowHeight * (VIEWER_HEIGHT_RATIO / 100))) / 2);
   }, [dispatch]);
 
   const resizeWindow = useCallback(() => {
-    setiewerSize();
+    setViewerSize();
     initViewerState();
-  }, [setiewerSize, initViewerState]);
+  }, [setViewerSize, initViewerState]);
 
   const debounceResizeWindow = useCallback(debounce(resizeWindow, 500), [resizeWindow]);
 
@@ -66,12 +70,11 @@ const Viewer: NextPage = () => {
   }, [settingChangeToggle, initViewerState]);
 
   useEffect(() => {
-    const windowHeight = window.innerHeight;
-    setMenuHeight((windowHeight - Math.floor(windowHeight * (VIEWER_HEIGHT_RATIO / 100))) / 2);
+
   }, []);
 
   useEffect(() => {
-    setiewerSize();
+    setViewerSize();
     return () => {
       initViewerState();
     };

@@ -30,11 +30,11 @@ const Content = styled.div`
 `;
 
 const RightButton = styled(ViewerButton)`
-  right: 2em;
+  right: 1em;
 `;
 
 const LeftButton = styled(ViewerButton)`
-  left: 2em;
+  left: 1em;
 `;
 
 interface Props {

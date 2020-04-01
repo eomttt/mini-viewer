@@ -33,8 +33,7 @@ const ToggleButton = styled.div`
 const SettingItems = styled.ul`
   position: absolute;
   width: 15em;
-  left: 50%;
-  transform: translateX(-50%);
+  right: 0;
   overflow: scroll;
   list-style-type: none;
   margin: 0;
