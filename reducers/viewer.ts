@@ -14,6 +14,7 @@ export const initialState: ViewerState = {
 
 // Action types
 export const INIT_VIEWER_STATE = 'viewer/INIT_VIEWER_STATE';
+export const RESIZE_VIEWER_STATE = 'viewer/RESIZE_VIEWER_STATE';
 export const SET_VIEWER_COUNT_LIST = 'viewer/SET_VIEWER_COUNT_LIST';
 
 export const SET_VIEWER_SPINE_ID = 'viewer/SET_VIEWER_SPINE_ID';
@@ -30,6 +31,10 @@ export const SET_VIEWER_PAGE_OFFSET_INFO = 'viewer/SET_VIEWR_PAGE_OFFSET_INFO';
 // Action creators
 export const initViewerState = () => ({
   type: INIT_VIEWER_STATE,
+});
+
+export const resizeViewerState = () => ({
+  type: RESIZE_VIEWER_STATE,
 });
 
 export const setViewerCountList = (countList: ViewerCount[]) => ({
@@ -93,6 +98,11 @@ export default (state = initialState, action: ReducerAction): ViewerState => {
   const { type, payload } = action;
   switch (type) {
     case INIT_VIEWER_STATE: {
+      return {
+        ...initialState,
+      };
+    }
+    case RESIZE_VIEWER_STATE: {
       return {
         ...state,
         viewerCountList: [],

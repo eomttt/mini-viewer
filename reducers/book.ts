@@ -6,9 +6,11 @@ import { EpubBookViewer } from '../interfaces/books';
 export const initialState: EpubBookViewer | null = null;
 
 // Action types
+export const CLEAR_SHOWING_BOOK = 'book/CLEAR_SHOWING_BOOK';
 export const SET_SHOWING_BOOK = 'book/SET_SHOWING_BOOK';
 
 // Action creators
+export const clearShowingBook = createAction(CLEAR_SHOWING_BOOK);
 export const setShowingBook = createAction(SET_SHOWING_BOOK, (book: EpubBookViewer) => ({ book }));
 // export const setShowingBook = (book: EpubBookViewer) => ({
 //   type: SET_SHOWING_BOOK,
@@ -19,7 +21,8 @@ export const setShowingBook = createAction(SET_SHOWING_BOOK, (book: EpubBookView
 
 // Reducer
 export default handleActions({
-  [SET_SHOWING_BOOK]: (state, { payload }: ReducerAction) => ({
+  [CLEAR_SHOWING_BOOK]: () => (null),
+  [SET_SHOWING_BOOK]: (_state, { payload }: ReducerAction) => ({
     ...payload.book,
   }),
 }, initialState);

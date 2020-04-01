@@ -38,3 +38,6 @@ export const getMaxPageOffset = (viewerCountList: ViewerCount[], spineId: string
 
   return pageOffset;
 };
+
+
+export const getString = (items: string[]) => items.reduce((acc, cur, index) => `${acc}${index > 0 ? ', ' : ''}${cur}`, '');

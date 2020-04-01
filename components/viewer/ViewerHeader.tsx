@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 
 import styled from 'styled-components';
@@ -12,6 +12,8 @@ import { titleFontSize } from '../../styles';
 import { ViewerMenu } from '../../styles/viewer';
 
 import { ReducerStates } from '../../interfaces';
+
+import { getString } from '../../lib/util';
 
 const Container = styled(ViewerMenu)`
   height: ${(props) => props.styleProps.height - 10}px;
@@ -55,7 +57,6 @@ const ViewerHeader: React.FunctionComponent<Props> = ({
   menuHeight,
 }) => {
   const book: EpubBookViewer | null = useSelector((state: ReducerStates) => state.book);
-  const getString = useCallback((items) => items.reduce((acc, cur, index) => `${acc}${index > 0 ? ', ' : ''}${cur}`, ''), []);
 
   return (
     <>

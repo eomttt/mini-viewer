@@ -34,8 +34,8 @@ const Viewer: NextPage = () => {
   const book = useSelector((state: ReducerStates) => state.book);
   const [menuHeight, setMenuHeight] = useState(0);
 
-  const initViewerState = useCallback(() => {
-    dispatch(viewerActions.initViewerState());
+  const resizeViewer = useCallback(() => {
+    dispatch(viewerActions.resizeViewerState());
   }, [dispatch]);
 
   const setViewerSize = useCallback(() => {
@@ -53,8 +53,8 @@ const Viewer: NextPage = () => {
 
   const resizeWindow = useCallback(() => {
     setViewerSize();
-    initViewerState();
-  }, [setViewerSize, initViewerState]);
+    resizeViewer();
+  }, [setViewerSize, resizeViewer]);
 
   const debounceResizeWindow = useCallback(debounce(resizeWindow, 500), [resizeWindow]);
 
@@ -66,17 +66,14 @@ const Viewer: NextPage = () => {
   }, [debounceResizeWindow]);
 
   useEffect(() => {
-    initViewerState();
-  }, [settingChangeToggle, initViewerState]);
-
-  useEffect(() => {
-
-  }, []);
+    resizeViewer();
+  }, [settingChangeToggle, resizeViewer]);
 
   useEffect(() => {
     setViewerSize();
     return () => {
-      initViewerState();
+      dispatch(viewerActions.initViewerState());
+      dispatch(bookActions.clearShowingBook());
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

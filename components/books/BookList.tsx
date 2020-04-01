@@ -4,6 +4,7 @@ import Router from 'next/router';
 import styled from 'styled-components';
 
 import { setLibraryOrder } from '../../lib/localStorage';
+import { getString } from '../../lib/util';
 
 import { subColor } from '../../styles';
 
@@ -16,7 +17,6 @@ const Container = styled.ul``;
 
 const CoverImage = styled.li`
   width: 10em;
-  border: 1px solid ${subColor};
   display: inline-block;
   margin: 1em;
   vertical-align: bottom;
@@ -25,6 +25,14 @@ const CoverImage = styled.li`
   & img {
     width: 100%;
     user-select: none;
+    box-shadow: 1px 1px 5px ${subColor};
+  }
+  & div {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: center;
   }
 `;
 
@@ -88,6 +96,9 @@ const BookList: React.FunctionComponent<Props> = ({ books }) => {
               onDragEnd={dragEnd}
               alt="Cover"
             />
+            <div>
+              {getString(book.titles)}
+            </div>
           </CoverImage>
         ))
       }
