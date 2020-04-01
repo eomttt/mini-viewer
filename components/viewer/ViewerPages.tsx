@@ -70,26 +70,12 @@ const ViewerPages: React.FunctionComponent<Props> = ({
   const widthWithRatio = usePageWithWithRatio(viewerWidth, widthRatio);
   const isSetCountList = useSetBookCount(viewerCountList, spines);
 
-  const getSpineId = useCallback((selectedHref: string): null | string => {
-    let selectedSpineId = null;
-    spines.some((spine) => {
-      const { href, id } = spine;
-      if (href && selectedHref.includes(href)) {
-        selectedSpineId = id;
-        return true;
-      }
-      return false;
-    });
-
-    return selectedSpineId;
-  }, [spines]);
-
   const setPageCountBySpineId = useCallback((spineId: string, offset?: number) => {
     const pageCount = getPageCountBySpineId(viewerCountList, spineId);
     if (pageCount > -1) {
       dispatch(viewerActions.setViewerPageCount(pageCount + offset));
     }
-  }, [dispatch, viewerCountList]);
+  }, [viewerCountList]);
 
   useEffect(() => {
     if (isSetCountList && viewerSpineId) {
@@ -97,35 +83,20 @@ const ViewerPages: React.FunctionComponent<Props> = ({
       const pageOffset = viewerSpineOffset >= maxPageOffset ? maxPageOffset - 1 : viewerSpineOffset;
       setPageCountBySpineId(viewerSpineId, pageOffset);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, isSetCountList, setPageCountBySpineId]);
+  }, [isSetCountList]);
 
   useEffect(() => {
     if (viewerLinkPageOffset) {
       const { spineId, offset } = viewerLinkPageOffset;
       setPageCountBySpineId(spineId, offset);
     }
-  }, [dispatch, viewerLinkPageOffset, setPageCountBySpineId]);
+  }, [viewerLinkPageOffset]);
 
   useEffect(() => {
     if (nowSpineId) {
       dispatch(viewerActions.setViewerSpineId(nowSpineId));
     }
-  }, [dispatch, nowSpineId]);
-
-  const clickLink = useCallback((spineHref, hashTag) => {
-    const spineId = getSpineId(spineHref);
-    if (spineId) {
-      if (hashTag) {
-        dispatch(viewerActions.setViewerLink({
-          spineId,
-          tag: hashTag,
-        }));
-      } else {
-        setPageCountBySpineId(spineId, 0);
-      }
-    }
-  }, [dispatch, getSpineId, setPageCountBySpineId]);
+  }, [nowSpineId]);
 
   /**
    * Calculate: Callback from single page, Set count in private store,
@@ -141,25 +112,47 @@ const ViewerPages: React.FunctionComponent<Props> = ({
   }, [spines]);
 
   useEffect(() => {
-    const { countItems } = privateStates;
-    if (isAllCountItemsSet) {
-      dispatch(viewerActions.setViewerCountList(countItems));
-    }
-  }, [dispatch, isAllCountItemsSet, privateStates]);
-
-  useEffect(() => {
     if (!isSetCountList) {
       privateDispatch(initCount());
     }
   }, [isSetCountList]);
 
+  useEffect(() => {
+    const { countItems } = privateStates;
+    if (isAllCountItemsSet) {
+      dispatch(viewerActions.setViewerCountList(countItems));
+    }
+  }, [isAllCountItemsSet, privateStates]);
+
   /**
-   * Viewer: Set offset spine index, Click left or right
+   * Viewer: Set offset spine index, Click left or right, link
    */
   useEffect(() => {
     const { current: containerCurrent } = containerRef;
     containerCurrent.scrollLeft = pagesOffset * (widthWithRatio + VIEWER_PAGE_GAP);
   }, [widthWithRatio, pagesOffset]);
+
+  const isSelectedSpineLink = useCallback(
+    (spineHref: string, selectedHref: string) => spineHref && selectedHref.includes(spineHref),
+    [],
+  );
+
+  const clickLink = useCallback((spineHref: string, hashTag: string) => {
+    spines.some(({ href, id }) => {
+      if (isSelectedSpineLink(href, spineHref)) {
+        if (hashTag) {
+          dispatch(viewerActions.setViewerLink({
+            spineId: id,
+            tag: hashTag,
+          }));
+        } else {
+          setPageCountBySpineId(id, 0);
+        }
+        return true;
+      }
+      return false;
+    });
+  }, [setPageCountBySpineId]);
 
   return (
     <Container

@@ -67,15 +67,15 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
       const pageCount = viewerCountList.reduce((acc, cur) => acc + cur.count, 0);
       dispatch(viewerActions.setViewerPageWholeCount(pageCount > 0 ? pageCount - 1 : 0));
     }
-  }, [dispatch, viewerCountList, isSetCountList]);
+  }, [isSetCountList]);
 
   const clickLeft = useCallback(() => {
     dispatch(viewerActions.setCountDownViewerPageCount());
-  }, [dispatch]);
+  }, []);
 
   const clickRight = useCallback(() => {
     dispatch(viewerActions.setCountUpViewerPageCount());
-  }, [dispatch]);
+  }, []);
 
   return (
     <Container

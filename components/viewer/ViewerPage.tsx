@@ -81,8 +81,7 @@ const ViewerPage: React.FunctionComponent<Props> = ({
         }));
       }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, viewerLink, spineIndex, isSelectedSpineByLink]);
+  }, [viewerLink, isSelectedSpineByLink]);
 
   /**
    * Calculate: Column count
@@ -97,12 +96,8 @@ const ViewerPage: React.FunctionComponent<Props> = ({
         }
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [viewArticleRef, widthWithRatio, isSetCountList]);
+  }, [widthWithRatio, isSetCountList]);
 
-  useEffect(() => {
-    // Before setting set
-  }, [fontSize, lineHeight, widthRatio]);
 
   /**
    * Viewer: Set offset scroll value
@@ -113,7 +108,7 @@ const ViewerPage: React.FunctionComponent<Props> = ({
       viewArticleRefCurrent.scrollLeft = pageOffset * (widthWithRatio + VIEWER_PAGE_GAP);
       dispatch(viewerActions.setViewerSpineOffset(pageOffset));
     }
-  }, [dispatch, widthWithRatio, pageOffset, isShowSpineViewer]);
+  }, [widthWithRatio, pageOffset, isShowSpineViewer]);
 
   const clickPage = useCallback((e) => {
     let node = e.target;

@@ -63,7 +63,7 @@ const ViewerNcx: React.FunctionComponent<Props> = ({ ncxItem }) => {
     if (pageCountBySpineId > -1) {
       dispatch(viewerActions.setViewerPageCount(pageCountBySpineId));
     }
-  }, [dispatch, viewerCountList]);
+  }, [viewerCountList]);
 
   const toggleShowNcs = useCallback(() => {
     setIsShowNcx(!isShowNcx);
