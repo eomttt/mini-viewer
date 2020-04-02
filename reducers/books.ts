@@ -1,7 +1,7 @@
 import { createAction, handleActions } from 'redux-actions';
 
 import { ReducerAction } from '../interfaces';
-import { BooksState, BookInfo } from '../interfaces/books';
+import { BooksState, BookListItem } from '../interfaces/books';
 
 export const initialState: BooksState = {
   list: null,
@@ -11,8 +11,8 @@ export const initialState: BooksState = {
 export const SET_BOOK_LIST = 'books/SET_BOOK_LIST';
 
 // Action creators
-export const setBookList = createAction(SET_BOOK_LIST, (list: BookInfo[]) => ({ list }));
-// export const setBookList = (list: BookInfo[]) => ({
+export const setBookList = createAction(SET_BOOK_LIST, (list: BookListItem[]) => ({ list }));
+// export const setBookList = (list: BookListItem[]) => ({
 //   type: SET_BOOK_LIST,
 //   payload: {
 //     list,

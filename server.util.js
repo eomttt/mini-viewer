@@ -1,6 +1,9 @@
 const fs = require('fs');
 const { EpubParser } = require('@ridi/epub-parser');
 
+const { getEpubFileKeys, getEpubFile } = require('./server.s3.js');
+const { TEMP_EPUB_FILE, DEFAULT_COVER_IMAGE } = require('./server.constant.js');
+
 const parsingBook = async (parser, {
   unzipPath,
 }) => {
@@ -13,10 +16,8 @@ const parsingBook = async (parser, {
 
     return book;
   } catch (error) {
-    console.log('Get book error', error);
+    throw new Error(error);
   }
-
-  return null;
 };
 
 const parsingViewers = async (parser, {
@@ -33,45 +34,40 @@ const parsingViewers = async (parser, {
 
     return viewers;
   } catch (error) {
-    console.log('Get viewers error', error);
+    throw new Error(error);
   }
-
-  return [];
 };
 
-const getBookInfo = async ({
-  dirPath,
-  fileName,
-}) => {
-  const parser = new EpubParser(`${dirPath}/${fileName}.epub`);
+const getBookInfo = async (fileName) => {
+  const parser = new EpubParser(`public/${TEMP_EPUB_FILE}.epub`);
   const styleText = [];
   try {
     const book = await parsingBook(parser, {
-      unzipPath: `${dirPath}/${fileName}`,
+      unzipPath: `public/${TEMP_EPUB_FILE}`,
     });
 
     if (book) {
       const viewers = await parsingViewers(parser, {
         bookSpines: book.spines,
-        publicPath: `${fileName}`,
+        publicPath: `${TEMP_EPUB_FILE}`,
       });
 
       const { styles } = book;
       // eslint-disable-next-line no-restricted-syntax
       for (const style of styles) {
-        const text = fs.readFileSync(`${dirPath}/${fileName}/${style.href}`, 'utf8');
+        const text = fs.readFileSync(`public/${TEMP_EPUB_FILE}/${style.href}`, 'utf8');
         styleText.push(text);
       }
 
       return {
+        fileName,
         book,
         viewers,
-        fileName,
         styleText: styleText.join(''),
       };
     }
   } catch (error) {
-    console.log('Get book info error', error);
+    throw new Error(error);
   }
 
   return {
@@ -82,47 +78,67 @@ const getBookInfo = async ({
   };
 };
 
-const isEpubFile = (fileName) => fileName.includes('.epub');
-
-const getBooks = async () => {
-  const files = fs.readdirSync('public');
-  const booksInfo = [];
-  // eslint-disable-next-line no-restricted-syntax
-  for (const file of files) {
-    if (isEpubFile(file)) {
-      const [fileName] = file.split('.epub');
-      try {
-        const bookInfo = await getBookInfo({
-          dirPath: 'public',
-          fileName,
-        });
-
-        booksInfo.push({ ...bookInfo });
-      } catch (error) {
-        throw new Error(error);
-      }
+const getCoverImage = (bookCover) => (
+  new Promise((resolve, reject) => {
+    if (bookCover) {
+      const imagefileNameArr = bookCover.href.split('/');
+      const imageFileName = imagefileNameArr[imagefileNameArr.length - 1];
+      fs.copyFile(`public/${TEMP_EPUB_FILE}/${bookCover.href}`, `public/cover/${imageFileName}`, (error) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(`cover/${imageFileName}`);
+      });
+    } else {
+      resolve(DEFAULT_COVER_IMAGE);
     }
+  })
+);
+
+const getTitle = (book) => book.creators.reduce((acc, cur, index) => `${acc}${index > 0 ? ', ' : ''}${cur.name}`, '');
+
+const getBookListItems = async () => {
+  const bookListItems = [];
+  try {
+    const fileKeys = await getEpubFileKeys();
+    // eslint-disable-next-line no-restricted-syntax
+    for (const fileKey of fileKeys) {
+      const [fileName] = fileKey.split('.');
+      await getEpubFile(fileName || 'jikji');
+      const bookInfo = await getBookInfo(fileName);
+      const imageFileName = await getCoverImage(bookInfo.book.cover);
+      const title = getTitle(bookInfo.book);
+      bookListItems.push({
+        fileName,
+        title,
+        coverImage: imageFileName,
+      });
+    }
+    return bookListItems;
+  } catch (error) {
+    throw new Error(error);
   }
-  return booksInfo;
 };
 
 const getBook = async (fileName) => {
-  const bookInfo = await getBookInfo({
-    dirPath: 'public',
-    fileName,
-  });
+  try {
+    await getEpubFile(fileName || 'jikji');
 
-  const {
-    book, styleText, viewers, fileName: bookInfoFileName,
-  } = bookInfo;
+    const bookInfo = await getBookInfo(fileName);
+    const {
+      book, styleText, viewers,
+    } = bookInfo;
 
-  return {
-    ...book,
-    styleText,
-    spineViewers: viewers,
-    fileName: bookInfoFileName,
-  };
+    return {
+      ...book,
+      styleText,
+      spineViewers: viewers,
+      fileName,
+    };
+  } catch (error) {
+    throw new Error(error);
+  }
 };
 
-module.exports.getBooks = getBooks;
+module.exports.getBookListItems = getBookListItems;
 module.exports.getBook = getBook;

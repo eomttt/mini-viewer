@@ -1,12 +1,11 @@
 export interface BooksState {
-  list: BookInfo[] | null;
+  list: BookListItem[] | null;
 }
 
-export interface BookInfo {
+export interface BookListItem {
   fileName: string;
-  book: EpubBook;
-  viewers: string[];
-  styleText: string;
+  coverImage: string;
+  title: string;
 }
 
 export interface EpubBookViewer extends EpubBook {

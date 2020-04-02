@@ -1,3 +1,7 @@
+public/temp/*
+public/temp.epub
+config/
+
 .DS_Store
 
 .next/
