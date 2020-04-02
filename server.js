@@ -4,7 +4,7 @@ const next = require('next');
 const path = require('path');
 const bodyParser = require('body-parser');
 
-const { getBookListItems, getBook } = require('./server.util');
+const { getBookListItem, getBookListItems, getBook } = require('./server.util');
 const { uploadEpubFile } = require('./server.s3');
 
 const dev = process.env.NODE_ENV !== 'production';
@@ -28,8 +28,10 @@ app.prepare().then(() => {
     try {
       const { files } = req;
       const result = await uploadEpubFile(files.file);
+
+      const pathArr = result.key.split('/');
       res.send({
-        location: result.key,
+        fileName: pathArr[pathArr.length - 1],
       });
     } catch (error) {
       console.log(error);
@@ -37,7 +39,20 @@ app.prepare().then(() => {
     }
   });
 
-  server.get('/books', async (req, res) => {
+  server.get('/book-list-item', async (req, res) => {
+    try {
+      const { query } = req;
+      const { fileName } = query;
+      const bookListItem = await getBookListItem(fileName);
+      res.send({
+        bookListItem,
+      });
+    } catch (error) {
+      res.status(500).send(error);
+    }
+  });
+
+  server.get('/book-list-items', async (req, res) => {
     try {
       const bookListItems = await getBookListItems();
       res.send({

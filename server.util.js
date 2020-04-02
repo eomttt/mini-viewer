@@ -97,6 +97,22 @@ const getCoverImage = (bookCover, fileName) => (
 
 const getTitle = (book) => book.creators.reduce((acc, cur, index) => `${acc}${index > 0 ? ', ' : ''}${cur.name}`, '');
 
+const getBookListItem = async (fileName) => {
+  try {
+    await getEpubFile(fileName || 'jikji');
+    const bookInfo = await getBookInfo(fileName);
+    const imageFileName = await getCoverImage(bookInfo.book.cover, fileName);
+    const title = getTitle(bookInfo.book);
+    return {
+      fileName,
+      title,
+      coverImage: imageFileName,
+    };
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 const getBookListItems = async () => {
   const bookListItems = [];
   try {
@@ -104,15 +120,8 @@ const getBookListItems = async () => {
     // eslint-disable-next-line no-restricted-syntax
     for (const fileKey of fileKeys) {
       const [fileName] = fileKey.split('.');
-      await getEpubFile(fileName || 'jikji');
-      const bookInfo = await getBookInfo(fileName);
-      const imageFileName = await getCoverImage(bookInfo.book.cover, fileName);
-      const title = getTitle(bookInfo.book);
-      bookListItems.push({
-        fileName,
-        title,
-        coverImage: imageFileName,
-      });
+      const listItem = await getBookListItem(fileName);
+      bookListItems.push(listItem);
     }
     return bookListItems;
   } catch (error) {
@@ -140,5 +149,6 @@ const getBook = async (fileName) => {
   }
 };
 
+module.exports.getBookListItem = getBookListItem;
 module.exports.getBookListItems = getBookListItems;
 module.exports.getBook = getBook;

@@ -2,7 +2,7 @@ import React, { useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { NextPage } from 'next';
 
-import { fetchGetBooks } from '../lib/fetch';
+import { fetchGetBookListItems } from '../lib/fetch';
 import { setLibraryOrder, getLibraryOrder } from '../lib/localStorage';
 
 import Layout from '../components/Layout';
@@ -45,22 +45,35 @@ const Home: NextPage = () => {
     return newOrderedItems;
   }, []);
 
-  const setBooksInfo = useCallback(async () => {
-    const bookListItems = await fetchGetBooks();
+  const setOrderedBookListItems = useCallback((bookListItems) => {
     const orderedItems = getLibraryOrder();
-
     let sortedBooksInfo = [...bookListItems];
     if (bookListItems && orderedItems) {
       sortedBooksInfo = getByOrderedItems(orderedItems, bookListItems);
     }
-
     setLibraryOrder(sortedBooksInfo.map((sortedBookInfo) => sortedBookInfo.fileName));
     dispatch(booksActions.setBookList([...sortedBooksInfo]));
   }, []);
 
+  const getBookListItems = useCallback(async () => {
+    try {
+      const bookListItems = await fetchGetBookListItems();
+      return bookListItems;
+    } catch (error) {
+      console.error(error);
+    }
+
+    return [];
+  }, []);
+
+  const initBookListItems = useCallback(async () => {
+    const items = await getBookListItems();
+    setOrderedBookListItems(items);
+  }, []);
+
   useEffect(() => {
     if (!list) {
-      setBooksInfo();
+      initBookListItems();
     }
   }, []);
 

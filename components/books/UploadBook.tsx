@@ -1,7 +1,10 @@
 import React, { useCallback, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-import { fetchUploadEpub } from '../../lib/fetch';
+import * as booksActions from '../../reducers/books';
+
+import { fetchGetBookListItem, fetchUploadEpub } from '../../lib/fetch';
 
 const Container = styled.div`
   width: 95%;
@@ -11,10 +14,41 @@ const Container = styled.div`
 `;
 
 const UploadBook = () => {
+  const dispatch = useDispatch();
   const [isUploading, setIsUploading] = useState(false);
   const fileRef = useRef(null);
 
-  const setFile = useCallback(async (e) => {
+  const addBook = useCallback(async (fileName) => {
+    try {
+      const [name] = fileName.split('.');
+      const bookListItem = await fetchGetBookListItem(name);
+
+      dispatch(booksActions.addBook(bookListItem));
+    } catch (error) {
+      throw new Error(error);
+    }
+  }, []);
+
+  const uploadFile = useCallback(async (fileData) => {
+    setIsUploading(true);
+
+    const data = new FormData();
+    data.append('file', fileData.files[0]);
+    data.append('filename', fileData.files[0].name);
+
+    try {
+      const res = await fetchUploadEpub(data);
+      if (res) {
+        await addBook(res);
+        setIsUploading(false);
+        alert('업로드에 성공했습니다.');
+      }
+    } catch (error) {
+      alert('업로드에 실패하였습니다.');
+    }
+  }, []);
+
+  const setFile = useCallback((e) => {
     e.preventDefault();
 
     if (isUploading) {
@@ -22,22 +56,10 @@ const UploadBook = () => {
     }
 
     if (fileRef) {
-      setIsUploading(true);
-
       const { current } = fileRef;
-      const data = new FormData();
-      data.append('file', current.files[0]);
-      data.append('filename', current.files[0].name);
-      const res = await fetchUploadEpub(data);
-
-      if (res) {
-        setIsUploading(false);
-        alert('업로드에 성공했습니다.');
-      } else {
-        alert('업로드에 실패하였습니다.');
-      }
+      uploadFile(current);
     }
-  }, [isUploading]);
+  }, [isUploading, uploadFile]);
 
   return (
     <Container>

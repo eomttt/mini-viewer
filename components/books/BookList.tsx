@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import Router from 'next/router';
 import styled from 'styled-components';
 
@@ -40,6 +40,10 @@ interface Props {
 const BookList: React.FunctionComponent<Props> = ({ bookListItems }) => {
   const [bookList, setBookList] = useState(bookListItems);
   const [draggedItem, setDraggedItem] = useState<BookListItem>(null);
+
+  useEffect(() => {
+    setBookList([...bookListItems]);
+  }, [bookListItems]);
 
   const openBook = useCallback((bookIndex: number) => {
     const selectedBook = bookList[bookIndex];
