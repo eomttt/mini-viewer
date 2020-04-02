@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import * as booksActions from '../../reducers/books';
 
 import { fetchGetBookListItem, fetchUploadEpub } from '../../lib/fetch';
+import { addLibraryOrder } from '../../lib/localStorage';
 
 const Container = styled.div`
   width: 95%;
@@ -24,17 +25,18 @@ const UploadBook = () => {
       const bookListItem = await fetchGetBookListItem(name);
 
       dispatch(booksActions.addBook(bookListItem));
+      addLibraryOrder(bookListItem.fileName);
     } catch (error) {
       throw new Error(error);
     }
   }, []);
 
-  const uploadFile = useCallback(async (fileData) => {
+  const uploadFile = useCallback(async (files) => {
     setIsUploading(true);
 
     const data = new FormData();
-    data.append('file', fileData.files[0]);
-    data.append('filename', fileData.files[0].name);
+    data.append('file', files[0]);
+    data.append('filename', files[0].name);
 
     try {
       const res = await fetchUploadEpub(data);
@@ -57,7 +59,11 @@ const UploadBook = () => {
 
     if (fileRef) {
       const { current } = fileRef;
-      uploadFile(current);
+      if (current.files && current.files.length > 0) {
+        uploadFile(current.files);
+      } else {
+        alert('파일을 선택해 주세요.');
+      }
     }
   }, [isUploading, uploadFile]);
 
