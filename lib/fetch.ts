@@ -31,3 +31,18 @@ export const fetchGetBook = async (fileName) => {
 
   return {};
 };
+
+export const fetchUploadEpub = async (file) => {
+  try {
+    const res = await axios.post('/upload-epub', file);
+    const { data, status } = res;
+    if (status === 200) {
+      const { location } = data;
+      return location;
+    }
+  } catch (error) {
+    console.log('Error', error);
+  }
+
+  return null;
+};

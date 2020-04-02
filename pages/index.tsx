@@ -6,7 +6,10 @@ import { fetchGetBooks } from '../lib/fetch';
 import { setLibraryOrder, getLibraryOrder } from '../lib/localStorage';
 
 import Layout from '../components/Layout';
+import Loading from '../components/common/Loading';
+import NoBookList from '../components/books/NoBookList';
 import BookList from '../components/books/BookList';
+import UploadBook from '../components/books/UploadBook';
 
 import * as booksActions from '../reducers/books';
 
@@ -49,19 +52,29 @@ const Home: NextPage = () => {
   }, []);
 
   useEffect(() => {
-    if (list && list.length > 0) {
-      // Already exist
-    } else {
+    if (!list) {
       setBooksInfo();
     }
   }, []);
+
+  const renderBookList = useCallback(() => (
+    <>
+      {
+        list.length > 0
+          ? <BookList bookListItems={list} />
+          : <NoBookList />
+      }
+    </>
+  ), [list]);
 
   return (
     <Layout>
       {
         list
-        && <BookList bookListItems={list} />
+          ? <>{renderBookList()}</>
+          : <Loading text="책을 가져오고 있습니다. 잠시만 기다려주세요..." />
       }
+      <UploadBook />
     </Layout>
   );
 };

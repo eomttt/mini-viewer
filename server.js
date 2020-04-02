@@ -1,8 +1,11 @@
 const express = require('express');
+const fileUpload = require('express-fileupload');
 const next = require('next');
 const path = require('path');
+const bodyParser = require('body-parser');
 
 const { getBookListItems, getBook } = require('./server.util');
+const { uploadEpubFile } = require('./server.s3');
 
 const dev = process.env.NODE_ENV !== 'production';
 const prod = process.env.NODE_ENV === 'production';
@@ -16,28 +19,22 @@ app.prepare().then(() => {
   server.use('/', express.static(path.join(__dirname, 'public')));
   server.use(express.json());
   server.use(express.urlencoded({ extended: true }));
+  server.use(bodyParser.urlencoded({
+    extended: false,
+  }));
+  server.use(fileUpload());
 
-  server.put('/upload-epub', (req, res) => {
-    // try {
-    //   const { body } = req;
-    //   const param = {
-    //     Bucket: 'kjglass-images',
-    //     Key: body.fileName,
-    //     ACL: 'public-read',
-    //     Body: fs.createReadStream('temp.jpg'),
-    //     ContentType: 'epub',
-    //   };
-    //   s3.upload(param, (error, data) => {
-    //     if (error) {
-    //       console.log('Upload s3 error', error);
-    //     }
-    //     res.send({
-    //       location: data.Location,
-    //     });
-    //   });
-    // } catch (error) {
-    //   res.status(500).send(error);
-    // }
+  server.post('/upload-epub', async (req, res) => {
+    try {
+      const { files } = req;
+      const result = await uploadEpubFile(files.file);
+      res.send({
+        location: result.key,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send(error);
+    }
   });
 
   server.get('/books', async (req, res) => {

@@ -57,5 +57,24 @@ const getEpubFile = (fileName) => (
   })
 );
 
+const uploadEpubFile = (file) => (
+  new Promise((resolve, reject) => {
+    const params = {
+      Bucket: AWS_BUCKET_NAME,
+      Key: `${BOOKS_LIST_DIR}/${file.name}`,
+      ACL: 'public-read',
+      ContetnType: file.mimetype,
+      Body: file.data,
+    };
+    s3.upload(params, (error, data) => {
+      if (error) {
+        reject(error);
+      }
+      resolve(data);
+    });
+  })
+);
+
 module.exports.getEpubFileKeys = getEpubFileKeys;
 module.exports.getEpubFile = getEpubFile;
+module.exports.uploadEpubFile = uploadEpubFile;
