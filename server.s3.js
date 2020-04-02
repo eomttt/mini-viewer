@@ -9,7 +9,7 @@ try {
   awsConfig = {};
 }
 
-const { AWS_BUCKET_NAME, BOOKS_LIST_DIR, TEMP_EPUB_FILE } = require('./server.constant.js');
+const { AWS_BUCKET_NAME, BOOKS_LIST_DIR } = require('./server.constant.js');
 
 AWS.config.update({
   accessKeyId: awsConfig.accessKeyId || process.env.accessKeyId,
@@ -51,8 +51,8 @@ const getEpubFile = (fileName) => (
       if (error) {
         reject(error);
       }
-      fs.writeFileSync(`public/${TEMP_EPUB_FILE}.epub`, data.Body);
-      resolve(TEMP_EPUB_FILE);
+      fs.writeFileSync(`public/${fileName}.epub`, data.Body);
+      resolve(fileName);
     });
   })
 );

@@ -2,7 +2,7 @@ const fs = require('fs');
 const { EpubParser } = require('@ridi/epub-parser');
 
 const { getEpubFileKeys, getEpubFile } = require('./server.s3.js');
-const { TEMP_EPUB_FILE, DEFAULT_COVER_IMAGE } = require('./server.constant.js');
+const { DEFAULT_COVER_IMAGE, EPUB_UNZIP_PATH } = require('./server.constant.js');
 
 const parsingBook = async (parser, {
   unzipPath,
@@ -39,23 +39,23 @@ const parsingViewers = async (parser, {
 };
 
 const getBookInfo = async (fileName) => {
-  const parser = new EpubParser(`public/${TEMP_EPUB_FILE}.epub`);
+  const parser = new EpubParser(`public/${fileName}.epub`);
   const styleText = [];
   try {
     const book = await parsingBook(parser, {
-      unzipPath: `public/${TEMP_EPUB_FILE}`,
+      unzipPath: `${EPUB_UNZIP_PATH}/${fileName}`,
     });
 
     if (book) {
       const viewers = await parsingViewers(parser, {
         bookSpines: book.spines,
-        publicPath: `${TEMP_EPUB_FILE}`,
+        publicPath: `epub/${fileName}`,
       });
 
       const { styles } = book;
       // eslint-disable-next-line no-restricted-syntax
       for (const style of styles) {
-        const text = fs.readFileSync(`public/${TEMP_EPUB_FILE}/${style.href}`, 'utf8');
+        const text = fs.readFileSync(`${EPUB_UNZIP_PATH}/${fileName}/${style.href}`, 'utf8');
         styleText.push(text);
       }
 
@@ -78,12 +78,12 @@ const getBookInfo = async (fileName) => {
   };
 };
 
-const getCoverImage = (bookCover) => (
+const getCoverImage = (bookCover, fileName) => (
   new Promise((resolve, reject) => {
     if (bookCover) {
       const imagefileNameArr = bookCover.href.split('/');
       const imageFileName = imagefileNameArr[imagefileNameArr.length - 1];
-      fs.copyFile(`public/${TEMP_EPUB_FILE}/${bookCover.href}`, `public/cover/${imageFileName}`, (error) => {
+      fs.copyFile(`${EPUB_UNZIP_PATH}/${fileName}/${bookCover.href}`, `public/cover/${imageFileName}`, (error) => {
         if (error) {
           reject(error);
         }
@@ -106,7 +106,7 @@ const getBookListItems = async () => {
       const [fileName] = fileKey.split('.');
       await getEpubFile(fileName || 'jikji');
       const bookInfo = await getBookInfo(fileName);
-      const imageFileName = await getCoverImage(bookInfo.book.cover);
+      const imageFileName = await getCoverImage(bookInfo.book.cover, fileName);
       const title = getTitle(bookInfo.book);
       bookListItems.push({
         fileName,

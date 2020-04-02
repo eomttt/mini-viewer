@@ -35,6 +35,13 @@ const Home: NextPage = () => {
         return false;
       });
     });
+
+    bookListItems.forEach((bookListItem) => {
+      if (!newOrderedItems.includes(bookListItem)) {
+        newOrderedItems.push(bookListItem);
+      }
+    });
+
     return newOrderedItems;
   }, []);
 
@@ -45,9 +52,9 @@ const Home: NextPage = () => {
     let sortedBooksInfo = [...bookListItems];
     if (bookListItems && orderedItems) {
       sortedBooksInfo = getByOrderedItems(orderedItems, bookListItems);
-    } else {
-      setLibraryOrder(bookListItems.map((bookListItem) => bookListItem.fileName));
     }
+
+    setLibraryOrder(sortedBooksInfo.map((sortedBookInfo) => sortedBookInfo.fileName));
     dispatch(booksActions.setBookList([...sortedBooksInfo]));
   }, []);
 

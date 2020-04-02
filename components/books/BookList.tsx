@@ -80,7 +80,7 @@ const BookList: React.FunctionComponent<Props> = ({ bookListItems }) => {
   return (
     <Container>
       {
-        bookListItems.map(({ fileName, coverImage, title }, index) => (
+        bookList.map(({ fileName, coverImage, title }, index) => (
           <CoverImage
             onClick={() => openBook(index)}
             onDragOver={(e) => dragOver(e, index)}
