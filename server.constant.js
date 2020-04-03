@@ -5,7 +5,7 @@ const DEFAULT_COVER_IMAGE = 'default-book.png';
 
 const EPUB_UNZIP_PATH = 'public/epub';
 
-const EPUB_IMAGE_STATIC_PATH = 'https:///hyuntaeeom-personal.s3.ap-northeast-2.amazonaws.com/RIDI+mini-vewer';
+const EPUB_IMAGE_STATIC_PATH = 'https://hyuntaeeom-personal.s3.ap-northeast-2.amazonaws.com/RIDI+mini-vewer';
 
 module.exports.AWS_BUCKET_NAME = AWS_BUCKET_NAME;
 module.exports.BOOKS_LIST_DIR = BOOKS_LIST_DIR;

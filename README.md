@@ -52,5 +52,14 @@
   - Logs: $heroku logs --tail
 - [Demo](https://mini-viewer.herokuapp.com/)
 
+### Issue
+- When parse viewer basePath:  https://${url} or http://${url} 을 basePath로 지정할 경우, https:/${url} or http:/${url} 로 나오는데,
+이유는 path.join 시 url 일 경우 다음과 같이 반환 한다고 함.
+- [link](https://stackoverflow.com/questions/34668012/combine-url-paths-with-path-join)
+- [github issue](https://github.com/nodejs/node/issues/18288)
+- >  console.log(path.join.apply(__dirname, ['https://hyuntaeeom-personal.s3.ap-northeast-2.amazonaws.com/RIDI+mini-vewer/pg61629', 'OEBPS']));
+- 임시 해결 방안: node_modules/@ridi/parser-core/lib/pathUtil.js
+  - ```target.replace(/\\/g, '/') -> target.replace(/\\/g, '/').replace(':/','://');```
+
 
 
