@@ -52,6 +52,7 @@ app.prepare().then(() => {
         bookListItem,
       });
     } catch (error) {
+      console.log(error);
       res.status(500).send(error);
     }
   });
@@ -75,6 +76,7 @@ app.prepare().then(() => {
         bookListItems,
       });
     } catch (error) {
+      console.log(error);
       res.status(500).send(error);
     }
   });
@@ -89,6 +91,7 @@ app.prepare().then(() => {
         book,
       });
     } catch (error) {
+      console.log(error);
       res.status(500).send(error);
     }
   });
