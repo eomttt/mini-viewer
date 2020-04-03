@@ -5,8 +5,18 @@ const {
   getEpubFileKeys,
   getEpubFile,
   deleteEpubFile,
+  uploadEpubImageFiles,
 } = require('./server.s3.js');
-const { DEFAULT_COVER_IMAGE, EPUB_UNZIP_PATH } = require('./server.constant.js');
+const {
+  DEFAULT_COVER_IMAGE,
+  EPUB_UNZIP_PATH,
+  EPUB_IMAGE_STATIC_PATH,
+} = require('./server.constant.js');
+
+const clearEpubFile = (fileName) => {
+  fs.unlinkSync(`public/${fileName}.epub`);
+  fs.rmdirSync(`public/epub/${fileName}`, { recursive: true });
+};
 
 const parsingBook = async (parser, {
   unzipPath,
@@ -51,18 +61,27 @@ const getBookInfo = async (fileName) => {
     });
 
     if (book) {
+      const { styles, images, spines } = book;
+
+      // eslint-disable-next-line no-restricted-syntax
+      for (const image of images) {
+        const { href, mediaType } = image;
+        await uploadEpubImageFiles(`${fileName}/${href}`, `${EPUB_UNZIP_PATH}/${fileName}/${href}`, mediaType);
+      }
+
       const viewers = await parsingViewers(parser, {
-        bookSpines: book.spines,
-        publicPath: `epub/${fileName}`,
+        bookSpines: spines,
+        publicPath: `${EPUB_IMAGE_STATIC_PATH}/${fileName}`,
       });
 
-      const { styles } = book;
       // eslint-disable-next-line no-restricted-syntax
       for (const style of styles) {
-        const text = fs.readFileSync(`${EPUB_UNZIP_PATH}/${fileName}/${style.href}`, 'utf8');
+        const { href } = style;
+        const text = fs.readFileSync(`${EPUB_UNZIP_PATH}/${fileName}/${href}`, 'utf8');
         styleText.push(text);
       }
 
+      clearEpubFile(fileName);
       return {
         fileName,
         book,
@@ -71,6 +90,7 @@ const getBookInfo = async (fileName) => {
       };
     }
   } catch (error) {
+    console.log('Get book info error', error);
     throw new Error(error);
   }
 };
@@ -84,11 +104,10 @@ const getBookListItem = async (fileName) => {
       const { book } = await getBookInfo(fileName);
       const { creators, cover } = book;
 
-      fs.unlinkSync(`public/${fileName}.epub`);
       return {
         fileName,
         title: getTitle(creators),
-        coverImage: cover ? `epub/${fileName}/${cover.href}` : DEFAULT_COVER_IMAGE,
+        coverImage: cover ? `${EPUB_IMAGE_STATIC_PATH}/${fileName}/${cover.href}` : DEFAULT_COVER_IMAGE,
       };
     }
     return null;
@@ -133,7 +152,6 @@ const getBook = async (fileName) => {
       const {
         book, styleText, viewers,
       } = bookInfo;
-      fs.unlinkSync(`public/${fileName}.epub`);
       return {
         ...book,
         styleText,

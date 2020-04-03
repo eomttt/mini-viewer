@@ -35,8 +35,11 @@
 ![](https://hyuntaeeom-personal.s3.ap-northeast-2.amazonaws.com/RIDI+mini-vewer/viewer-store-change-diagram.png)
 
 ### API
-- ***GET /books***
+- ***POST /upload-epub***
+- ***GET /book-list-items***
+- ***GET /book-list-item?fileName=${fileName}***
 - ***GET /book?fileName=${fileName}***
+- ***DELETE /book-list-item***
 
 ### Deploy
 - Using Heroku

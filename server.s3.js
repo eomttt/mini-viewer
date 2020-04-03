@@ -84,6 +84,27 @@ const uploadEpubFile = (file) => (
   })
 );
 
+const uploadEpubImageFiles = (fileName, image, type) => (
+  new Promise((resolve, reject) => {
+    const params = {
+      Bucket: AWS_BUCKET_NAME,
+      Key: `${BOOKS_LIST_DIR}/${fileName}`,
+      ACL: 'public-read',
+      ContetnType: type,
+      Body: fs.createReadStream(image),
+    };
+    s3.upload(params, (error, data) => {
+      if (error) {
+        reject(error);
+      }
+      if (data) {
+        resolve(data);
+      }
+      resolve(null);
+    });
+  })
+);
+
 const deleteEpubFile = (fileName) => (
   new Promise((resolve, reject) => {
     const params = {
@@ -104,4 +125,5 @@ const deleteEpubFile = (fileName) => (
 module.exports.getEpubFileKeys = getEpubFileKeys;
 module.exports.getEpubFile = getEpubFile;
 module.exports.uploadEpubFile = uploadEpubFile;
+module.exports.uploadEpubImageFiles = uploadEpubImageFiles;
 module.exports.deleteEpubFile = deleteEpubFile;
