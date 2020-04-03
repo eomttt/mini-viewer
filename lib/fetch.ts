@@ -2,7 +2,7 @@ import axios from 'axios';
 
 import { BookListItem, EpubBookViewer } from '../interfaces/books';
 
-export const fetchGetBookListItems = async (): Promise<BookListItem[]> => {
+export const fetchGetBookListItems = async (): Promise<BookListItem[] | []> => {
   try {
     const res = await axios.get('/book-list-items');
     const { data, status } = res;
@@ -12,13 +12,12 @@ export const fetchGetBookListItems = async (): Promise<BookListItem[]> => {
     }
   } catch (error) {
     console.error('Error', error);
-    throw new Error(error);
   }
 
   return [];
 };
 
-export const fetchGetBookListItem = async (fileName): Promise<BookListItem> => {
+export const fetchGetBookListItem = async (fileName): Promise<BookListItem | null> => {
   try {
     const res = await axios.get(`/book-list-item?fileName=${fileName}`);
     const { data, status } = res;
@@ -28,13 +27,29 @@ export const fetchGetBookListItem = async (fileName): Promise<BookListItem> => {
     }
   } catch (error) {
     console.error('Error', error);
-    throw new Error(error);
   }
 
   return null;
 };
 
-export const fetchGetBook = async (fileName): Promise<EpubBookViewer> => {
+export const fetchDeleteBookListItem = async (fileName): Promise<string | null> => {
+  try {
+    const res = await axios.delete('/book-list-item', {
+      data: {
+        fileName,
+      },
+    });
+    const { data, status } = res;
+    if (status === 200) {
+      return data;
+    }
+  } catch (error) {
+    console.error('Error', error);
+  }
+  return null;
+}
+
+export const fetchGetBook = async (fileName): Promise<EpubBookViewer | null> => {
   try {
     const res = await axios.get(`/book?fileName=${fileName}`);
     const { data, status } = res;
@@ -44,13 +59,12 @@ export const fetchGetBook = async (fileName): Promise<EpubBookViewer> => {
     }
   } catch (error) {
     console.error('Error', error);
-    throw new Error(error);
   }
 
   return null;
 };
 
-export const fetchUploadEpub = async (file): Promise<string> => {
+export const fetchUploadEpub = async (file): Promise<string | null> => {
   try {
     const res = await axios.post('/upload-epub', file);
     const { data, status } = res;
@@ -60,7 +74,6 @@ export const fetchUploadEpub = async (file): Promise<string> => {
     }
   } catch (error) {
     console.log('Error', error);
-    throw new Error(error);
   }
 
   return null;

@@ -108,16 +108,19 @@ Viewer.getInitialProps = async (context: NextPageContext<any>): Promise<any> => 
 
   let book: EpubBookViewer = null;
 
-  try {
-    if (req) {
+  if (req) {
+    try {
       const { getBook } = require('../server.util');
       book = await getBook(queryName);
-    } else {
-      book = await fetchGetBook(queryName);
+    } catch (error) {
+      console.error(error);
     }
+  } else {
+    book = await fetchGetBook(queryName);
+  }
+
+  if (book) {
     store.dispatch(bookActions.setShowingBook(book));
-  } catch (error) {
-    console.error('Not support book');
   }
 };
 

@@ -8,7 +8,7 @@ const Container = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: #808080;
+  background-color: #dedede;
   z-index: 6;
 `;
 

@@ -1,11 +1,14 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
 import * as booksActions from '../../reducers/books';
 
 import { fetchGetBookListItem, fetchUploadEpub } from '../../lib/fetch';
 import { addLibraryOrder } from '../../lib/localStorage';
+
+import { ReducerStates } from '../../interfaces';
+import { BooksState } from '../../interfaces/books';
 
 const Container = styled.div`
   width: 95%;
@@ -16,41 +19,56 @@ const Container = styled.div`
 
 const UploadBook = () => {
   const dispatch = useDispatch();
+  const { list }: BooksState = useSelector((state: ReducerStates) => state.books);
   const [isUploading, setIsUploading] = useState(false);
   const fileRef = useRef(null);
 
-  const addBook = useCallback(async (fileName) => {
-    try {
-      const [name] = fileName.split('.');
-      const bookListItem = await fetchGetBookListItem(name);
+  const isExistBook = useCallback((fileName) => {
+    const [name] = fileName.split('.');
+    let isExist = false;
 
-      if (bookListItem) {
-        dispatch(booksActions.addBook(bookListItem));
-        addLibraryOrder(bookListItem.fileName);
+    list.some((item) => {
+      if (item.fileName === name) {
+        isExist = true;
+        return true;
       }
-    } catch (error) {
-      throw new Error(error);
+      return false;
+    });
+
+    return isExist;
+  }, [list]);
+
+  const addBook = useCallback(async (fileName) => {
+    const [name] = fileName.split('.');
+    const bookListItem = await fetchGetBookListItem(name);
+
+    if (bookListItem) {
+      dispatch(booksActions.addBook(bookListItem));
+      addLibraryOrder(bookListItem.fileName);
     }
   }, []);
 
   const uploadFile = useCallback(async (files) => {
     setIsUploading(true);
 
+    if (isExistBook(files[0].name)) {
+      alert('이미 있는 책입니다.');
+      return;
+    }
+
     const data = new FormData();
     data.append('file', files[0]);
     data.append('filename', files[0].name);
 
-    try {
-      const res = await fetchUploadEpub(data);
-      if (res) {
-        await addBook(res);
-        setIsUploading(false);
-        alert('업로드에 성공했습니다.');
-      }
-    } catch (error) {
-      alert('업로드에 실패하였습니다.');
+    const res = await fetchUploadEpub(data);
+    if (res) {
+      await addBook(res);
+      setIsUploading(false);
+      alert('업로드에 성공했습니다.');
+    } else {
+      alert('업로드에 실패했습니다. 잠시 후 다시 시도해주세요.');
     }
-  }, []);
+  }, [isExistBook]);
 
   const setFile = useCallback((e) => {
     e.preventDefault();

@@ -1,7 +1,11 @@
 const fs = require('fs');
 const { EpubParser } = require('@ridi/epub-parser');
 
-const { getEpubFileKeys, getEpubFile } = require('./server.s3.js');
+const {
+  getEpubFileKeys,
+  getEpubFile,
+  deleteEpubFile,
+} = require('./server.s3.js');
 const { DEFAULT_COVER_IMAGE, EPUB_UNZIP_PATH } = require('./server.constant.js');
 
 const parsingBook = async (parser, {
@@ -112,6 +116,15 @@ const getBookListItems = async () => {
   }
 };
 
+const deleteListItem = async (fileName) => {
+  try {
+    const res = await deleteEpubFile(fileName);
+    return res;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 const getBook = async (fileName) => {
   try {
     const epubFile = await getEpubFile(fileName || 'jikji');
@@ -137,4 +150,5 @@ const getBook = async (fileName) => {
 
 module.exports.getBookListItem = getBookListItem;
 module.exports.getBookListItems = getBookListItems;
+module.exports.deleteListItem = deleteListItem;
 module.exports.getBook = getBook;

@@ -84,6 +84,24 @@ const uploadEpubFile = (file) => (
   })
 );
 
+const deleteEpubFile = (fileName) => (
+  new Promise((resolve, reject) => {
+    const params = {
+      Bucket: AWS_BUCKET_NAME,
+      Key: `${BOOKS_LIST_DIR}/${fileName}.epub`,
+    };
+    s3.deleteObject(params, (error, data) => {
+      if (error) {
+        reject(error);
+      }
+      if (data) {
+        resolve(data);
+      }
+    })
+  })
+);
+
 module.exports.getEpubFileKeys = getEpubFileKeys;
 module.exports.getEpubFile = getEpubFile;
 module.exports.uploadEpubFile = uploadEpubFile;
+module.exports.deleteEpubFile = deleteEpubFile;

@@ -18,7 +18,6 @@ import { BooksState, BookListItem } from '../interfaces/books';
 
 const Home: NextPage = () => {
   const dispatch = useDispatch();
-
   const { list }: BooksState = useSelector((state: ReducerStates) => state.books);
 
   const getByOrderedItems = useCallback((
@@ -56,14 +55,8 @@ const Home: NextPage = () => {
   }, []);
 
   const getBookListItems = useCallback(async () => {
-    try {
-      const bookListItems = await fetchGetBookListItems();
-      return bookListItems;
-    } catch (error) {
-      console.error(error);
-    }
-
-    return [];
+    const bookListItems = await fetchGetBookListItems();
+    return bookListItems;
   }, []);
 
   const initBookListItems = useCallback(async () => {
@@ -81,7 +74,7 @@ const Home: NextPage = () => {
     <>
       {
         list.length > 0
-          ? <BookList bookListItems={list} />
+          ? <BookList />
           : <NoBookList />
       }
     </>

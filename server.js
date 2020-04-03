@@ -4,7 +4,11 @@ const next = require('next');
 const path = require('path');
 const bodyParser = require('body-parser');
 
-const { getBookListItem, getBookListItems, getBook } = require('./server.util');
+const {
+  getBookListItem, getBookListItems,
+  deleteListItem,
+  getBook,
+} = require('./server.util');
 const { uploadEpubFile } = require('./server.s3');
 
 const dev = process.env.NODE_ENV !== 'production';
@@ -48,6 +52,18 @@ app.prepare().then(() => {
         bookListItem,
       });
     } catch (error) {
+      res.status(500).send(error);
+    }
+  });
+
+  server.delete('/book-list-item', async (req, res) => {
+    try {
+      const { body } = req;
+      const { fileName } = body;
+      await deleteListItem(fileName);
+      res.send('Success');
+    } catch (error) {
+      console.log(error);
       res.status(500).send(error);
     }
   });
