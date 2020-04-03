@@ -29,14 +29,17 @@ const getEpubFileKeys = () => (
       if (error) {
         reject(error);
       }
-      const epubFileKeys = data.Contents.filter((content) => {
-        const { Key } = content;
-        return isEpubFile(Key);
-      }).map((content) => {
-        const { Key } = content;
-        return Key.split(`${BOOKS_LIST_DIR}/`)[1];
-      });
-      resolve(epubFileKeys);
+      if (data) {
+        const epubFileKeys = data.Contents.filter((content) => {
+          const { Key } = content;
+          return isEpubFile(Key);
+        }).map((content) => {
+          const { Key } = content;
+          return Key.split(`${BOOKS_LIST_DIR}/`)[1];
+        });
+        resolve(epubFileKeys);
+      }
+      resolve([]);
     });
   })
 );
@@ -51,8 +54,11 @@ const getEpubFile = (fileName) => (
       if (error) {
         reject(error);
       }
-      fs.writeFileSync(`public/${fileName}.epub`, data.Body);
-      resolve(fileName);
+      if (data) {
+        fs.writeFileSync(`public/${fileName}.epub`, data.Body);
+        resolve(fileName);
+      }
+      resolve(null);
     });
   })
 );
@@ -70,7 +76,10 @@ const uploadEpubFile = (file) => (
       if (error) {
         reject(error);
       }
-      resolve(data);
+      if (data) {
+        resolve(data);
+      }
+      resolve(null);
     });
   })
 );

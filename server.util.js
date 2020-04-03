@@ -69,13 +69,6 @@ const getBookInfo = async (fileName) => {
   } catch (error) {
     throw new Error(error);
   }
-
-  return {
-    fileName,
-    book: null,
-    viewers: [],
-    styleText: '',
-  };
 };
 
 const getCoverImage = (bookCover, fileName) => (
@@ -99,15 +92,19 @@ const getTitle = (book) => book.creators.reduce((acc, cur, index) => `${acc}${in
 
 const getBookListItem = async (fileName) => {
   try {
-    await getEpubFile(fileName || 'jikji');
-    const bookInfo = await getBookInfo(fileName);
-    const imageFileName = await getCoverImage(bookInfo.book.cover, fileName);
-    const title = getTitle(bookInfo.book);
-    return {
-      fileName,
-      title,
-      coverImage: imageFileName,
-    };
+    const epubFile = await getEpubFile(fileName || 'jikji');
+    if (epubFile) {
+      const bookInfo = await getBookInfo(fileName);
+      const imageFileName = await getCoverImage(bookInfo.book.cover, fileName);
+      const title = getTitle(bookInfo.book);
+      fs.unlinkSync(`public/${fileName}.epub`);
+      return {
+        fileName,
+        title,
+        coverImage: imageFileName,
+      };
+    }
+    return null;
   } catch (error) {
     throw new Error(error);
   }
@@ -121,7 +118,10 @@ const getBookListItems = async () => {
     for (const fileKey of fileKeys) {
       const [fileName] = fileKey.split('.');
       const listItem = await getBookListItem(fileName);
-      bookListItems.push(listItem);
+
+      if (listItem) {
+        bookListItems.push(listItem);
+      }
     }
     return bookListItems;
   } catch (error) {
@@ -131,19 +131,22 @@ const getBookListItems = async () => {
 
 const getBook = async (fileName) => {
   try {
-    await getEpubFile(fileName || 'jikji');
+    const epubFile = await getEpubFile(fileName || 'jikji');
+    if (epubFile) {
+      const bookInfo = await getBookInfo(fileName);
+      const {
+        book, styleText, viewers,
+      } = bookInfo;
+      fs.unlinkSync(`public/${fileName}.epub`);
+      return {
+        ...book,
+        styleText,
+        spineViewers: viewers,
+        fileName,
+      };
+    }
 
-    const bookInfo = await getBookInfo(fileName);
-    const {
-      book, styleText, viewers,
-    } = bookInfo;
-
-    return {
-      ...book,
-      styleText,
-      spineViewers: viewers,
-      fileName,
-    };
+    return null;
   } catch (error) {
     throw new Error(error);
   }

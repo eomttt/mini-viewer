@@ -8,7 +8,7 @@ export const fetchGetBookListItems = async (): Promise<BookListItem[]> => {
     const { data, status } = res;
     if (status === 200) {
       const { bookListItems } = data;
-      return [...bookListItems];
+      return bookListItems;
     }
   } catch (error) {
     console.error('Error', error);
@@ -24,9 +24,7 @@ export const fetchGetBookListItem = async (fileName): Promise<BookListItem> => {
     const { data, status } = res;
     if (status === 200) {
       const { bookListItem } = data;
-      return {
-        ...bookListItem,
-      }
+      return bookListItem;
     }
   } catch (error) {
     console.error('Error', error);

@@ -21,7 +21,7 @@ import * as settingActions from '../reducers/viewerSetting';
 import { VIEWER_HEIGHT_RATIO, VIEWER_WIDTH_RATIO } from '../constants/viewer';
 
 import { ReducerStates } from '../interfaces';
-import { BooksState, EpubBookViewer } from '../interfaces/books';
+import { EpubBookViewer } from '../interfaces/books';
 import { ViewerSettingState } from '../interfaces/viewer';
 
 
@@ -108,13 +108,17 @@ Viewer.getInitialProps = async (context: NextPageContext<any>): Promise<any> => 
 
   let book: EpubBookViewer = null;
 
-  if (req) {
-    const { getBook } = require('../server.util');
-    book = await getBook(queryName);
-  } else {
-    book = await fetchGetBook(queryName);
+  try {
+    if (req) {
+      const { getBook } = require('../server.util');
+      book = await getBook(queryName);
+    } else {
+      book = await fetchGetBook(queryName);
+    }
+    store.dispatch(bookActions.setShowingBook(book));
+  } catch (error) {
+    console.error('Not support book');
   }
-  store.dispatch(bookActions.setShowingBook(book));
 };
 
 export default Viewer;

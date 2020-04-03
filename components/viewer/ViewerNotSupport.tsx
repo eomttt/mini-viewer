@@ -22,6 +22,7 @@ const ViewerNotSupport: React.FunctionComponent = () => (
     <div>
       지원하지 않은 책입니다. 다른책을 선택해주세요.
     </div>
+    <a href="/">다른책 선택하기</a>
   </Container>
 );
 

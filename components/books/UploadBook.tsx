@@ -24,8 +24,10 @@ const UploadBook = () => {
       const [name] = fileName.split('.');
       const bookListItem = await fetchGetBookListItem(name);
 
-      dispatch(booksActions.addBook(bookListItem));
-      addLibraryOrder(bookListItem.fileName);
+      if (bookListItem) {
+        dispatch(booksActions.addBook(bookListItem));
+        addLibraryOrder(bookListItem.fileName);
+      }
     } catch (error) {
       throw new Error(error);
     }
