@@ -36,10 +36,14 @@
 
 ### API
 - ***POST /upload-epub***
-- ***GET /book-list-items***
+
 - ***GET /book-list-item?fileName=${fileName}***
-- ***GET /book?fileName=${fileName}***
+
 - ***DELETE /book-list-item***
+
+- ***GET /book-list-items***
+
+- ***GET /book?fileName=${fileName}***
 
 ### Deploy
 - Using Heroku
