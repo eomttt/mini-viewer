@@ -19,7 +19,11 @@ import { ReducerStates } from '../../interfaces';
 import { EpubSpineItem } from '../../interfaces/books';
 import { ViewerState, ViewerSettingState } from '../../interfaces/viewer';
 
-import { usePageWithWithRatio, usePageOffset } from '../../hooks';
+import {
+  usePageWithWithRatio,
+  useSpinePosition,
+  useSpineIndex,
+} from '../../hooks';
 
 const Article = styled(ViewerArticle)`
   overflow: hidden;
@@ -44,7 +48,6 @@ const ViewerPage: React.FunctionComponent<Props> = ({
 
   const {
     viewerLink, viewerPageCount, viewerCountList,
-    viewerSpineId,
   }: ViewerState = useSelector((state: ReducerStates) => state.viewer);
   const {
     viewerWidth, viewerHeight,
@@ -53,12 +56,14 @@ const ViewerPage: React.FunctionComponent<Props> = ({
 
   const viewArticleRef = useRef(null);
 
-  const isSelectedSpineByLink = useMemo(() => viewerLink && viewerLink.spineId === spine.id,
-    [viewerLink, spine]);
-  const isShowSpineViewer = useMemo(() => viewerSpineId === spine.id, [viewerSpineId, spine]);
-
-  const pageOffset = usePageOffset(viewerCountList, viewerPageCount, spineIndex);
+  const nowSpineIndex = useSpineIndex(viewerCountList, viewerPageCount);
+  const nowSpinePosition = useSpinePosition(viewerCountList, viewerPageCount, spineIndex);
   const widthWithRatio = usePageWithWithRatio(viewerWidth, widthRatio);
+
+  const isSelectedSpineByLink = useMemo(() => viewerLink && viewerLink.spineIndex === spineIndex,
+    [viewerLink, spine]);
+  const isShowNowSpineIndex = useMemo(() => nowSpineIndex === spineIndex,
+    [nowSpineIndex, spineIndex]);
 
   /**
    * When click a link in spine(page), Calculate new page offset
@@ -73,11 +78,10 @@ const ViewerPage: React.FunctionComponent<Props> = ({
         const pageScroll = Math.floor(
           tagElementScroll - (spineIndex * widthWithRatio) - pageMargin,
         );
-        const pageCount = Math.floor(pageScroll / widthWithRatio);
-        dispatch(viewerActions.setViewerLinkPageOffset({
-          spineId: viewerLink.spineId,
-          tag: viewerLink.tag,
-          offset: pageCount,
+        const pagePosition = Math.floor(pageScroll / widthWithRatio);
+        dispatch(viewerActions.setViewerLinkPagePosition({
+          ...viewerLink,
+          position: pagePosition,
         }));
       }
     }
@@ -103,12 +107,12 @@ const ViewerPage: React.FunctionComponent<Props> = ({
    * Viewer: Set offset scroll value
    */
   useEffect(() => {
-    if (pageOffset >= 0 && isShowSpineViewer) {
+    if (nowSpinePosition >= 0 && isShowNowSpineIndex) {
       const { current: viewArticleRefCurrent } = viewArticleRef;
-      viewArticleRefCurrent.scrollLeft = pageOffset * (widthWithRatio + VIEWER_PAGE_GAP);
-      dispatch(viewerActions.setViewerSpineOffset(pageOffset));
+      viewArticleRefCurrent.scrollLeft = nowSpinePosition * (widthWithRatio + VIEWER_PAGE_GAP);
+      dispatch(viewerActions.setViewerSpinePosition(nowSpinePosition));
     }
-  }, [widthWithRatio, pageOffset, isShowSpineViewer]);
+  }, [widthWithRatio, nowSpinePosition, isShowNowSpineIndex]);
 
   const clickPage = useCallback((e) => {
     let node = e.target;

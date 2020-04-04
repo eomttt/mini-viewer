@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import styled from 'styled-components';
@@ -10,7 +10,7 @@ import * as viewerActions from '../../reducers/viewer';
 import { ReducerStates } from '../../interfaces';
 import { EpubNcxItem, EpubNavPoint } from '../../interfaces/books';
 
-import { getPageCountBySpineId } from '../../lib/util';
+import { getSpineIndexById, getPageCountBySpineIndex } from '../../lib/util';
 
 const Container = styled.div`
   position: relative;
@@ -59,9 +59,10 @@ const ViewerNcx: React.FunctionComponent<Props> = ({ ncxItem }) => {
   const { viewerCountList } = useSelector((state: ReducerStates) => state.viewer);
 
   const setPageCountBySpineId = useCallback((selectedSpineId) => {
-    const pageCountBySpineId = getPageCountBySpineId(viewerCountList, selectedSpineId);
-    if (pageCountBySpineId > -1) {
-      dispatch(viewerActions.setViewerPageCount(pageCountBySpineId));
+    const spineIndex = getSpineIndexById(viewerCountList, selectedSpineId);
+    if (spineIndex > -1) {
+      const pageCount = getPageCountBySpineIndex(viewerCountList, spineIndex);
+      dispatch(viewerActions.setViewerPageCount(pageCount));
     }
   }, [viewerCountList]);
 

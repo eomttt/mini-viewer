@@ -2,10 +2,10 @@ export interface ViewerState {
   viewerCountList: ViewerCount[];
   viewerPageCount: number;
   viewerWholePageCount: number;
-  viewerSpineId: string;
-  viewerSpineOffset: number;
+  viewerSpineIndex: number;
+  viewerSpinePosition: number;
   viewerLink?: ViewerLink;
-  viewerLinkPageOffset?: ViewerLinkPageOffset;
+  viewerLinkPosition?: ViewerLinkPagePosition;
 }
 
 export interface ViewerSettingState extends ViewerStyle {
@@ -25,15 +25,16 @@ export interface ViewerCount {
   index: number;
   count: number;
   spineId: string;
+  href: string;
 }
 
 export interface ViewerLink {
-  spineId: string;
+  spineIndex: number;
   tag: string;
 }
 
-export interface ViewerLinkPageOffset extends ViewerLink {
-  offset: number;
+export interface ViewerLinkPagePosition extends ViewerLink {
+  position: number;
 }
 
 export interface SettingItem {
