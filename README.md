@@ -29,9 +29,9 @@
   2. 왼쪽 또는 오른쪽 클릭으로 인한 변경
   3. 하단 슬라이더를 이용한 변경
 - 따라서 다음과 같은 변경이 있을 시에 store 내에 **viewerPageCount** 를 변경시킨다.
-- **viewerPageCount** 변경됨에 따라서 **pagesOffset**, **pageOffset** 를 변경시켜주어 그에 맞는 page 를 찾아서 viewer 와 슬라이더 카운트를 맞게 변경해준다.
+- **viewerPageCount** 변경됨에 따라서 **viewerSpineIndex**, **viewrSpinePostion** 를 변경시켜주어 그에 맞는 page 를 찾아서 viewer 와 슬라이더 카운트를 맞게 변경해준다.
 
-> 그림에서 각각 **pagesOffset** 는 **Spine Index** 로, **pageOffset** 는 **column count** 로 표현하였다.
+> 그림에서 각각 **viewerSpineIndex** 는 **Spine Index** 로, **viewrSpinePostion** 는 **column count** 로 표현하였다.
 
 ![](https://hyuntaeeom-personal.s3.ap-northeast-2.amazonaws.com/RIDI+mini-vewer/viewer-store-change-diagram.png)
 
