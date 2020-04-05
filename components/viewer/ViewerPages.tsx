@@ -72,23 +72,26 @@ const ViewerPages: React.FunctionComponent<Props> = ({
   const widthWithRatio = usePageWithWithRatio(viewerWidth, widthRatio);
   const isSetCountList = useSetBookCount(viewerCountList, spines);
 
+  const setPageCount = useCallback((spineIndex: number, position = 0) => {
+    const pageCount = getPageCountBySpineIndex(viewerCountList, spineIndex);
+    dispatch(viewerActions.setViewerPageCount(pageCount + position));
+  }, [viewerCountList]);
+
   useEffect(() => {
     // Resize or Style 변경시 적용
     if (isSetCountList && viewerSpineIndex > -1) {
       const maxSpinePosition = getMaxSpinePosition(viewerCountList, viewerSpineIndex);
-      const pageCount = getPageCountBySpineIndex(viewerCountList, viewerSpineIndex);
       const position = viewerSpinePosition >= maxSpinePosition
         ? maxSpinePosition - 1
         : viewerSpinePosition;
-      dispatch(viewerActions.setViewerPageCount(pageCount + position));
+      setPageCount(viewerSpineIndex, position);
     }
   }, [isSetCountList]);
 
   useEffect(() => {
     if (viewerLinkPosition) {
       const { spineIndex: linkSpineIndex, position } = viewerLinkPosition;
-      const pageCount = getPageCountBySpineIndex(viewerCountList, linkSpineIndex);
-      dispatch(viewerActions.setViewerPageCount(pageCount + position));
+      setPageCount(linkSpineIndex, position);
     }
   }, [viewerLinkPosition]);
 
@@ -137,17 +140,16 @@ const ViewerPages: React.FunctionComponent<Props> = ({
   const clickLink = useCallback((spineHref: string, hashTag: string) => {
     const spineIndex = getSpineIndexByHref(viewerCountList, spineHref);
     if (spineIndex > -1) {
-      const pageCount = getPageCountBySpineIndex(viewerCountList, spineIndex);
       if (hashTag) {
         dispatch(viewerActions.setViewerLink({
           spineIndex,
           tag: hashTag,
         }));
       } else {
-        dispatch(viewerActions.setViewerPageCount(pageCount));
+        setPageCount(spineIndex);
       }
     }
-  }, [viewerCountList, spines]);
+  }, [viewerCountList, setPageCount]);
 
   return (
     <Container

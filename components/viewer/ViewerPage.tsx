@@ -52,6 +52,7 @@ const ViewerPage: React.FunctionComponent<Props> = ({
   const {
     viewerWidth, viewerHeight,
     fontSize, lineHeight, widthRatio,
+    settingChangeToggle,
   }: ViewerSettingState = useSelector((state: ReducerStates) => state.viewerSetting);
 
   const viewArticleRef = useRef(null);
@@ -64,6 +65,11 @@ const ViewerPage: React.FunctionComponent<Props> = ({
     [viewerLink, spine]);
   const isShowNowSpineIndex = useMemo(() => nowSpineIndex === spineIndex,
     [nowSpineIndex, spineIndex]);
+
+
+  useEffect(() => {
+    console.log("AAAAA");
+  }, [settingChangeToggle]);
 
   /**
    * When click a link in spine(page), Calculate new page offset
