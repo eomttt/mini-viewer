@@ -5,7 +5,8 @@ const path = require('path');
 const bodyParser = require('body-parser');
 
 const {
-  getBookListItem, getBookListItems,
+  getBookListItem,
+  getBookListItems,
   deleteListItem,
   getBook,
 } = require('./server.util');
