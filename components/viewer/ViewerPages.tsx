@@ -58,7 +58,7 @@ const ViewerPages: React.FunctionComponent<Props> = ({
     viewerSpineIndex, viewerSpinePosition,
   }: ViewerState = useSelector((state: ReducerStates) => state.viewer);
   const {
-    viewerWidth, widthRatio,
+    viewerWidth, widthRatio, isOpenSettingMenu,
   }: ViewerSettingState = useSelector((state: ReducerStates) => state.viewerSetting);
 
   const containerRef = useRef(null);
@@ -138,18 +138,20 @@ const ViewerPages: React.FunctionComponent<Props> = ({
   }, [widthWithRatio, nowSpineIndex]);
 
   const clickLink = useCallback((spineHref: string, hashTag: string) => {
-    const spineIndex = getSpineIndexByHref(viewerCountList, spineHref);
-    if (spineIndex > -1) {
-      if (hashTag) {
-        dispatch(viewerActions.setViewerLink({
-          spineIndex,
-          tag: hashTag,
-        }));
-      } else {
-        setPageCount(spineIndex);
+    if (!isOpenSettingMenu) {
+      const spineIndex = getSpineIndexByHref(viewerCountList, spineHref);
+      if (spineIndex > -1) {
+        if (hashTag) {
+          dispatch(viewerActions.setViewerLink({
+            spineIndex,
+            tag: hashTag,
+          }));
+        } else {
+          setPageCount(spineIndex);
+        }
       }
     }
-  }, [viewerCountList, setPageCount]);
+  }, [viewerCountList, isOpenSettingMenu, setPageCount]);
 
   return (
     <Container

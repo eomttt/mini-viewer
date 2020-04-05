@@ -53,6 +53,7 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
   const {
     viewerWidth, viewerHeight,
     widthRatio, backgroundColor,
+    isOpenSettingMenu,
   }: ViewerSettingState = useSelector((state: ReducerStates) => state.viewerSetting);
 
   const isFirstPage = useMemo(() => viewerPageCount === 0, [viewerPageCount]);
@@ -70,12 +71,16 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
   }, [isSetCountList]);
 
   const clickLeft = useCallback(() => {
-    dispatch(viewerActions.setCountDownViewerPageCount());
-  }, []);
+    if (!isOpenSettingMenu) {
+      dispatch(viewerActions.setCountDownViewerPageCount());
+    }
+  }, [isOpenSettingMenu]);
 
   const clickRight = useCallback(() => {
-    dispatch(viewerActions.setCountUpViewerPageCount());
-  }, []);
+    if (!isOpenSettingMenu) {
+      dispatch(viewerActions.setCountUpViewerPageCount());
+    }
+  }, [isOpenSettingMenu]);
 
   return (
     <Container

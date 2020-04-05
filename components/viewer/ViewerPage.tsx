@@ -1,5 +1,5 @@
 import React, {
-  useRef, useEffect, useCallback, useMemo,
+  useRef, useEffect, useCallback, useMemo, useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -57,9 +57,15 @@ const ViewerPage: React.FunctionComponent<Props> = ({
 
   const viewArticleRef = useRef(null);
 
+  const [viewerStyle, setViewerStyle] = useState({
+    fontSize,
+    lineHeight,
+    widthRatio,
+  });
+
   const nowSpineIndex = useSpineIndex(viewerCountList, viewerPageCount);
   const nowSpinePosition = useSpinePosition(viewerCountList, viewerPageCount, spineIndex);
-  const widthWithRatio = usePageWithWithRatio(viewerWidth, widthRatio);
+  const widthWithRatio = usePageWithWithRatio(viewerWidth, viewerStyle.widthRatio);
 
   const isSelectedSpineByLink = useMemo(() => viewerLink && viewerLink.spineIndex === spineIndex,
     [viewerLink, spine]);
@@ -68,8 +74,22 @@ const ViewerPage: React.FunctionComponent<Props> = ({
 
 
   useEffect(() => {
-    console.log("AAAAA");
+    setViewerStyle({
+      fontSize,
+      lineHeight,
+      widthRatio,
+    });
   }, [settingChangeToggle]);
+
+  useEffect(() => {
+    if (isShowNowSpineIndex) {
+      setViewerStyle({
+        fontSize,
+        lineHeight,
+        widthRatio,
+      });
+    }
+  }, [fontSize, lineHeight, widthRatio]);
 
   /**
    * When click a link in spine(page), Calculate new page offset
@@ -140,16 +160,16 @@ const ViewerPage: React.FunctionComponent<Props> = ({
       styleProps={{
         width: widthWithRatio,
         height: viewerHeight,
-        fontSize,
-        lineHeight,
+        fontSize: viewerStyle.fontSize,
+        lineHeight: viewerStyle.lineHeight,
       }}
       onClickCapture={clickPage}
     >
       <ViewerSection
         styleProps={{
-          fontSize,
-          lineHeight,
           width: widthWithRatio,
+          fontSize: viewerStyle.fontSize,
+          lineHeight: viewerStyle.lineHeight,
         }}
       >
         <ViewerContents

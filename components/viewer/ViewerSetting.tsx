@@ -45,10 +45,10 @@ const SettingItems = styled.ul`
 const ViewerSetting: React.FunctionComponent = () => {
   const {
     fontSize, widthRatio, lineHeight, backgroundColor,
+    isOpenSettingMenu,
   } = useSelector((state: ReducerStates) => state.viewerSetting);
   const dispatch = useDispatch();
 
-  const [isShow, setIsShow] = useState(false);
   const [beforeValue, setBeforeValue] = useState({
     fontSize,
     widthRatio,
@@ -114,7 +114,7 @@ const ViewerSetting: React.FunctionComponent = () => {
   }, [fontSize, widthRatio, lineHeight, backgroundColor]);
 
   useEffect(() => {
-    if (!isShow && isSettingChange) {
+    if (!isOpenSettingMenu && isSettingChange) {
       dispatch(settingActions.toggleSettingChanged());
       setBeforeValue({
         fontSize,
@@ -122,11 +122,15 @@ const ViewerSetting: React.FunctionComponent = () => {
         widthRatio,
       });
     }
-  }, [isShow, isSettingChange, fontSize, lineHeight, widthRatio]);
+  }, [isOpenSettingMenu, isSettingChange, fontSize, lineHeight, widthRatio]);
 
   const toggleShowNcs = useCallback(() => {
-    setIsShow(!isShow);
-  }, [isShow]);
+    if (isOpenSettingMenu) {
+      dispatch(settingActions.closeSettingMenu());
+    } else {
+      dispatch(settingActions.openSettingMenu());
+    }
+  }, [isOpenSettingMenu]);
 
   const renderSettingItem = useCallback((settingItem: SettingItem) => {
     const {
@@ -163,7 +167,7 @@ const ViewerSetting: React.FunctionComponent = () => {
         설정
       </ToggleButton>
       {
-        isShow
+        isOpenSettingMenu
         && (
         <SettingItems>
           {

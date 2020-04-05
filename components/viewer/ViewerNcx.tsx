@@ -9,6 +9,7 @@ import * as viewerActions from '../../reducers/viewer';
 
 import { ReducerStates } from '../../interfaces';
 import { EpubNcxItem, EpubNavPoint } from '../../interfaces/books';
+import { ViewerSettingState, ViewerState } from '../../interfaces/viewer';
 
 import { getSpineIndexById, getPageCountBySpineIndex } from '../../lib/util';
 
@@ -56,7 +57,10 @@ const ViewerNcx: React.FunctionComponent<Props> = ({ ncxItem }) => {
 
   const [isShowNcx, setIsShowNcx] = useState(false);
 
-  const { viewerCountList } = useSelector((state: ReducerStates) => state.viewer);
+  const {
+    isOpenSettingMenu,
+  }: ViewerSettingState = useSelector((state: ReducerStates) => state.viewerSetting);
+  const { viewerCountList }: ViewerState = useSelector((state: ReducerStates) => state.viewer);
 
   const setPageCountBySpineId = useCallback((selectedSpineId) => {
     const spineIndex = getSpineIndexById(viewerCountList, selectedSpineId);
@@ -67,13 +71,17 @@ const ViewerNcx: React.FunctionComponent<Props> = ({ ncxItem }) => {
   }, [viewerCountList]);
 
   const toggleShowNcs = useCallback(() => {
-    setIsShowNcx(!isShowNcx);
-  }, [isShowNcx]);
+    if (!isOpenSettingMenu) {
+      setIsShowNcx(!isShowNcx);
+    }
+  }, [isOpenSettingMenu, isShowNcx]);
 
   const selectNavPoint = useCallback((point: EpubNavPoint) => {
-    setIsShowNcx(false);
-    setPageCountBySpineId(point.spine.id);
-  }, [setPageCountBySpineId]);
+    if (!isOpenSettingMenu) {
+      setIsShowNcx(false);
+      setPageCountBySpineId(point.spine.id);
+    }
+  }, [isOpenSettingMenu, setPageCountBySpineId]);
 
   return (
     <Container>

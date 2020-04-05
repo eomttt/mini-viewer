@@ -11,6 +11,7 @@ export const initialState: ViewerSettingState = {
   widthRatio: WIDTH_RATIO_RANGE.MAX,
   lineHeight: LINE_HEIGHT_RANGE.MIN,
   backgroundColor: defaultColor,
+  isOpenSettingMenu: false,
   settingChangeToggle: false,
 };
 
@@ -23,6 +24,8 @@ export const SET_WIDTH_RATIO = 'viewerSetting/SET_WIDTH_RATIO';
 export const SET_LINE_HEIGHT = 'viewerSetting/SET_LINE_HEIGHT';
 export const SET_BACKGROUND_COLOR = 'viewerSetting/SET_VIEWER_SETTING_BACKGROUND_COLOR';
 
+export const OPEN_SETTING_MENU = 'viewerSetting/OPEN_SETTING_MENU';
+export const CLOSE_SETTING_MEUN = 'viewerSetting/CLOSE_SETTING_MENU';
 export const TOGGLE_SETTING_CHANGED = 'viewerSetting/TOGGLE_SETTING_CHANGED';
 
 // Action creators
@@ -66,6 +69,14 @@ export const setViewerSettingBackgroundColor = (color: string) => ({
   payload: {
     backgroundColor: color,
   },
+});
+
+export const openSettingMenu = () => ({
+  type: OPEN_SETTING_MENU,
+});
+
+export const closeSettingMenu = () => ({
+  type: CLOSE_SETTING_MEUN,
 });
 
 export const toggleSettingChanged = () => ({
@@ -116,6 +127,18 @@ export default (state = initialState, action: ReducerAction): ViewerSettingState
       return {
         ...state,
         backgroundColor,
+      };
+    }
+    case OPEN_SETTING_MENU: {
+      return {
+        ...state,
+        isOpenSettingMenu: true,
+      };
+    }
+    case CLOSE_SETTING_MEUN: {
+      return {
+        ...state,
+        isOpenSettingMenu: false,
       };
     }
     case TOGGLE_SETTING_CHANGED: {
