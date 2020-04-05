@@ -104,11 +104,12 @@ const ViewerPages: React.FunctionComponent<Props> = ({
    */
   const setCountCallback = useCallback((count: number, index: number) => {
     const spine = spines[index];
+    const { href, id } = spine;
     privateDispatch(addCount({
       index,
       count,
-      href: spine.href,
-      spineId: spine.id,
+      href,
+      spineId: id,
     }));
   }, [spines]);
 
