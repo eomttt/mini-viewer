@@ -8,7 +8,7 @@ const Container = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: #dedede;
+  background-color: ${(props) => (props.styleProps.backgroundColor ? props.styleProps.backgroundColor : '#dedede')};
   z-index: 6;
 `;
 
@@ -31,10 +31,15 @@ const Content = styled.div`
 
 interface Props {
   text: string;
+  backgroundColor?: string;
 }
 
-const Loading: React.FunctionComponent<Props> = ({ text }) => (
-  <Container>
+const Loading: React.FunctionComponent<Props> = ({ text, backgroundColor }) => (
+  <Container
+    styleProps={{
+      backgroundColor,
+    }}
+  >
     <Content>
       <div>
         {text}

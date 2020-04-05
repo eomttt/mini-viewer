@@ -7,18 +7,14 @@ const Container = styled.div`
   margin-bottom: 5em;
   text-align: center;
   font-size: 2em;
-  & a {
-    font-size: 16px;
-  }
 `;
 
 const NoBookList = () => (
   <>
     <Container>
       <div>
-        구매한 책이 없습니다.
+        업로드한 책이 없습니다. 업로드해서 사용해보세요.
       </div>
-      <a href="https://ridibooks.com" rel="noreferrer noopener" target="_blank">책 구매하기</a>
     </Container>
   </>
 );

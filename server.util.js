@@ -137,6 +137,7 @@ const getBookListItems = async () => {
 
 const deleteListItem = async (fileName) => {
   try {
+    console.log('fileName', fileName);
     const res = await deleteEpubFile(fileName);
     return res;
   } catch (error) {

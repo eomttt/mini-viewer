@@ -4,10 +4,11 @@ const next = require('next');
 const path = require('path');
 const bodyParser = require('body-parser');
 
+const graphqlHTTP = require('express-graphql');
+const { schema } = require('./graphql/schema');
+const { resolvers } = require('./graphql/resolvers');
+
 const {
-  getBookListItem,
-  getBookListItems,
-  deleteListItem,
   getBook,
 } = require('./server.util');
 const { uploadEpubFile } = require('./server.s3');
@@ -28,6 +29,11 @@ app.prepare().then(() => {
     extended: false,
   }));
   server.use(fileUpload());
+  server.use('/graphql', graphqlHTTP({
+    schema,
+    rootValue: resolvers,
+    graphiql: true,
+  }));
 
   server.post('/upload-epub', async (req, res) => {
     try {
@@ -37,44 +43,6 @@ app.prepare().then(() => {
       const pathArr = result.key.split('/');
       res.send({
         fileName: pathArr[pathArr.length - 1],
-      });
-    } catch (error) {
-      console.log(error);
-      res.status(500).send(error);
-    }
-  });
-
-  server.get('/book-list-item', async (req, res) => {
-    try {
-      const { query } = req;
-      const { fileName } = query;
-      const bookListItem = await getBookListItem(fileName);
-      res.send({
-        bookListItem,
-      });
-    } catch (error) {
-      console.log(error);
-      res.status(500).send(error);
-    }
-  });
-
-  server.delete('/book-list-item', async (req, res) => {
-    try {
-      const { body } = req;
-      const { fileName } = body;
-      await deleteListItem(fileName);
-      res.send('Success');
-    } catch (error) {
-      console.log(error);
-      res.status(500).send(error);
-    }
-  });
-
-  server.get('/book-list-items', async (req, res) => {
-    try {
-      const bookListItems = await getBookListItems();
-      res.send({
-        bookListItems,
       });
     } catch (error) {
       console.log(error);

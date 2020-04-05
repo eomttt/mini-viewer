@@ -116,9 +116,9 @@ const deleteEpubFile = (fileName) => (
         reject(error);
       }
       if (data) {
-        resolve(data);
+        resolve('Success to remove');
       }
-    })
+    });
   })
 );
 

@@ -1,14 +1,9 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 
-import * as booksActions from '../../reducers/books';
+import { fetchUploadEpub } from '../../lib/fetch';
 
-import { fetchGetBookListItem, fetchUploadEpub } from '../../lib/fetch';
-import { addLibraryOrder } from '../../lib/localStorage';
-
-import { ReducerStates } from '../../interfaces';
-import { BooksState } from '../../interfaces/books';
+import { BookListItem } from '../../interfaces/books';
 
 const Container = styled.div`
   width: 95%;
@@ -17,9 +12,12 @@ const Container = styled.div`
   text-align: right;
 `;
 
-const UploadBook = () => {
-  const dispatch = useDispatch();
-  const { list }: BooksState = useSelector((state: ReducerStates) => state.books);
+interface Props {
+  list: BookListItem[];
+  refetchBookList: () => void;
+}
+
+const UploadBook: React.FunctionComponent<Props> = ({ list, refetchBookList }) => {
   const [isUploading, setIsUploading] = useState(false);
   const fileRef = useRef(null);
 
@@ -38,16 +36,6 @@ const UploadBook = () => {
     return isExist;
   }, [list]);
 
-  const addBook = useCallback(async (fileName) => {
-    const [name] = fileName.split('.');
-    const bookListItem = await fetchGetBookListItem(name);
-
-    if (bookListItem) {
-      dispatch(booksActions.addBook(bookListItem));
-      addLibraryOrder(bookListItem.fileName);
-    }
-  }, []);
-
   const uploadFile = useCallback(async (files) => {
     setIsUploading(true);
 
@@ -62,9 +50,8 @@ const UploadBook = () => {
 
     const res = await fetchUploadEpub(data);
     if (res) {
-      await addBook(res);
+      refetchBookList();
       setIsUploading(false);
-      alert('업로드에 성공했습니다.');
     } else {
       alert('업로드에 실패했습니다. 잠시 후 다시 시도해주세요.');
     }
