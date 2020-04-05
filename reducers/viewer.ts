@@ -1,13 +1,13 @@
 import { ReducerAction } from '../interfaces';
 import {
   ViewerState, ViewerCount,
-  ViewerLink, ViewerLinkPageOffset,
+  ViewerLink, ViewerLinkPagePosition,
 } from '../interfaces/viewer';
 
 export const initialState: ViewerState = {
   viewerCountList: [],
-  viewerSpineId: '',
-  viewerSpineOffset: 0,
+  viewerSpineIndex: -1,
+  viewerSpinePosition: 0,
   viewerPageCount: 0,
   viewerWholePageCount: 0,
 };
@@ -17,8 +17,8 @@ export const INIT_VIEWER_STATE = 'viewer/INIT_VIEWER_STATE';
 export const RESIZE_VIEWER_STATE = 'viewer/RESIZE_VIEWER_STATE';
 export const SET_VIEWER_COUNT_LIST = 'viewer/SET_VIEWER_COUNT_LIST';
 
-export const SET_VIEWER_SPINE_ID = 'viewer/SET_VIEWER_SPINE_ID';
-export const SET_VIEWER_SPINE_OFFSET = 'viewer/SET_VIEWER_SPINE_OFFSET';
+export const SET_VIEWER_SPINE_INDEX = 'viewer/SET_VIEWER_SPINE_INDEX';
+export const SET_VIEWER_SPINE_POSITION = 'viewer/SET_VIEWER_SPINE_POSITION';
 
 export const SET_VIEWER_PAGE_WHOLE_COUNT = 'viewer/SET_VIEWER_PAGE_WHOLE_COUNT';
 export const SET_VIEWER_PAGE_COUNT = 'viewer/SET_VIEWER_PAGE_COUNT';
@@ -26,7 +26,7 @@ export const SET_COUNT_UP_VIEWER_PAGE_COUNT = 'viewer/SET_COUNT_UP_VIEWER_PAGE_C
 export const SET_COUNT_DOWN_VIEWER_PAGE_COUNT = 'viewer/SET_COUNT_DOWN_VIEWER_PAGE_COUNT';
 
 export const SET_VIEWER_LINK = 'viewer/SET_VIEWER_LINK';
-export const SET_VIEWER_PAGE_OFFSET_INFO = 'viewer/SET_VIEWR_PAGE_OFFSET_INFO';
+export const SET_VIEWER_LINK_PAGE_POSITION_INFO = 'viewer/SET_VIEWER_LINK_PAGE_POSITION_INFO';
 
 // Action creators
 export const initViewerState = () => ({
@@ -44,17 +44,17 @@ export const setViewerCountList = (countList: ViewerCount[]) => ({
   },
 });
 
-export const setViewerSpineId = (spineId: string) => ({
-  type: SET_VIEWER_SPINE_ID,
+export const setViewerSpineIndex = (spineIndex: number) => ({
+  type: SET_VIEWER_SPINE_INDEX,
   payload: {
-    spineId,
+    spineIndex,
   },
 });
 
-export const setViewerSpineOffset = (spineOffset: number) => ({
-  type: SET_VIEWER_SPINE_OFFSET,
+export const setViewerSpinePosition = (spinePosition: number) => ({
+  type: SET_VIEWER_SPINE_POSITION,
   payload: {
-    spineOffset,
+    spinePosition,
   },
 });
 
@@ -87,8 +87,8 @@ export const setViewerLink = (params: ViewerLink) => ({
   },
 });
 
-export const setViewerLinkPageOffset = (params: ViewerLinkPageOffset) => ({
-  type: SET_VIEWER_PAGE_OFFSET_INFO,
+export const setViewerLinkPagePosition = (params: ViewerLinkPagePosition) => ({
+  type: SET_VIEWER_LINK_PAGE_POSITION_INFO,
   payload: {
     ...params,
   },
@@ -108,7 +108,7 @@ export default (state = initialState, action: ReducerAction): ViewerState => {
         viewerCountList: [],
         viewerWholePageCount: 0,
         viewerLink: null,
-        viewerLinkPageOffset: null,
+        viewerLinkPosition: null,
       };
     }
     case SET_VIEWER_COUNT_LIST: {
@@ -118,18 +118,18 @@ export default (state = initialState, action: ReducerAction): ViewerState => {
         viewerCountList: [...countList],
       };
     }
-    case SET_VIEWER_SPINE_ID: {
-      const { spineId } = payload;
+    case SET_VIEWER_SPINE_INDEX: {
+      const { spineIndex } = payload;
       return {
         ...state,
-        viewerSpineId: spineId,
+        viewerSpineIndex: spineIndex,
       };
     }
-    case SET_VIEWER_SPINE_OFFSET: {
-      const { spineOffset } = payload;
+    case SET_VIEWER_SPINE_POSITION: {
+      const { spinePosition } = payload;
       return {
         ...state,
-        viewerSpineOffset: spineOffset,
+        viewerSpinePosition: spinePosition,
       };
     }
     case SET_VIEWER_PAGE_COUNT: {
@@ -159,23 +159,23 @@ export default (state = initialState, action: ReducerAction): ViewerState => {
       };
     }
     case SET_VIEWER_LINK: {
-      const { spineId, tag } = payload;
+      const { spineIndex, tag } = payload;
       return {
         ...state,
         viewerLink: {
-          spineId,
+          spineIndex,
           tag,
         },
       };
     }
-    case SET_VIEWER_PAGE_OFFSET_INFO: {
-      const { spineId, offset, tag } = payload;
+    case SET_VIEWER_LINK_PAGE_POSITION_INFO: {
+      const { spineIndex, position, tag } = payload;
       return {
         ...state,
-        viewerLinkPageOffset: {
-          spineId,
+        viewerLinkPosition: {
+          spineIndex,
           tag,
-          offset,
+          position,
         },
       };
     }

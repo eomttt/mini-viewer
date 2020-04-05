@@ -3,29 +3,11 @@ import { useMemo } from 'react';
 import { EpubSpineItem } from '../interfaces/books';
 import { ViewerCount } from '../interfaces/viewer';
 
-export const useViewerSpineId = (
+export const useSpineIndex = (
   viewerCountList: ViewerCount[],
   viewerPageCount: number,
 ) => useMemo(() => {
-  let spineId = '';
-  let accurateCount = 0;
-  viewerCountList.some((viewerCount) => {
-    if (accurateCount > viewerPageCount) {
-      return true;
-    }
-    accurateCount += viewerCount.count;
-    spineId = viewerCount.spineId;
-    return false;
-  });
-
-  return spineId;
-}, [viewerPageCount]);
-
-export const usePagesOffset = (
-  viewerCountList: ViewerCount[],
-  viewerPageCount: number,
-) => useMemo(() => {
-  let spineIndex = 0;
+  let spineIndex = -1;
   let accurateCount = 0;
   viewerCountList.some((viewerCount) => {
     if (accurateCount + viewerCount.count > viewerPageCount) {
@@ -38,7 +20,7 @@ export const usePagesOffset = (
   return spineIndex;
 }, [viewerPageCount]);
 
-export const usePageOffset = (
+export const useSpinePosition = (
   viewerCountList: ViewerCount[],
   viewerPageCount: number,
   viewerIndex: number,

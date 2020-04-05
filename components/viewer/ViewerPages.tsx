@@ -21,12 +21,15 @@ import {
   VIEWER_PAGE_GAP,
 } from '../../constants/viewer';
 
-import { getPageCountBySpineId, getMaxPageOffset } from '../../lib/util';
+import {
+  getPageCountBySpineIndex,
+  getMaxSpinePosition,
+  getSpineIndexByHref,
+} from '../../lib/util';
 
 import {
   usePageWithWithRatio,
-  usePagesOffset,
-  useViewerSpineId,
+  useSpineIndex,
   useSetBookCount,
 } from '../../hooks';
 
@@ -51,8 +54,8 @@ const ViewerPages: React.FunctionComponent<Props> = ({
 
   const {
     viewerCountList, viewerPageCount,
-    viewerLinkPageOffset,
-    viewerSpineId, viewerSpineOffset,
+    viewerLinkPosition,
+    viewerSpineIndex, viewerSpinePosition,
   }: ViewerState = useSelector((state: ReducerStates) => state.viewer);
   const {
     viewerWidth, widthRatio,
@@ -65,38 +68,35 @@ const ViewerPages: React.FunctionComponent<Props> = ({
     return countItems.length >= spineViewers.length;
   }, [privateStates, spineViewers]);
 
-  const nowSpineId = useViewerSpineId(viewerCountList, viewerPageCount);
-  const pagesOffset = usePagesOffset(viewerCountList, viewerPageCount);
+  const nowSpineIndex = useSpineIndex(viewerCountList, viewerPageCount);
   const widthWithRatio = usePageWithWithRatio(viewerWidth, widthRatio);
   const isSetCountList = useSetBookCount(viewerCountList, spines);
 
-  const setPageCountBySpineId = useCallback((spineId: string, offset?: number) => {
-    const pageCount = getPageCountBySpineId(viewerCountList, spineId);
-    if (pageCount > -1) {
-      dispatch(viewerActions.setViewerPageCount(pageCount + offset));
-    }
-  }, [viewerCountList]);
-
   useEffect(() => {
-    if (isSetCountList && viewerSpineId) {
-      const maxPageOffset = getMaxPageOffset(viewerCountList, viewerSpineId);
-      const pageOffset = viewerSpineOffset >= maxPageOffset ? maxPageOffset - 1 : viewerSpineOffset;
-      setPageCountBySpineId(viewerSpineId, pageOffset);
+    // Resize or Style 변경시 적용
+    if (isSetCountList && viewerSpineIndex > -1) {
+      const maxSpinePosition = getMaxSpinePosition(viewerCountList, viewerSpineIndex);
+      const pageCount = getPageCountBySpineIndex(viewerCountList, viewerSpineIndex);
+      const position = viewerSpinePosition >= maxSpinePosition
+        ? maxSpinePosition - 1
+        : viewerSpinePosition;
+      dispatch(viewerActions.setViewerPageCount(pageCount + position));
     }
   }, [isSetCountList]);
 
   useEffect(() => {
-    if (viewerLinkPageOffset) {
-      const { spineId, offset } = viewerLinkPageOffset;
-      setPageCountBySpineId(spineId, offset);
+    if (viewerLinkPosition) {
+      const { spineIndex: linkSpineIndex, position } = viewerLinkPosition;
+      const pageCount = getPageCountBySpineIndex(viewerCountList, linkSpineIndex);
+      dispatch(viewerActions.setViewerPageCount(pageCount + position));
     }
-  }, [viewerLinkPageOffset]);
+  }, [viewerLinkPosition]);
 
   useEffect(() => {
-    if (nowSpineId) {
-      dispatch(viewerActions.setViewerSpineId(nowSpineId));
+    if (nowSpineIndex > -1) {
+      dispatch(viewerActions.setViewerSpineIndex(nowSpineIndex));
     }
-  }, [nowSpineId]);
+  }, [nowSpineIndex]);
 
   /**
    * Calculate: Callback from single page, Set count in private store,
@@ -104,10 +104,12 @@ const ViewerPages: React.FunctionComponent<Props> = ({
    */
   const setCountCallback = useCallback((count: number, index: number) => {
     const spine = spines[index];
+    const { href, id } = spine;
     privateDispatch(addCount({
       index,
       count,
-      spineId: spine.id,
+      href,
+      spineId: id,
     }));
   }, [spines]);
 
@@ -129,30 +131,23 @@ const ViewerPages: React.FunctionComponent<Props> = ({
    */
   useEffect(() => {
     const { current: containerCurrent } = containerRef;
-    containerCurrent.scrollLeft = pagesOffset * (widthWithRatio + VIEWER_PAGE_GAP);
-  }, [widthWithRatio, pagesOffset]);
-
-  const isSelectedSpineLink = useCallback(
-    (spineHref: string, selectedHref: string) => spineHref && selectedHref.includes(spineHref),
-    [],
-  );
+    containerCurrent.scrollLeft = nowSpineIndex * (widthWithRatio + VIEWER_PAGE_GAP);
+  }, [widthWithRatio, nowSpineIndex]);
 
   const clickLink = useCallback((spineHref: string, hashTag: string) => {
-    spines.some(({ href, id }) => {
-      if (isSelectedSpineLink(href, spineHref)) {
-        if (hashTag) {
-          dispatch(viewerActions.setViewerLink({
-            spineId: id,
-            tag: hashTag,
-          }));
-        } else {
-          setPageCountBySpineId(id, 0);
-        }
-        return true;
+    const spineIndex = getSpineIndexByHref(viewerCountList, spineHref);
+    if (spineIndex > -1) {
+      const pageCount = getPageCountBySpineIndex(viewerCountList, spineIndex);
+      if (hashTag) {
+        dispatch(viewerActions.setViewerLink({
+          spineIndex,
+          tag: hashTag,
+        }));
+      } else {
+        dispatch(viewerActions.setViewerPageCount(pageCount));
       }
-      return false;
-    });
-  }, [setPageCountBySpineId]);
+    }
+  }, [viewerCountList, spines]);
 
   return (
     <Container
