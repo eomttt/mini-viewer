@@ -1,17 +1,14 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useMutation } from 'react-apollo';
+import { gql } from 'apollo-boost';
 import Router from 'next/router';
 import styled from 'styled-components';
 
-import * as booksActions from '../../reducers/books';
-
 import { setLibraryOrder } from '../../lib/localStorage';
-import { fetchDeleteBookListItem } from '../../lib/fetch';
 
 import { subColor } from '../../styles';
 
-import { ReducerStates } from '../../interfaces';
-import { BooksState, BookListItem } from '../../interfaces/books';
+import { BookListItem } from '../../interfaces/books';
 
 import { VIEWER_PATH_NAME } from '../../constants/viewer';
 
@@ -51,44 +48,49 @@ const CoverImage = styled.img`
   box-shadow: 1px 1px 5px ${subColor};
 `;
 
-const BookList: React.FunctionComponent = () => {
-  const dispatch = useDispatch();
-  const { list }: BooksState = useSelector((state: ReducerStates) => state.books);
-  const [bookList, setBookList] = useState(list);
+const DELETE_BOOKLIST_ITEM = gql`
+  mutation DeleteBookListItem($fileName: String!) {
+    deleteBookListItem(fileName: $fileName)
+  }
+`;
+
+interface Props {
+  bookListItem: BookListItem[];
+  refetchBookList: () => void;
+}
+
+const BookList: React.FunctionComponent<Props> = ({ bookListItem, refetchBookList }) => {
+  const [deleteBookListItem] = useMutation(DELETE_BOOKLIST_ITEM, {
+    update() {
+      refetchBookList();
+    },
+  });
+
+  const [bookList, setBookList] = useState<BookListItem[]>(bookListItem);
   const [draggedItem, setDraggedItem] = useState<BookListItem>(null);
 
   useEffect(() => {
-    setBookList([...list]);
-  }, [list]);
+    setBookList([...bookListItem]);
+  }, [bookListItem]);
 
-  const deleteBook = useCallback(async (index: number) => {
-    const selectedFileName = bookList[index].fileName;
-    const res = await fetchDeleteBookListItem(selectedFileName);
-
-    if (res) {
-      alert('삭제에 성공했습니다.');
-      const newSortedBooks = bookList.filter((item) => item.fileName !== selectedFileName);
-      newSortedBooks.splice(index, 0);
-
-      setBookList([...newSortedBooks]);
-      setLibraryOrder(newSortedBooks.map((item) => item.fileName));
-      dispatch(booksActions.setBookList([...newSortedBooks]));
-    } else {
-      alert('삭제에 실패했습니다. 잠시 후 다시 시도해주세요.');
-    }
-  }, [bookList]);
-
-  const onClickDeleteBook = useCallback((e, index: number) => {
+  const onClickDeleteBook = useCallback((
+    e, index: number,
+  ) => {
     e.stopPropagation();
     e.preventDefault();
 
     const res = window.confirm('삭제 하시겠습니까?');
     if (res) {
-      deleteBook(index);
+      const selectedFileName = bookList[index].fileName;
+      deleteBookListItem({
+        variables: {
+          fileName: selectedFileName,
+        },
+      });
     } else {
       // Pass
     }
-  }, [deleteBook]);
+  }, [bookList]);
 
   const openBook = useCallback((bookIndex: number) => {
     const selectedBook = bookList[bookIndex];
@@ -125,8 +127,7 @@ const BookList: React.FunctionComponent = () => {
 
   const dragEnd = useCallback((e) => {
     e.preventDefault();
-    dispatch(booksActions.setBookList([...bookList]));
-  }, [bookList]);
+  }, []);
 
   return (
     <ul>

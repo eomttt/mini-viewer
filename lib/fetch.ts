@@ -1,53 +1,5 @@
 import axios from 'axios';
-
-import { BookListItem, EpubBookViewer } from '../interfaces/books';
-
-export const fetchGetBookListItems = async (): Promise<BookListItem[] | []> => {
-  try {
-    const res = await axios.get('/book-list-items');
-    const { data, status } = res;
-    if (status === 200) {
-      const { bookListItems } = data;
-      return bookListItems;
-    }
-  } catch (error) {
-    console.error('Error', error);
-  }
-
-  return [];
-};
-
-export const fetchGetBookListItem = async (fileName): Promise<BookListItem | null> => {
-  try {
-    const res = await axios.get(`/book-list-item?fileName=${fileName}`);
-    const { data, status } = res;
-    if (status === 200) {
-      const { bookListItem } = data;
-      return bookListItem;
-    }
-  } catch (error) {
-    console.error('Error', error);
-  }
-
-  return null;
-};
-
-export const fetchDeleteBookListItem = async (fileName): Promise<string | null> => {
-  try {
-    const res = await axios.delete('/book-list-item', {
-      data: {
-        fileName,
-      },
-    });
-    const { data, status } = res;
-    if (status === 200) {
-      return data;
-    }
-  } catch (error) {
-    console.error('Error', error);
-  }
-  return null;
-}
+import { EpubBookViewer } from '../interfaces/books';
 
 export const fetchGetBook = async (fileName): Promise<EpubBookViewer | null> => {
   try {

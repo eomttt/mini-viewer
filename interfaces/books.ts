@@ -1,7 +1,3 @@
-export interface BooksState {
-  list: BookListItem[] | null;
-}
-
 export interface BookListItem {
   fileName: string;
   coverImage: string;

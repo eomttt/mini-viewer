@@ -1,8 +1,11 @@
 import React from 'react';
+import { ApolloProvider } from 'react-apollo';
 import { Provider } from 'react-redux';
 
 import withRedux from 'next-redux-wrapper';
 import App, { AppInitialProps } from 'next/app';
+import ApolloClient from 'apollo-boost';
+import fetch from 'node-fetch';
 
 import initStore from '../store';
 
@@ -24,11 +27,16 @@ class MyApp extends App<Props> {
   }
 
   public render(): JSX.Element {
+    const client = new ApolloClient({
+      fetch,
+    });
     const { Component, pageProps, store } = this.props;
     return (
-      <Provider store={store}>
-        <Component {...pageProps} />
-      </Provider>
+      <ApolloProvider client={client}>
+        <Provider store={store}>
+          <Component {...pageProps} />
+        </Provider>
+      </ApolloProvider>
     );
   }
 }

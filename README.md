@@ -10,6 +10,8 @@
 - Express JS
 - Style-component
 - Redux
+- GraphQL
+- React Apollo
 
 ### Reference
 - [with-typescript-styled-components in Next](https://github.com/zeit/next.js/tree/canary/examples/with-typescript-styled-components)
@@ -39,13 +41,17 @@
 ### API
 - ***POST /upload-epub***
 
-- ***GET /book-list-item?fileName=${fileName}***
-
-- ***DELETE /book-list-item***
-
-- ***GET /book-list-items***
-
 - ***GET /book?fileName=${fileName}***
+
+### GraphQL
+- /graphql
+- [react-apollo public docs](https://www.apollographql.com/docs/)
+- [express-graphql](https://yuddomack.tistory.com/entry/expressgraphql-%EC%8B%9C%EC%9E%91%ED%95%98%EA%B8%B0Hello-World-Guide)
+- [react-apollo](https://www.daleseo.com/graphql-react-apollo-client/)
+
+#### Schema
+- Query: bookList
+- Mutation: deleteBookListItem(fileName: string)
 
 ### Deploy
 - Using Heroku
