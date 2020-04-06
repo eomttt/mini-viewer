@@ -47,7 +47,7 @@
 
 ### GraphQL
 - /graphql
-- [www.apollographql.com](https://www.apollographql.com/docs/react/v2.5/essentials/queries/)
+- [react-apollo public docs](https://www.apollographql.com/docs/)
 - [express-graphql](https://yuddomack.tistory.com/entry/expressgraphql-%EC%8B%9C%EC%9E%91%ED%95%98%EA%B8%B0Hello-World-Guide)
 - [react-apollo](https://www.daleseo.com/graphql-react-apollo-client/)
 

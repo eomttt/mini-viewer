@@ -13,11 +13,11 @@ const Container = styled.div`
 `;
 
 interface Props {
-  list: BookListItem[];
+  bookListItem: BookListItem[];
   refetchBookList: () => void;
 }
 
-const UploadBook: React.FunctionComponent<Props> = ({ list, refetchBookList }) => {
+const UploadBook: React.FunctionComponent<Props> = ({ bookListItem, refetchBookList }) => {
   const [isUploading, setIsUploading] = useState(false);
   const fileRef = useRef(null);
 
@@ -25,7 +25,7 @@ const UploadBook: React.FunctionComponent<Props> = ({ list, refetchBookList }) =
     const [name] = fileName.split('.');
     let isExist = false;
 
-    list.some((item) => {
+    bookListItem.some((item) => {
       if (item.fileName === name) {
         isExist = true;
         return true;
@@ -34,7 +34,7 @@ const UploadBook: React.FunctionComponent<Props> = ({ list, refetchBookList }) =
     });
 
     return isExist;
-  }, [list]);
+  }, [bookListItem]);
 
   const uploadFile = useCallback(async (files) => {
     setIsUploading(true);

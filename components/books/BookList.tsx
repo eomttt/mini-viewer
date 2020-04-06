@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import { Mutation } from 'react-apollo';
+import { useMutation } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import Router from 'next/router';
 import styled from 'styled-components';
@@ -55,21 +55,26 @@ const DELETE_BOOKLIST_ITEM = gql`
 `;
 
 interface Props {
-  list: BookListItem[];
+  bookListItem: BookListItem[];
   refetchBookList: () => void;
 }
 
-const BookList: React.FunctionComponent<Props> = ({ list, refetchBookList }) => {
-  const [bookList, setBookList] = useState<BookListItem[]>(list);
+const BookList: React.FunctionComponent<Props> = ({ bookListItem, refetchBookList }) => {
+  const [deleteBookListItem] = useMutation(DELETE_BOOKLIST_ITEM, {
+    update() {
+      refetchBookList();
+    },
+  });
+
+  const [bookList, setBookList] = useState<BookListItem[]>(bookListItem);
   const [draggedItem, setDraggedItem] = useState<BookListItem>(null);
 
   useEffect(() => {
-    setBookList([...list]);
-  }, [list]);
+    setBookList([...bookListItem]);
+  }, [bookListItem]);
 
   const onClickDeleteBook = useCallback((
     e, index: number,
-    deleteBookListItem,
   ) => {
     e.stopPropagation();
     e.preventDefault();
@@ -124,54 +129,33 @@ const BookList: React.FunctionComponent<Props> = ({ list, refetchBookList }) => 
     e.preventDefault();
   }, []);
 
-  const renderBookListItem = useCallback((listItem: BookListItem[], mutationProps) => {
-    const { deleteBookListItem } = mutationProps;
-    return (
-      <>
-        {
-          listItem.map(({ fileName, coverImage, title }, index) => (
-            <Cover
-              onClick={() => openBook(index)}
-              onDragOver={(e) => dragOver(e, index)}
-              key={fileName}
-            >
-              <CoverImage
-                src={coverImage}
-                draggable
-                onDragStart={(e) => dragStart(e, index)}
-                onDragEnd={dragEnd}
-                alt="Cover"
-              />
-              <div>
-                {title}
-              </div>
-              <CancelIcon
-                src="close-icon.svg"
-                alt="Close"
-                onClick={(e) => onClickDeleteBook(e, index, deleteBookListItem)}
-              />
-            </Cover>
-          ))
-        }
-      </>
-
-    );
-  }, [onClickDeleteBook, openBook,
-    dragOver, dragStart, dragEnd]);
-
   return (
     <ul>
-      <Mutation
-        mutation={DELETE_BOOKLIST_ITEM}
-        update={() => {
-          refetchBookList();
-        }}
-      >
-        {(deleteBookListItem, result) => renderBookListItem(bookList, {
-          deleteBookListItem,
-          result,
-        })}
-      </Mutation>
+      {
+        bookList.map(({ fileName, coverImage, title }, index) => (
+          <Cover
+            onClick={() => openBook(index)}
+            onDragOver={(e) => dragOver(e, index)}
+            key={fileName}
+          >
+            <CoverImage
+              src={coverImage}
+              draggable
+              onDragStart={(e) => dragStart(e, index)}
+              onDragEnd={dragEnd}
+              alt="Cover"
+            />
+            <div>
+              {title}
+            </div>
+            <CancelIcon
+              src="close-icon.svg"
+              alt="Close"
+              onClick={(e) => onClickDeleteBook(e, index)}
+            />
+          </Cover>
+        ))
+      }
     </ul>
   );
 };
