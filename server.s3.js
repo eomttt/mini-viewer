@@ -17,6 +17,10 @@ AWS.config.update({
 });
 const s3 = new AWS.S3();
 
+const getRandomNumber = () => {
+  return Math.floor(Math.random() * 10000);
+};
+
 const isEpubFile = (fileName) => fileName.includes('.epub');
 
 const getEpubFileKeys = () => (
@@ -55,8 +59,10 @@ const getEpubFile = (fileName) => (
         reject(error);
       }
       if (data) {
-        fs.writeFileSync(`public/${fileName}.epub`, data.Body);
-        resolve(fileName);
+        const downLoadFileName = `${fileName}-${getRandomNumber()}`;
+
+        fs.writeFileSync(`public/${downLoadFileName}.epub`, data.Body);
+        resolve(downLoadFileName);
       }
       resolve(null);
     });

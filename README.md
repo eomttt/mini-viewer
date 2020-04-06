@@ -41,8 +41,6 @@
 ### API
 - ***POST /upload-epub***
 
-- ***DELETE /book-list-item***
-
 - ***GET /book?fileName=${fileName}***
 
 ### GraphQL
@@ -53,7 +51,7 @@
 
 #### Schema
 - Query: bookList
-- Mutation: removeBookListItem
+- Mutation: deleteBookListItem(fileName: string)
 
 ### Deploy
 - Using Heroku
