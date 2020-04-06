@@ -1,4 +1,4 @@
-import { EpubBookViewer, BookListItem } from './books';
+import { EpubBookViewer } from './books';
 import { ViewerState, ViewerSettingState } from './viewer';
 
 export interface ReducerAction {
@@ -7,7 +7,6 @@ export interface ReducerAction {
 }
 
 export interface ReducerStates {
-  books: BookListItem[];
   book: EpubBookViewer | null;
   viewer: ViewerState;
   viewerSetting: ViewerSettingState;

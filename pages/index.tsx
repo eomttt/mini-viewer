@@ -1,10 +1,7 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useQuery } from 'react-apollo';
 import { gql } from 'apollo-boost';
 import { NextPage } from 'next';
-
-import * as booksAction from '../reducers/books';
 
 import { setLibraryOrder, getLibraryOrder } from '../lib/localStorage';
 
@@ -32,8 +29,6 @@ const GET_BOOK_LIST_QUERY = gql`
 `;
 
 const Home: NextPage = () => {
-  const dispatch = useDispatch();
-  const storedBooks: BookListItem[] = useSelector((state) => state.books);
   const {
     loading, error, data: queryData,
     networkStatus, refetch,
@@ -77,43 +72,18 @@ const Home: NextPage = () => {
     return [...sortedBooksInfo];
   }, []);
 
-  const isSameStoredData = useCallback((queryDataBooks: BookListItem[]) => {
-    if (storedBooks.length !== queryDataBooks.length) {
-      return false;
-    }
-    let isSame = true;
-    const storedBooksName = storedBooks.map((storedBook) => storedBook.fileName);
-
-    queryDataBooks.some((book) => {
-      if (!storedBooksName.includes(book.fileName)) {
-        isSame = false;
-        return true;
-      }
-      return false;
-    });
-
-    return isSame;
-  }, [storedBooks]);
 
   useEffect(() => {
-    const orderedBookList = getOrderedBookListItems(storedBooks);
-    setOrderedBooks(orderedBookList);
-  }, []);
-
-  useEffect(() => {
-    if (queryData) {
+    if (queryData && queryData.bookList) {
       const { bookList: responseBooks } = queryData;
-      if (!isSameStoredData(responseBooks)) {
-        const orderedBookList = getOrderedBookListItems(responseBooks);
+      const orderedBookList = getOrderedBookListItems(responseBooks);
 
-        setLibraryOrder(orderedBookList.map((orderedBook) => orderedBook.fileName));
-        setOrderedBooks(orderedBookList);
-        dispatch(booksAction.setBookList(orderedBookList));
-      }
+      setLibraryOrder(orderedBookList.map((orderedBook) => orderedBook.fileName));
+      setOrderedBooks(orderedBookList);
     }
-  }, [queryData, isSameStoredData]);
+  }, [queryData]);
 
-  if (loading && storedBooks.length < 1) {
+  if (loading && networkStatus !== REFETCH_NETWORK_STATUS) {
     return <Loading text="책을 가져오고 있습니다. 잠시만 기다려주세요." />;
   }
 
