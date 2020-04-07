@@ -122,7 +122,7 @@ const deleteEpubFile = (fileName) => (
         reject(error);
       }
       if (data) {
-        resolve('Success to remove');
+        resolve(fileName);
       }
     });
   })

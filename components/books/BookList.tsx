@@ -1,12 +1,10 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import { useMutation } from 'react-apollo';
-import { gql } from 'apollo-boost';
 import Router from 'next/router';
 import styled from 'styled-components';
 
-import { setLibraryOrder } from '../../lib/localStorage';
-
 import { subColor } from '../../styles';
+
+import { setLibraryOrder } from '../../lib/localStorage';
 
 import { BookListItem } from '../../interfaces/books';
 
@@ -48,24 +46,16 @@ const CoverImage = styled.img`
   box-shadow: 1px 1px 5px ${subColor};
 `;
 
-const DELETE_BOOKLIST_ITEM = gql`
-  mutation DeleteBookListItem($fileName: String!) {
-    deleteBookListItem(fileName: $fileName)
-  }
-`;
-
 interface Props {
   bookListItem: BookListItem[];
-  refetchBookList: () => void;
+  deleteBookListItem: (params: {
+    variables: {
+      fileName: string;
+    };
+  }) => void;
 }
 
-const BookList: React.FunctionComponent<Props> = ({ bookListItem, refetchBookList }) => {
-  const [deleteBookListItem] = useMutation(DELETE_BOOKLIST_ITEM, {
-    update() {
-      refetchBookList();
-    },
-  });
-
+const BookList: React.FunctionComponent<Props> = ({ bookListItem, deleteBookListItem }) => {
   const [bookList, setBookList] = useState<BookListItem[]>(bookListItem);
   const [draggedItem, setDraggedItem] = useState<BookListItem>(null);
 

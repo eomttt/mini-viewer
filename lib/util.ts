@@ -60,5 +60,5 @@ export const getMaxSpinePosition = (viewerCountList: ViewerCount[], spineIndex: 
   return maxPagePosition;
 };
 
-
 export const getString = (items: string[]) => items.reduce((acc, cur, index) => `${acc}${index > 0 ? ', ' : ''}${cur}`, '');
+export const isWindowDefined = () => typeof window !== 'undefined';

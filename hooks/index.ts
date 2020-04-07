@@ -3,6 +3,8 @@ import { useMemo } from 'react';
 import { EpubSpineItem } from '../interfaces/books';
 import { ViewerCount } from '../interfaces/viewer';
 
+import { getLibraryOrder } from '../lib/localStorage';
+
 export const useSpineIndex = (
   viewerCountList: ViewerCount[],
   viewerPageCount: number,
@@ -47,3 +49,29 @@ export const useSetBookCount = (
 export const usePageWithWithRatio = (
   nowWidth: number, newRatio: number,
 ) => useMemo(() => Math.floor(Number(nowWidth) * (Number(newRatio) / 100)), [nowWidth, newRatio]);
+
+export const useOrderedBookList = (bookListItems) => useMemo(() => {
+  if (bookListItems) {
+    const orderedItems = getLibraryOrder();
+    if (bookListItems && orderedItems) {
+      const newOrderedItems = [];
+      orderedItems.forEach((orderedItem) => {
+        bookListItems.some((bookListItem) => {
+          if (bookListItem.fileName === orderedItem) {
+            newOrderedItems.push(bookListItem);
+            return true;
+          }
+          return false;
+        });
+      });
+
+      bookListItems.forEach((bookListItem) => {
+        if (!newOrderedItems.includes(bookListItem)) {
+          newOrderedItems.push(bookListItem);
+        }
+      });
+      return [...newOrderedItems];
+    }
+  }
+  return null;
+}, [bookListItems]);

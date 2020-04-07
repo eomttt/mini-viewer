@@ -24,6 +24,8 @@
 ### Project design
 - [PPT link](https://hyuntaeeom-personal.s3.ap-northeast-2.amazonaws.com/RIDI+mini-vewer/RIDI+%E1%84%8B%E1%85%B5%E1%86%B8%E1%84%89%E1%85%A1%E1%84%8C%E1%85%A1+%E1%84%80%E1%85%AA%E1%84%8C%E1%85%A6.pdf)
 
+## Viewer
+
 ### Reducer 및 viewer 구조
 - [PPT link](https://hyuntaeeom-personal.s3.ap-northeast-2.amazonaws.com/RIDI+mini-vewer/RIDI+%E1%84%8B%E1%85%B5%E1%86%B8%E1%84%89%E1%85%A1%E1%84%8C%E1%85%A1+%E1%84%80%E1%85%AA%E1%84%8C%E1%85%A6++-+%E1%84%80%E1%85%AE%E1%84%92%E1%85%A7%E1%86%AB+%E1%84%8C%E1%85%AE%E1%86%BC%E1%84%80%E1%85%A1%E1%86%AB+%E1%84%85%E1%85%B5%E1%84%87%E1%85%B2+(Viewer).pdf)
 - Viewer 를 변경시키는 방법은 총 3가지이다.
@@ -37,10 +39,10 @@
 
 ![](https://hyuntaeeom-personal.s3.ap-northeast-2.amazonaws.com/RIDI+mini-vewer/viewer-store-change-diagram.png)
 
+## Library
 
 ### API
 - ***POST /upload-epub***
-
 - ***GET /book?fileName=${fileName}***
 
 ### GraphQL
@@ -52,14 +54,14 @@
   - Query: bookList
   - Mutation: deleteBookListItem(fileName: string)
 
-### Deploy
+## Deploy
 - Using Heroku
   - Git push master
   - Deploy in heroku
   - Logs: $heroku logs --tail
 - [Demo](https://mini-viewer.herokuapp.com/)
 
-### Issue
+## Issue
 - When parse viewer basePath:  https://${url} or http://${url} 을 basePath로 지정할 경우, https:/${url} or http:/${url} 로 나오는데,
 이유는 path.join 시 url 일 경우 다음과 같이 반환 한다고 함.
 - [link](https://stackoverflow.com/questions/34668012/combine-url-paths-with-path-join)
