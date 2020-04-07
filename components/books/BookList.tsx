@@ -56,11 +56,12 @@ interface Props {
 }
 
 const BookList: React.FunctionComponent<Props> = ({ bookListItem, deleteBookListItem }) => {
-  const [bookList, setBookList] = useState<BookListItem[]>(bookListItem);
+  const [bookList, setBookList] = useState<BookListItem[]>([]);
   const [draggedItem, setDraggedItem] = useState<BookListItem>(null);
 
   useEffect(() => {
     setBookList([...bookListItem]);
+    setLibraryOrder(bookListItem.map((orderedBook) => orderedBook.fileName));
   }, [bookListItem]);
 
   const onClickDeleteBook = useCallback((

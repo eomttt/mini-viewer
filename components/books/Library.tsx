@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useMutation, useQuery } from 'react-apollo';
 
 import { subTransparentColor } from '../../styles';
@@ -9,8 +9,6 @@ import NoBookList from './NoBookList';
 import Loading from '../common/Loading';
 import Error from '../common/Error';
 
-import { setLibraryOrder } from '../../lib/localStorage';
-
 import { REFETCH_NETWORK_STATUS } from '../../constants';
 
 import {
@@ -20,15 +18,19 @@ import {
 
 import { useOrderedBookList } from '../../hooks';
 
+import { BookListItem } from '../../interfaces/books';
+
 const Library: React.FunctionComponent = () => {
   const [deleteBookListItem] = useMutation(DELETE_BOOKLIST_ITEM, {
     update(cache, { data: mutationData }) {
-      const res: any = cache.readQuery({ query: GET_BOOK_LIST_QUERY });
+      const { bookList }: {bookList: BookListItem[]} = cache.readQuery({
+        query: GET_BOOK_LIST_QUERY,
+      });
       cache.writeQuery({
         query: GET_BOOK_LIST_QUERY,
         data: {
           bookList:
-            res.bookList.filter((item) => item.fileName !== mutationData.deleteBookListItem),
+            bookList.filter((item) => item.fileName !== mutationData.deleteBookListItem),
         },
       });
     },
@@ -39,15 +41,9 @@ const Library: React.FunctionComponent = () => {
   } = useQuery(GET_BOOK_LIST_QUERY, {
     notifyOnNetworkStatusChange: true,
   });
-  const [refetchText, setRefetchText] = useState('');
-  const bookListItem = useOrderedBookList(queryData && queryData.bookList);
 
-  useEffect(() => {
-    if (bookListItem) {
-      setLibraryOrder(bookListItem.map((orderedBook) => orderedBook.fileName));
-    }
-  }, [bookListItem]);
-
+  const [refetchText, setRefetchText] = useState<string>('');
+  const bookListItem: BookListItem[] = useOrderedBookList(queryData && queryData.bookList);
 
   if (loading && networkStatus !== REFETCH_NETWORK_STATUS) {
     return <Loading text="책을 가져오고 있습니다. 잠시만 기다려주세요." />;

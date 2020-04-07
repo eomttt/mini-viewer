@@ -11,13 +11,3 @@ export const getLibraryOrder = (): string[] => {
   }
   return [];
 };
-
-export const addLibraryOrder = (itemName: string) => {
-  const items = getLibraryOrder();
-
-  if (items) {
-    setLibraryOrder([...items, itemName]);
-  } else {
-    setLibraryOrder([itemName]);
-  }
-};

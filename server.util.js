@@ -110,25 +110,6 @@ const getBookInfo = async (epubFileName) => {
 
 const getTitle = (creators) => creators.reduce((acc, cur, index) => `${acc}${index > 0 ? ', ' : ''}${cur.name}`, '');
 
-const getBookListItem = async (fileName) => {
-  try {
-    const epubFileName = await getEpubFile(fileName || 'jikji');
-    if (epubFileName) {
-      const { book } = await getBookInfo(epubFileName);
-      const { creators, cover } = book;
-
-      return {
-        fileName,
-        title: getTitle(creators),
-        coverImage: cover ? `${EPUB_IMAGE_STATIC_PATH}/${fileName}/${cover.href}` : DEFAULT_COVER_IMAGE,
-      };
-    }
-    return null;
-  } catch (error) {
-    throw new Error(error);
-  }
-};
-
 const getBookListItems = async () => {
   const bookListItems = [];
   try {
@@ -136,10 +117,16 @@ const getBookListItems = async () => {
     // eslint-disable-next-line no-restricted-syntax
     for (const fileKey of fileKeys) {
       const [fileName] = fileKey.split('.');
-      const listItem = await getBookListItem(fileName);
+      const epubFileName = await getEpubFile(fileName || 'jikji');
+      if (epubFileName) {
+        const { book } = await getBookInfo(epubFileName);
+        const { creators, cover } = book;
 
-      if (listItem) {
-        bookListItems.push(listItem);
+        bookListItems.push({
+          fileName,
+          title: getTitle(creators),
+          coverImage: cover ? `${EPUB_IMAGE_STATIC_PATH}/${fileName}/${cover.href}` : DEFAULT_COVER_IMAGE,
+        });
       }
     }
     return bookListItems;
@@ -161,10 +148,9 @@ const getBook = async (fileName) => {
   try {
     const epubFileName = await getEpubFile(fileName || 'jikji');
     if (epubFileName) {
-      const bookInfo = await getBookInfo(epubFileName);
       const {
         book, styleText, viewers,
-      } = bookInfo;
+      } = await getBookInfo(epubFileName);
       return {
         ...book,
         styleText,
@@ -179,7 +165,6 @@ const getBook = async (fileName) => {
   }
 };
 
-module.exports.getBookListItem = getBookListItem;
 module.exports.getBookListItems = getBookListItems;
 module.exports.deleteListItem = deleteListItem;
 module.exports.getBook = getBook;
