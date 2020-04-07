@@ -12,7 +12,7 @@ const schema = buildSchema(`
   type BookList {
     fileName: String!
     coverImage: String!
-    title: String!
+    titles: String!
   }
 `);
 

@@ -9,9 +9,18 @@ const { schema } = require('./graphql/schema');
 const { resolvers } = require('./graphql/resolvers');
 
 const {
-  getBook,
+  getBookInfo,
+  writeBookStaticInfo,
+  writeBookViewerInfo,
+  clearEpubFile,
 } = require('./server.util');
-const { uploadEpubFile } = require('./server.s3');
+const {
+  getEpubFile,
+  getEpubStaticInfo,
+  getEpubViewerInfo,
+  uploadEpubFile,
+  uploadUnzipEpubFile,
+} = require('./server.s3');
 
 const dev = process.env.NODE_ENV !== 'production';
 const prod = process.env.NODE_ENV === 'production';
@@ -39,13 +48,24 @@ app.prepare().then(() => {
     try {
       const { files } = req;
       const result = await uploadEpubFile(files.file);
-
       const pathArr = result.key.split('/');
+
+      const [fileName] = pathArr[pathArr.length - 1].split('.');
+      const epubFile = await getEpubFile(fileName);
+      const bookInfo = await getBookInfo(epubFile);
+
+      writeBookStaticInfo(fileName, bookInfo);
+      writeBookViewerInfo(fileName, bookInfo);
+
+      await uploadUnzipEpubFile(fileName);
+
+      clearEpubFile(fileName);
+
       res.send({
-        fileName: pathArr[pathArr.length - 1],
+        fileName,
       });
     } catch (error) {
-      console.log(error);
+      console.log('Upload epub', error);
       res.status(500).send(error);
     }
   });
@@ -54,13 +74,24 @@ app.prepare().then(() => {
     try {
       const { query } = req;
       const { fileName } = query;
-      const book = await getBook(fileName);
+      // await getEpubFile(fileName);
+      const staticInfo = await getEpubStaticInfo(fileName || 'jikji');
+      const viewerInfo = await getEpubViewerInfo(fileName || 'jikji');
 
+      let respondData = null;
+      if (staticInfo && viewerInfo) {
+        respondData = {
+          ...staticInfo,
+          ...viewerInfo,
+          spineViewers: viewerInfo.viewers,
+        };
+      }
+      // clearEpubFile(fileName);
       res.send({
-        book,
+        book: respondData,
       });
     } catch (error) {
-      console.log(error);
+      console.log('Get book', error);
       res.status(500).send(error);
     }
   });

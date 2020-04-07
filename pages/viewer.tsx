@@ -9,6 +9,7 @@ import debounce from 'lodash.debounce';
 import { fetchGetBook } from '../lib/fetch';
 
 import Layout from '../components/Layout';
+import Loading from '../components/common/Loading';
 import ViewerPagesController from '../components/viewer/ViewerPagesController';
 import ViewerBottom from '../components/viewer/ViewerBottom';
 import ViewerHeader from '../components/viewer/ViewerHeader';
@@ -21,17 +22,16 @@ import * as settingActions from '../reducers/viewerSetting';
 import { VIEWER_HEIGHT_RATIO, VIEWER_WIDTH_RATIO } from '../constants/viewer';
 
 import { ReducerStates } from '../interfaces';
-import { EpubBookViewer } from '../interfaces/books';
-import { ViewerSettingState } from '../interfaces/viewer';
 
+interface Props {
+  bookName: string;
+}
 
-const Viewer: NextPage = () => {
+const Viewer: NextPage<Props> = ({ bookName }) => {
   const dispatch = useDispatch();
-  const {
-    settingChangeToggle,
-  }: ViewerSettingState = useSelector((state: ReducerStates) => state.viewerSetting);
-
   const book = useSelector((state: ReducerStates) => state.book);
+
+  const [isGettingBook, setIsGettingBook] = useState(true);
   const [menuHeight, setMenuHeight] = useState(0);
 
   const resizeViewer = useCallback(() => {
@@ -56,7 +56,19 @@ const Viewer: NextPage = () => {
     resizeViewer();
   }, [setViewerSize, resizeViewer]);
 
-  const debounceResizeWindow = useCallback(debounce(resizeWindow, 500), [resizeWindow]);
+  const debounceResizeWindow = useCallback(debounce(resizeWindow, 350), [resizeWindow]);
+
+  const getBook = useCallback(async () => {
+    const bookData = await fetchGetBook(bookName);
+    if (bookData) {
+      dispatch(bookActions.setShowingBook(bookData));
+      setIsGettingBook(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    getBook();
+  }, []);
 
   useEffect(() => {
     window.addEventListener('resize', debounceResizeWindow);
@@ -66,10 +78,6 @@ const Viewer: NextPage = () => {
   }, [debounceResizeWindow]);
 
   useEffect(() => {
-    resizeViewer();
-  }, [settingChangeToggle]);
-
-  useEffect(() => {
     setViewerSize();
     return () => {
       // Page out
@@ -77,6 +85,14 @@ const Viewer: NextPage = () => {
       dispatch(bookActions.clearShowingBook());
     };
   }, []);
+
+  if (isGettingBook) {
+    return (
+      <Loading
+        text="책을 가져오고 있습니다. 잠시만 기다려주세요..."
+      />
+    );
+  }
 
   if (!book) {
     return (
@@ -101,27 +117,14 @@ const Viewer: NextPage = () => {
 };
 
 // eslint-disable-next-line @typescript-eslint/unbound-method
-Viewer.getInitialProps = async (context: NextPageContext<any>): Promise<any> => {
-  const { req, store, query } = context;
+Viewer.getInitialProps = (context: NextPageContext<any>) => {
+  const { query } = context;
   const { fileName } = query;
   const queryName = decodeURI(String(fileName || 'jikji'));
 
-  let book: EpubBookViewer = null;
-
-  if (req) {
-    try {
-      const { getBook } = require('../server.util');
-      book = await getBook(queryName);
-    } catch (error) {
-      console.error(error);
-    }
-  } else {
-    book = await fetchGetBook(queryName);
-  }
-
-  if (book) {
-    store.dispatch(bookActions.setShowingBook(book));
-  }
+  return {
+    bookName: queryName,
+  };
 };
 
 export default Viewer;

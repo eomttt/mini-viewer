@@ -5,7 +5,7 @@ export const GET_BOOK_LIST_QUERY = gql`
     bookList {
       fileName
       coverImage
-      title
+      titles
     }
   }
 `;

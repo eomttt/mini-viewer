@@ -70,10 +70,10 @@ const ViewerHeader: React.FunctionComponent<Props> = ({
       >
         <Info>
           <Title>
-            {getString(book.titles)}
+            {book.titles}
           </Title>
           <Author>
-            {getString(book.creators.map((authorItem) => authorItem.name))}
+            {book.creators}
           </Author>
         </Info>
         <HeaderNcx>

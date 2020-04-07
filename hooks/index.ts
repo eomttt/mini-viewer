@@ -20,7 +20,7 @@ export const useSpineIndex = (
     return false;
   });
   return spineIndex;
-}, [viewerPageCount]);
+}, [viewerCountList, viewerPageCount]);
 
 export const useSpinePosition = (
   viewerCountList: ViewerCount[],
@@ -39,7 +39,7 @@ export const useSpinePosition = (
     return columnOffset;
   }
   return -1;
-}, [viewerPageCount, viewerIndex]);
+}, [viewerCountList, viewerPageCount, viewerIndex]);
 
 export const useSetBookCount = (
   viewerCountList: ViewerCount[],
