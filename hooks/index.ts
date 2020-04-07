@@ -9,7 +9,7 @@ export const useSpineIndex = (
   viewerCountList: ViewerCount[],
   viewerPageCount: number,
 ) => useMemo(() => {
-  let spineIndex = -1;
+  let spineIndex = 0;
   let accurateCount = 0;
   viewerCountList.some((viewerCount) => {
     if (accurateCount + viewerCount.count > viewerPageCount) {
@@ -20,7 +20,7 @@ export const useSpineIndex = (
     return false;
   });
   return spineIndex;
-}, [viewerCountList, viewerPageCount]);
+}, [viewerPageCount]);
 
 export const useSpinePosition = (
   viewerCountList: ViewerCount[],
@@ -39,7 +39,7 @@ export const useSpinePosition = (
     return columnOffset;
   }
   return -1;
-}, [viewerCountList, viewerPageCount, viewerIndex]);
+}, [viewerPageCount, viewerIndex]);
 
 export const useSetBookCount = (
   viewerCountList: ViewerCount[],

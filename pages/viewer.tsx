@@ -56,7 +56,7 @@ const Viewer: NextPage<Props> = ({ bookName }) => {
     resizeViewer();
   }, [setViewerSize, resizeViewer]);
 
-  const debounceResizeWindow = useCallback(debounce(resizeWindow, 350), [resizeWindow]);
+  const debounceResizeWindow = useCallback(debounce(resizeWindow, 100), [resizeWindow]);
 
   const getBook = useCallback(async () => {
     const bookData = await fetchGetBook(bookName);

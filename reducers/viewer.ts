@@ -6,7 +6,7 @@ import {
 
 export const initialState: ViewerState = {
   viewerCountList: [],
-  viewerSpineIndex: -1,
+  viewerSpineIndex: 0,
   viewerSpinePosition: 0,
   viewerPageCount: 0,
   viewerWholePageCount: 0,
