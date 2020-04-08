@@ -22,6 +22,9 @@ import * as settingActions from '../reducers/viewerSetting';
 import { VIEWER_HEIGHT_RATIO, VIEWER_WIDTH_RATIO } from '../constants/viewer';
 
 import { ReducerStates } from '../interfaces';
+import { ViewerState } from '../interfaces/viewer';
+
+import { useSetBookCount } from '../hooks';
 
 interface Props {
   bookName: string;
@@ -29,10 +32,24 @@ interface Props {
 
 const Viewer: NextPage<Props> = ({ bookName }) => {
   const dispatch = useDispatch();
+  const {
+    viewerCountList,
+  }: ViewerState = useSelector((state: ReducerStates) => state.viewer);
   const book = useSelector((state: ReducerStates) => state.book);
 
+  const isSetCountList = useSetBookCount(viewerCountList, book ? book.spines : []);
+
+  const [isResizing, setIsResizing] = useState(false);
   const [isGettingBook, setIsGettingBook] = useState(true);
   const [menuHeight, setMenuHeight] = useState(0);
+
+  useEffect(() => {
+    if (isSetCountList) {
+      const pageCount = viewerCountList.reduce((acc, cur) => acc + cur.count, 0);
+      dispatch(viewerActions.setViewerPageWholeCount(pageCount > 0 ? pageCount - 1 : 0));
+      setIsResizing(false);
+    }
+  }, [isSetCountList]);
 
   const resizeViewer = useCallback(() => {
     dispatch(viewerActions.resizeViewerState());
@@ -54,7 +71,7 @@ const Viewer: NextPage<Props> = ({ bookName }) => {
   const resizeWindow = useCallback(() => {
     setViewerSize();
     resizeViewer();
-  }, [setViewerSize, resizeViewer]);
+  }, [resizeViewer]);
 
   const debounceResizeWindow = useCallback(debounce(resizeWindow, 100), [resizeWindow]);
 
@@ -71,9 +88,15 @@ const Viewer: NextPage<Props> = ({ bookName }) => {
   }, []);
 
   useEffect(() => {
-    window.addEventListener('resize', debounceResizeWindow);
+    window.addEventListener('resize', () => {
+      setIsResizing(true);
+      debounceResizeWindow();
+    });
     return () => {
-      window.removeEventListener('resize', debounceResizeWindow);
+      window.removeEventListener('resize', () => {
+        setIsResizing(true);
+        debounceResizeWindow();
+      });
     };
   }, [debounceResizeWindow]);
 
@@ -102,6 +125,7 @@ const Viewer: NextPage<Props> = ({ bookName }) => {
 
   return (
     <Layout>
+      {(!isSetCountList || isResizing) && <Loading text="로딩 중..." />}
       <ViewerHeader
         menuHeight={menuHeight}
       />
