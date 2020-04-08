@@ -1,5 +1,5 @@
 import React, {
-  useMemo, useCallback,
+  useCallback,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -12,19 +12,31 @@ import { ReducerStates } from '../../interfaces';
 import { EpubBookViewer } from '../../interfaces/books';
 import { ViewerState, ViewerSettingState } from '../../interfaces/viewer';
 
-import { ViewerButton } from '../../styles/viewer';
+import {
+  ViewerPageControllerStyleProps,
+  ViewerButton,
+} from '../../styles/viewer';
 
-import { usePageWithWithRatio } from '../../hooks';
+import {
+  usePageWithWithRatio,
+  useIsFirstPage,
+  useIsLastPage,
+} from '../../hooks';
+
+interface ViewerPageControllerProps {
+  menuHeight: number;
+  book: EpubBookViewer;
+}
 
 const Container = styled.div`
-  background-color: ${(props) => props.styleProps.backgroundColor};
+  background-color: ${(props: ViewerPageControllerStyleProps): string => props.backgroundColor};
 `;
 
 const Content = styled.div`
-  width: ${(props) => props.styleProps.width}px;
-  height: ${(props) => props.styleProps.height}px;
-  margin: 0 calc((100% - ${(props) => props.styleProps.width}px) / 2);
-  padding: ${(props) => props.styleProps.menuHeight}px 0;
+  width: ${(props: ViewerPageControllerStyleProps): number => props.width}px;
+  height: ${(props: ViewerPageControllerStyleProps): number => props.height}px;
+  margin: 0 calc((100% - ${(props: ViewerPageControllerStyleProps): number => props.width}px) / 2);
+  padding: ${(props: ViewerPageControllerStyleProps): number => props.menuHeight}px 0;
   text-align: center;
 `;
 
@@ -36,16 +48,10 @@ const LeftButton = styled(ViewerButton)`
   left: 1em;
 `;
 
-interface Props {
-  menuHeight: number;
-  book: EpubBookViewer;
-}
-
-const ViewerPagesController: React.FunctionComponent<Props> = ({
+const ViewerPagesController: React.FunctionComponent<ViewerPageControllerProps> = ({
   menuHeight, book,
 }) => {
   const dispatch = useDispatch();
-
   const {
     viewerPageCount, viewerWholePageCount,
   }: ViewerState = useSelector((state: ReducerStates) => state.viewer);
@@ -55,10 +61,8 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
     isOpenSettingMenu,
   }: ViewerSettingState = useSelector((state: ReducerStates) => state.viewerSetting);
 
-  const isFirstPage = useMemo(() => viewerPageCount === 0, [viewerPageCount]);
-  const isLastPage = useMemo(() => viewerPageCount === viewerWholePageCount,
-    [viewerPageCount, viewerWholePageCount]);
-
+  const isFirstPage = useIsFirstPage(viewerPageCount);
+  const isLastPage = useIsLastPage(viewerPageCount, viewerWholePageCount);
   const widthWithRatio = usePageWithWithRatio(viewerWidth, widthRatio);
 
   const clickLeft = useCallback(() => {
@@ -75,16 +79,12 @@ const ViewerPagesController: React.FunctionComponent<Props> = ({
 
   return (
     <Container
-      styleProps={{
-        backgroundColor,
-      }}
+      backgroundColor={backgroundColor}
     >
       <Content
-        styleProps={{
-          width: widthWithRatio,
-          height: viewerHeight,
-          menuHeight,
-        }}
+        width={widthWithRatio}
+        height={viewerHeight}
+        menuHeight={menuHeight}
       >
         <ViewerPages
           spines={book.spines}

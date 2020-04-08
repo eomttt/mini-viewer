@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { EpubBookViewer } from '../interfaces/books';
 
-export const fetchGetBook = async (fileName): Promise<EpubBookViewer | null> => {
+export const fetchGetBook = async (fileName: string): Promise<EpubBookViewer | null> => {
   try {
     const res = await axios.get(`/book?fileName=${fileName}`);
     const { data, status } = res;
@@ -16,7 +16,7 @@ export const fetchGetBook = async (fileName): Promise<EpubBookViewer | null> => 
   return null;
 };
 
-export const fetchUploadEpub = async (file): Promise<string | null> => {
+export const fetchUploadEpub = async (file: FormData): Promise<string | null> => {
   try {
     const res = await axios.post('/upload-epub', file);
     const { data, status } = res;

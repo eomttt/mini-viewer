@@ -1,4 +1,4 @@
-import { ReducerAction } from '../interfaces';
+import { ViewerReducerAction } from '../interfaces/index';
 import {
   ViewerState, ViewerCount,
   ViewerLink, ViewerLinkPagePosition,
@@ -29,72 +29,89 @@ export const SET_VIEWER_LINK = 'viewer/SET_VIEWER_LINK';
 export const SET_VIEWER_LINK_PAGE_POSITION_INFO = 'viewer/SET_VIEWER_LINK_PAGE_POSITION_INFO';
 
 // Action creators
-export const initViewerState = () => ({
+export const initViewerState = (): ViewerReducerAction => ({
   type: INIT_VIEWER_STATE,
 });
 
-export const resizeViewerState = () => ({
+export const resizeViewerState = (): ViewerReducerAction => ({
   type: RESIZE_VIEWER_STATE,
 });
 
-export const setViewerCountList = (countList: ViewerCount[]) => ({
+export const setViewerCountList = (
+  countList: ViewerCount[],
+): ViewerReducerAction => ({
   type: SET_VIEWER_COUNT_LIST,
   payload: {
     countList,
   },
 });
 
-export const setViewerSpineIndex = (spineIndex: number) => ({
+export const setViewerSpineIndex = (
+  spineIndex: number,
+): ViewerReducerAction => ({
   type: SET_VIEWER_SPINE_INDEX,
   payload: {
     spineIndex,
   },
 });
 
-export const setViewerSpinePosition = (spinePosition: number) => ({
+export const setViewerSpinePosition = (
+  spinePosition: number,
+): ViewerReducerAction => ({
   type: SET_VIEWER_SPINE_POSITION,
   payload: {
     spinePosition,
   },
 });
 
-export const setViewerPageWholeCount = (wholeCount: number) => ({
+export const setViewerPageWholeCount = (
+  wholeCount: number,
+): ViewerReducerAction => ({
   type: SET_VIEWER_PAGE_WHOLE_COUNT,
   payload: {
     wholeCount,
   },
 });
 
-export const setViewerPageCount = (pageCount: number) => ({
+export const setViewerPageCount = (
+  pageCount: number,
+): ViewerReducerAction => ({
   type: SET_VIEWER_PAGE_COUNT,
   payload: {
     pageCount,
   },
 });
 
-export const setCountUpViewerPageCount = () => ({
+export const setCountUpViewerPageCount = (): ViewerReducerAction => ({
   type: SET_COUNT_UP_VIEWER_PAGE_COUNT,
 });
 
-export const setCountDownViewerPageCount = () => ({
+export const setCountDownViewerPageCount = (): ViewerReducerAction => ({
   type: SET_COUNT_DOWN_VIEWER_PAGE_COUNT,
 });
 
-export const setViewerLink = (params: ViewerLink) => ({
+export const setViewerLink = (
+  viewerLink: ViewerLink,
+): ViewerReducerAction => ({
   type: SET_VIEWER_LINK,
   payload: {
-    ...params,
+    viewerLink,
   },
 });
 
-export const setViewerLinkPagePosition = (params: ViewerLinkPagePosition) => ({
+export const setViewerLinkPagePosition = (
+  viewerLinkPosition: ViewerLinkPagePosition,
+): ViewerReducerAction => ({
   type: SET_VIEWER_LINK_PAGE_POSITION_INFO,
   payload: {
-    ...params,
+    viewerLinkPosition,
   },
 });
 
-export default (state = initialState, action: ReducerAction): ViewerState => {
+export default (
+  state = initialState,
+  action: ViewerReducerAction,
+): ViewerState => {
   const { type, payload } = action;
   switch (type) {
     case INIT_VIEWER_STATE: {
@@ -159,7 +176,8 @@ export default (state = initialState, action: ReducerAction): ViewerState => {
       };
     }
     case SET_VIEWER_LINK: {
-      const { spineIndex, tag } = payload;
+      const { viewerLink } = payload;
+      const { spineIndex, tag } = viewerLink;
       return {
         ...state,
         viewerLink: {
@@ -169,7 +187,8 @@ export default (state = initialState, action: ReducerAction): ViewerState => {
       };
     }
     case SET_VIEWER_LINK_PAGE_POSITION_INFO: {
-      const { spineIndex, position, tag } = payload;
+      const { viewerLinkPosition } = payload;
+      const { spineIndex, position, tag } = viewerLinkPosition;
       return {
         ...state,
         viewerLinkPosition: {

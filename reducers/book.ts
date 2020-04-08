@@ -1,6 +1,6 @@
 import { createAction, handleActions } from 'redux-actions';
 
-import { ReducerAction } from '../interfaces';
+import { BookReducerAction } from '../interfaces';
 import { EpubBookViewer } from '../interfaces/books';
 
 export const initialState: EpubBookViewer | null = null;
@@ -20,12 +20,14 @@ export const setShowingBook = createAction(SET_SHOWING_BOOK, (book: EpubBookView
 // });
 
 // Reducer
-export default handleActions({
+const reducer = handleActions({
   [CLEAR_SHOWING_BOOK]: () => (null),
-  [SET_SHOWING_BOOK]: (_state, { payload }: ReducerAction) => ({
+  [SET_SHOWING_BOOK]: (_state, { payload }: BookReducerAction) => ({
     ...payload.book,
   }),
 }, initialState);
+
+export default reducer;
 // export default (state = initialState, action: ReducerAction): EpubBookViewer | null => {
 //   const { type, payload } = action;
 //   switch (type) {

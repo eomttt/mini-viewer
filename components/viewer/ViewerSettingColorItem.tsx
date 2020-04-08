@@ -8,6 +8,11 @@ import {
   ViewerSettingLabel,
 } from '../../styles/viewer';
 
+interface ViewerSettingColorItemStyleProps {
+  isSelected: boolean;
+  color: string;
+}
+
 const Controller = styled.div`
   display: flex;
   margin: auto 0 auto auto;
@@ -16,9 +21,9 @@ const Controller = styled.div`
 const Content = styled.div`
   width: 1em;
   height: 1em;
-  border: 1px solid ${(props) => (props.styleProps.isSelected ? 'black' : `${subColor}`)};  
+  border: 1px solid ${(props: ViewerSettingColorItemStyleProps): string => (props.isSelected ? 'black' : `${subColor}`)};  
   border-radius: 50%;
-  background-color: ${(props) => props.styleProps.color} !important;
+  background-color: ${(props: ViewerSettingColorItemStyleProps): string => props.color} !important;
   cursor: pointer;
   margin: 0 .2em;
 `;
@@ -47,11 +52,9 @@ const ViewerSettingColorItem: React.FunctionComponent<Props> = ({
         colors.map((color) => (
           <Content
             key={color}
-            styleProps={{
-              color,
-              isSelected: color === value,
-            }}
             onClick={() => selectColor(color)}
+            color={color}
+            isSelected={color === value}
           />
         ))
       }

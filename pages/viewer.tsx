@@ -24,36 +24,24 @@ import { VIEWER_HEIGHT_RATIO, VIEWER_WIDTH_RATIO } from '../constants/viewer';
 import { ReducerStates } from '../interfaces';
 import { ViewerState } from '../interfaces/viewer';
 
-import { useSetBookCount } from '../hooks';
+import { useIsSetViewerCountList } from '../hooks';
 
-interface Props {
+interface ViewerPageProps {
   bookName: string;
 }
 
-const Viewer: NextPage<Props> = ({ bookName }) => {
+const Viewer: NextPage<ViewerPageProps> = ({ bookName }) => {
   const dispatch = useDispatch();
   const {
     viewerCountList,
   }: ViewerState = useSelector((state: ReducerStates) => state.viewer);
   const book = useSelector((state: ReducerStates) => state.book);
 
-  const isSetCountList = useSetBookCount(viewerCountList, book ? book.spines : []);
+  const isSetViewerCountList = useIsSetViewerCountList(viewerCountList, book ? book.spines : []);
 
   const [isResizing, setIsResizing] = useState(false);
   const [isGettingBook, setIsGettingBook] = useState(true);
   const [menuHeight, setMenuHeight] = useState(0);
-
-  useEffect(() => {
-    if (isSetCountList) {
-      const pageCount = viewerCountList.reduce((acc, cur) => acc + cur.count, 0);
-      dispatch(viewerActions.setViewerPageWholeCount(pageCount > 0 ? pageCount - 1 : 0));
-      setIsResizing(false);
-    }
-  }, [isSetCountList]);
-
-  const resizeViewer = useCallback(() => {
-    dispatch(viewerActions.resizeViewerState());
-  }, []);
 
   const setViewerSize = useCallback(() => {
     const windowWidth = window.innerWidth;
@@ -68,12 +56,15 @@ const Viewer: NextPage<Props> = ({ bookName }) => {
     setMenuHeight((windowHeight - Math.floor(windowHeight * (VIEWER_HEIGHT_RATIO / 100))) / 2);
   }, []);
 
-  const resizeWindow = useCallback(() => {
-    setViewerSize();
-    resizeViewer();
-  }, [resizeViewer]);
+  const initViewer = useCallback(() => {
+    dispatch(viewerActions.initViewerState());
+    dispatch(bookActions.clearShowingBook());
+  }, []);
 
-  const debounceResizeWindow = useCallback(debounce(resizeWindow, 100), [resizeWindow]);
+  const resizeViewer = useCallback(() => {
+    dispatch(viewerActions.resizeViewerState());
+    setViewerSize();
+  }, []);
 
   const getBook = useCallback(async () => {
     const bookData = await fetchGetBook(bookName);
@@ -83,30 +74,38 @@ const Viewer: NextPage<Props> = ({ bookName }) => {
     }
   }, []);
 
-  useEffect(() => {
-    getBook();
-  }, []);
+  const debounceResizeViewer = useCallback(debounce(resizeViewer, 100), [resizeViewer]);
 
-  useEffect(() => {
+  const addResizingEventListener = useCallback(() => {
     window.addEventListener('resize', () => {
       setIsResizing(true);
-      debounceResizeWindow();
+      debounceResizeViewer();
     });
-    return () => {
-      window.removeEventListener('resize', () => {
-        setIsResizing(true);
-        debounceResizeWindow();
-      });
-    };
-  }, [debounceResizeWindow]);
+  }, [debounceResizeViewer]);
+
+  const removeResizingEventListener = useCallback(() => {
+    window.removeEventListener('resize', () => {
+      debounceResizeViewer();
+    });
+  }, [debounceResizeViewer]);
 
   useEffect(() => {
+    if (isSetViewerCountList) {
+      const pageCount = viewerCountList.reduce((acc, cur) => acc + cur.count, 0);
+      dispatch(viewerActions.setViewerPageWholeCount(pageCount > 0 ? pageCount - 1 : 0));
+      setIsResizing(false);
+    }
+  }, [isSetViewerCountList]);
+
+  useEffect(() => {
+    addResizingEventListener();
+    return removeResizingEventListener;
+  }, [addResizingEventListener, removeResizingEventListener]);
+
+  useEffect(() => {
+    getBook();
     setViewerSize();
-    return () => {
-      // Page out
-      dispatch(viewerActions.initViewerState());
-      dispatch(bookActions.clearShowingBook());
-    };
+    return initViewer;
   }, []);
 
   if (isGettingBook) {
@@ -125,7 +124,7 @@ const Viewer: NextPage<Props> = ({ bookName }) => {
 
   return (
     <Layout>
-      {(!isSetCountList || isResizing) && <Loading text="로딩 중..." />}
+      {(!isSetViewerCountList || isResizing) && <Loading text="로딩 중..." />}
       <ViewerHeader
         menuHeight={menuHeight}
       />
@@ -140,8 +139,7 @@ const Viewer: NextPage<Props> = ({ bookName }) => {
   );
 };
 
-// eslint-disable-next-line @typescript-eslint/unbound-method
-Viewer.getInitialProps = (context: NextPageContext<any>) => {
+Viewer.getInitialProps = (context: NextPageContext): ViewerPageProps => {
   const { query } = context;
   const { fileName } = query;
   const queryName = decodeURI(String(fileName || 'jikji'));
