@@ -79,7 +79,7 @@ const ViewerSetting: React.FunctionComponent = () => {
         valueUnit: SETTING_ITEM_UNIT.FONT_SIZE,
         minValue: FONT_SIZE_RANGE.MIN,
         maxValue: FONT_SIZE_RANGE.MAX,
-        action: (value: number) => {
+        action: (value: number): void => {
           dispatch(settingActions.setViewerSettingFontSize(value));
         },
       }, {
@@ -89,7 +89,7 @@ const ViewerSetting: React.FunctionComponent = () => {
         valueUnit: SETTING_ITEM_UNIT.WIDTH,
         minValue: WIDTH_RATIO_RANGE.MIN,
         maxValue: WIDTH_RATIO_RANGE.MAX,
-        action: (value: number) => {
+        action: (value: number): void => {
           dispatch(settingActions.setViewerSettingWidthRatio(value));
         },
       }, {
@@ -99,7 +99,7 @@ const ViewerSetting: React.FunctionComponent = () => {
         valueUnit: SETTING_ITEM_UNIT.LINE_HEIGHT,
         minValue: LINE_HEIGHT_RANGE.MIN,
         maxValue: LINE_HEIGHT_RANGE.MAX,
-        action: (value: number) => {
+        action: (value: number): void => {
           dispatch(settingActions.setViewerSettingLineHeight(value));
         },
       }, {
@@ -107,7 +107,7 @@ const ViewerSetting: React.FunctionComponent = () => {
         key: SETTING_ITEM_KEY.BACKGROUND_COLOR,
         value: backgroundColor,
         colors: BACKGROUND_COLORS,
-        action: (value: string) => {
+        action: (value: string): void => {
           dispatch(settingActions.setViewerSettingBackgroundColor(value));
         },
       },
@@ -124,7 +124,7 @@ const ViewerSetting: React.FunctionComponent = () => {
       });
       dispatch(viewerActions.resizeViewerState());
     }
-  }, [isOpenSettingMenu, isSettingChange, fontSize, lineHeight, widthRatio]);
+  }, [isOpenSettingMenu, isSettingChange]);
 
   const toggleShowNcs = useCallback(() => {
     if (isOpenSettingMenu) {

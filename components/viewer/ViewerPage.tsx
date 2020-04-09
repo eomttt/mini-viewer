@@ -2,7 +2,6 @@ import React, {
   useRef, useEffect, useCallback, useMemo, useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
 import styled from 'styled-components';
 
 import {
@@ -13,25 +12,33 @@ import {
 
 import * as viewerActions from '../../reducers/viewer';
 
-import { VIEWER_PAGE_GAP } from '../../constants/viewer';
-
 import { ReducerStates } from '../../interfaces';
 import { EpubSpineItem } from '../../interfaces/books';
-import { ViewerState, ViewerSettingState } from '../../interfaces/viewer';
+import {
+  ViewerState,
+  ViewerSettingState,
+} from '../../interfaces/viewer';
+
+import {
+  getSpineViewerCount,
+  getTagPostion,
+} from '../../lib/calculate';
+import { getPageCountBySpineIndex } from '../../lib/util';
 
 import {
   usePageWithWithRatio,
   useSpinePosition,
   useSpineIndex,
+  useSpineLinkInfo,
+  useScrollLeft,
 } from '../../hooks';
 
 interface ViewerPageProps {
-  isSetViewerCountList: boolean;
+  isSetAllViewerCountList: boolean;
   spineIndex: number;
   spineViewer: string;
   spine: EpubSpineItem;
   setCountCallback: (count: number, index: number) => void;
-  clickLink: (spineHref: string, hashId: string) => void;
 }
 
 const Article = styled(ViewerArticle)`
@@ -39,20 +46,19 @@ const Article = styled(ViewerArticle)`
 `;
 
 const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
-  isSetViewerCountList,
+  isSetAllViewerCountList,
   spineIndex, spineViewer, spine,
   setCountCallback,
-  clickLink,
 }) => {
   const dispatch = useDispatch();
 
   const {
-    viewerLink, viewerPageCount, viewerCountList,
+    viewerPageCount, viewerCountList, viewerSpineIndex,
   }: ViewerState = useSelector((state: ReducerStates) => state.viewer);
   const {
     viewerWidth,
     fontSize, lineHeight, widthRatio,
-    settingChangeToggle, isOpenSettingMenu,
+    settingChangeToggle,
   }: ViewerSettingState = useSelector((state: ReducerStates) => state.viewerSetting);
 
   const viewArticleRef = useRef(null);
@@ -60,85 +66,36 @@ const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
   const [viewerStyle, setViewerStyle] = useState({
     fontSize,
     lineHeight,
-    widthRatio,
+  });
+  const [selectedLink, setSelectedLink] = useState({
+    href: '',
+    tag: '',
   });
 
-  const nowSpineIndex = useSpineIndex(viewerCountList, viewerPageCount);
+  const widthWithRatio = usePageWithWithRatio(viewerWidth, widthRatio);
+  const selectedSpineLink = useSpineLinkInfo(viewerCountList, selectedLink);
   const nowSpinePosition = useSpinePosition(viewerCountList, viewerPageCount, spineIndex);
-  const widthWithRatio = usePageWithWithRatio(viewerWidth, viewerStyle.widthRatio);
+  const scrollLeft = useScrollLeft(nowSpinePosition, widthWithRatio);
 
-  const isSelectedSpineByLink = useMemo(() => viewerLink && viewerLink.spineIndex === spineIndex,
-    [viewerLink, spine]);
-  const isShowNowSpineIndex = useMemo(() => nowSpineIndex === spineIndex,
-    [nowSpineIndex, spineIndex]);
+  const isShowNowSpineIndex = useMemo(() => viewerSpineIndex === spineIndex,
+    [viewerSpineIndex, spineIndex]);
 
-  useEffect(() => {
-    setViewerStyle({
-      fontSize,
-      lineHeight,
-      widthRatio,
-    });
-  }, [settingChangeToggle]);
+  const setPageCount = useCallback((index: number, position = 0) => {
+    const pageCount = getPageCountBySpineIndex(viewerCountList, index);
+    dispatch(viewerActions.setViewerPageCount(pageCount + position));
+  }, [viewerCountList]);
 
-  useEffect(() => {
-    if (isShowNowSpineIndex) {
-      setViewerStyle({
-        fontSize,
-        lineHeight,
-        widthRatio,
-      });
-    }
-  }, [fontSize, lineHeight, widthRatio]);
-
-  /**
-   * When click a link in spine(page), Calculate new page offset
-   */
-  useEffect(() => {
-    if (widthWithRatio > 0 && isSelectedSpineByLink) {
-      const { current: viewArticleRefCurrent } = viewArticleRef;
-      const tagElement = viewArticleRefCurrent.querySelector(`#${viewerLink.tag}`);
+  const getLinkPosition = useCallback((index: number, tag: string) => {
+    if (tag) {
+      const selectedLinkSpineElement = document.querySelector(`[data-spineindex='${index}']`);
+      const tagElement: HTMLElement = selectedLinkSpineElement.querySelector(`#${tag}`);
       if (tagElement) {
-        const tagElementScroll = tagElement.offsetLeft;
-        const pageMargin = (window.innerWidth - widthWithRatio) / 2;
-        const pageScroll = Math.floor(
-          tagElementScroll - (spineIndex * widthWithRatio) - pageMargin,
-        );
-        const pagePosition = Math.floor(pageScroll / widthWithRatio);
-        dispatch(viewerActions.setViewerLinkPagePosition({
-          ...viewerLink,
-          position: pagePosition,
-        }));
+        return getTagPostion(tagElement.offsetLeft, index, widthWithRatio);
       }
     }
-  }, [viewerLink, isSelectedSpineByLink]);
 
-  /**
-   * Calculate: Column count
-   */
-  useEffect(() => {
-    const { current: viewArticleRefCurrent } = viewArticleRef;
-    if (viewArticleRefCurrent) {
-      setTimeout(() => {
-        if (widthWithRatio > 0 && !isSetViewerCountList) {
-          const count = viewArticleRefCurrent.scrollWidth / (widthWithRatio + VIEWER_PAGE_GAP);
-          setCountCallback(Math.floor(count), spineIndex);
-        }
-      });
-    }
-  }, [widthWithRatio, isSetViewerCountList]);
-
-
-  /**
-   * Viewer: Set offset scroll value
-   */
-  useEffect(() => {
-    if (nowSpinePosition >= 0 && isShowNowSpineIndex) {
-      const { current: viewArticleRefCurrent } = viewArticleRef;
-      // 계산식 constant
-      viewArticleRefCurrent.scrollLeft = nowSpinePosition * (widthWithRatio + VIEWER_PAGE_GAP);
-      dispatch(viewerActions.setViewerSpinePosition(nowSpinePosition));
-    }
-  }, [widthWithRatio, nowSpinePosition, isShowNowSpineIndex]);
+    return 0;
+  }, [widthWithRatio]);
 
   const clickPage = useCallback((e) => {
     let node = e.target;
@@ -148,14 +105,72 @@ const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
     if (node) {
       e.preventDefault();
       const [spineHref, hashId] = node.getAttribute('href').split('#');
-      clickLink(spineHref || spine.href, hashId);
-      return false; // stop handling the click
+      setSelectedLink({
+        href: spineHref || spine.href,
+        tag: hashId,
+      });
+      return false;
     }
-    return true; // handle other clicks
-  }, [clickLink, spine]);
+    return true;
+  }, [spine]);
+
+  useEffect(() => {
+    setViewerStyle({
+      fontSize,
+      lineHeight,
+    });
+  }, [settingChangeToggle]);
+
+  useEffect(() => {
+    if (isShowNowSpineIndex) {
+      setViewerStyle({
+        fontSize,
+        lineHeight,
+      });
+    }
+  }, [fontSize, lineHeight]);
+
+  useEffect(() => {
+    const { current: viewArticleRefCurrent } = viewArticleRef;
+    if (viewArticleRefCurrent) {
+      setTimeout(() => {
+        if (widthWithRatio > 0 && !isSetAllViewerCountList) {
+          const count = getSpineViewerCount(viewArticleRefCurrent.scrollWidth, widthWithRatio);
+          setCountCallback(count, spineIndex);
+        }
+      });
+    }
+  }, [isSetAllViewerCountList]);
+
+  useEffect(() => {
+    const {
+      index: selectedSpineLinkIndex,
+      tag,
+    } = selectedSpineLink;
+    if (selectedSpineLinkIndex > -1) {
+      setPageCount(
+        selectedSpineLinkIndex,
+        getLinkPosition(selectedSpineLinkIndex, tag),
+      );
+    }
+  }, [selectedSpineLink]);
+
+  useEffect(() => {
+    if (isShowNowSpineIndex && nowSpinePosition > -1) {
+      dispatch(viewerActions.setViewerSpinePosition(nowSpinePosition));
+    }
+  }, [isShowNowSpineIndex, nowSpinePosition]);
+
+  useEffect(() => {
+    if (isShowNowSpineIndex) {
+      const { current: viewArticleRefCurrent } = viewArticleRef;
+      viewArticleRefCurrent.scrollLeft = scrollLeft;
+    }
+  }, [isShowNowSpineIndex, scrollLeft]);
 
   return (
     <Article
+      data-spineindex={spineIndex}
       ref={viewArticleRef}
       onClickCapture={clickPage}
       fontSize={viewerStyle.fontSize}

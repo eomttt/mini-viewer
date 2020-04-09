@@ -1,7 +1,6 @@
 import { ViewerReducerAction } from '../interfaces/index';
 import {
   ViewerState, ViewerCount,
-  ViewerLink, ViewerLinkPagePosition,
 } from '../interfaces/viewer';
 
 export const initialState: ViewerState = {
@@ -24,9 +23,6 @@ export const SET_VIEWER_PAGE_WHOLE_COUNT = 'viewer/SET_VIEWER_PAGE_WHOLE_COUNT';
 export const SET_VIEWER_PAGE_COUNT = 'viewer/SET_VIEWER_PAGE_COUNT';
 export const SET_COUNT_UP_VIEWER_PAGE_COUNT = 'viewer/SET_COUNT_UP_VIEWER_PAGE_COUNT';
 export const SET_COUNT_DOWN_VIEWER_PAGE_COUNT = 'viewer/SET_COUNT_DOWN_VIEWER_PAGE_COUNT';
-
-export const SET_VIEWER_LINK = 'viewer/SET_VIEWER_LINK';
-export const SET_VIEWER_LINK_PAGE_POSITION_INFO = 'viewer/SET_VIEWER_LINK_PAGE_POSITION_INFO';
 
 // Action creators
 export const initViewerState = (): ViewerReducerAction => ({
@@ -90,24 +86,6 @@ export const setCountDownViewerPageCount = (): ViewerReducerAction => ({
   type: SET_COUNT_DOWN_VIEWER_PAGE_COUNT,
 });
 
-export const setViewerLink = (
-  viewerLink: ViewerLink,
-): ViewerReducerAction => ({
-  type: SET_VIEWER_LINK,
-  payload: {
-    viewerLink,
-  },
-});
-
-export const setViewerLinkPagePosition = (
-  viewerLinkPosition: ViewerLinkPagePosition,
-): ViewerReducerAction => ({
-  type: SET_VIEWER_LINK_PAGE_POSITION_INFO,
-  payload: {
-    viewerLinkPosition,
-  },
-});
-
 export default (
   state = initialState,
   action: ViewerReducerAction,
@@ -124,8 +102,6 @@ export default (
         ...state,
         viewerCountList: [],
         viewerWholePageCount: 0,
-        viewerLink: null,
-        viewerLinkPosition: null,
       };
     }
     case SET_VIEWER_COUNT_LIST: {
@@ -173,29 +149,6 @@ export default (
       return {
         ...state,
         viewerPageCount: state.viewerPageCount - 1,
-      };
-    }
-    case SET_VIEWER_LINK: {
-      const { viewerLink } = payload;
-      const { spineIndex, tag } = viewerLink;
-      return {
-        ...state,
-        viewerLink: {
-          spineIndex,
-          tag,
-        },
-      };
-    }
-    case SET_VIEWER_LINK_PAGE_POSITION_INFO: {
-      const { viewerLinkPosition } = payload;
-      const { spineIndex, position, tag } = viewerLinkPosition;
-      return {
-        ...state,
-        viewerLinkPosition: {
-          spineIndex,
-          tag,
-          position,
-        },
       };
     }
     default: {

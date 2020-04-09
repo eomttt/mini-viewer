@@ -1,7 +1,8 @@
 import { EpubBookViewer } from './books';
 import {
-  ViewerState, ViewerSettingState,
-  ViewerCount, ViewerLinkPagePosition, ViewerLink,
+  ViewerState,
+  ViewerSettingState,
+  ViewerCount,
 } from './viewer';
 
 export interface BookPayload {
@@ -14,8 +15,6 @@ export interface ViewerPayload {
   spinePosition?: number;
   wholeCount?: number;
   pageCount?: number;
-  viewerLink?: ViewerLink;
-  viewerLinkPosition?: ViewerLinkPagePosition;
 }
 
 export interface ViewerSettingPayload {

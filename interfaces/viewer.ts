@@ -4,8 +4,6 @@ export interface ViewerState {
   viewerWholePageCount: number;
   viewerSpineIndex: number;
   viewerSpinePosition: number;
-  viewerLink?: ViewerLink;
-  viewerLinkPosition?: ViewerLinkPagePosition;
 }
 
 export interface ViewerSettingState extends ViewerStyle {
@@ -27,15 +25,6 @@ export interface ViewerCount {
   count: number;
   spineId: string;
   href: string;
-}
-
-export interface ViewerLink {
-  spineIndex: number;
-  tag: string;
-}
-
-export interface ViewerLinkPagePosition extends ViewerLink {
-  position: number;
 }
 
 export interface SettingItem {

@@ -68,8 +68,8 @@ export const getMaxSpinePosition = (
 
 export const getSpinePosition = (
   viewerCountList: ViewerCount[],
-  noewSpinePosition: number,
   spineIndex: number,
+  noewSpinePosition: number,
 ): number => {
   const maxSpinePosition = getMaxSpinePosition(viewerCountList, spineIndex);
   return noewSpinePosition >= maxSpinePosition

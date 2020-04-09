@@ -5,6 +5,8 @@ import { ViewerCount } from '../interfaces/viewer';
 
 import { getLibraryOrder } from '../lib/localStorage';
 
+import { VIEWER_PAGE_GAP } from '../constants/viewer';
+
 export const useSpineIndex = (
   viewerCountList: ViewerCount[],
   viewerPageCount: number,
@@ -22,6 +24,32 @@ export const useSpineIndex = (
   return spineIndex;
 }, [viewerPageCount]);
 
+export const useSpineLinkInfo = (
+  viewerCountList: ViewerCount[],
+  selectedLink: {
+    href: string;
+    tag: string;
+  },
+): {
+  index: number;
+  tag: string;
+} => useMemo(() => {
+  const { href, tag } = selectedLink;
+  let spineIndex = -1;
+  viewerCountList.some((viewerCount) => {
+    if (href.includes(viewerCount.href)) {
+      spineIndex = viewerCount.index;
+      return true;
+    }
+    return false;
+  });
+
+  return {
+    index: spineIndex,
+    tag,
+  };
+}, [selectedLink]);
+
 export const useSpinePosition = (
   viewerCountList: ViewerCount[],
   viewerPageCount: number,
@@ -36,12 +64,12 @@ export const useSpinePosition = (
       }
       return true;
     });
-    return columnOffset;
+    return columnOffset < 0 ? 0 : columnOffset;
   }
   return -1;
 }, [viewerPageCount, viewerIndex]);
 
-export const useIsSetViewerCountList = (
+export const useIsSetAllViewerCountList = (
   viewerCountList: ViewerCount[],
   spines: EpubSpineItem[],
 ): boolean => useMemo(() => viewerCountList.length >= spines.length, [viewerCountList, spines]);
@@ -86,4 +114,9 @@ export const useIsFirstPage = (viewerPageCount: number): boolean => useMemo(
 export const useIsLastPage = (viewerPageCount: number, viewerWholePageCount: number): boolean => useMemo(
   () => viewerPageCount === viewerWholePageCount,
   [viewerPageCount, viewerWholePageCount],
+);
+
+export const useScrollLeft = (offsetNumber: number, viewerWidth: number): number => useMemo(
+  () => Math.floor(offsetNumber * (viewerWidth + VIEWER_PAGE_GAP)),
+  [offsetNumber, viewerWidth],
 );

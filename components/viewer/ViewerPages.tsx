@@ -1,5 +1,6 @@
 import React, {
-  useEffect, useCallback, useReducer, useRef, useMemo,
+  useEffect, useCallback, useReducer,
+  useRef, useMemo,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -11,22 +12,21 @@ import ViewerPage from './ViewerPage';
 
 import { ReducerStates } from '../../interfaces';
 import { EpubSpineItem } from '../../interfaces/books';
-import { ViewerState, ViewerSettingState } from '../../interfaces/viewer';
-
 import {
-  VIEWER_PAGE_GAP,
-} from '../../constants/viewer';
+  ViewerState,
+  ViewerSettingState,
+} from '../../interfaces/viewer';
 
 import {
   getPageCountBySpineIndex,
   getSpinePosition,
-  getSpineIndexByHref,
 } from '../../lib/util';
 
 import {
   usePageWithWithRatio,
   useSpineIndex,
-  useIsSetViewerCountList,
+  useIsSetAllViewerCountList,
+  useScrollLeft,
 } from '../../hooks';
 
 interface ViewerPagesProps {
@@ -50,11 +50,10 @@ const ViewerPages: React.FunctionComponent<ViewerPagesProps> = ({
 
   const {
     viewerCountList, viewerPageCount,
-    viewerLinkPosition,
     viewerSpineIndex, viewerSpinePosition,
   }: ViewerState = useSelector((state: ReducerStates) => state.viewer);
   const {
-    viewerWidth, widthRatio, isOpenSettingMenu,
+    viewerWidth, widthRatio,
   }: ViewerSettingState = useSelector((state: ReducerStates) => state.viewerSetting);
 
   const containerRef = useRef(null);
@@ -64,48 +63,13 @@ const ViewerPages: React.FunctionComponent<ViewerPagesProps> = ({
     return countItems.length >= spineViewers.length;
   }, [privateStates, spineViewers]);
 
-  const nowSpineIndex = useSpineIndex(viewerCountList, viewerPageCount);
+  const spineIndexByPageCount = useSpineIndex(viewerCountList, viewerPageCount);
   const widthWithRatio = usePageWithWithRatio(viewerWidth, widthRatio);
-  const isSetViewerCountList = useIsSetViewerCountList(viewerCountList, spines);
+  const isSetAllViewerCountList = useIsSetAllViewerCountList(viewerCountList, spines);
+  const scrollLeft = useScrollLeft(viewerSpineIndex, widthWithRatio);
 
-  const setViewerCountList = useCallback(() => {
-    const { countItems } = privateStates;
-    dispatch(viewerActions.setViewerCountList(countItems));
-  }, [privateStates]);
-
-  const setPageCount = useCallback((spineIndex: number, position = 0) => {
-    const pageCount = getPageCountBySpineIndex(viewerCountList, spineIndex);
-    dispatch(viewerActions.setViewerPageCount(pageCount + position));
-  }, [viewerCountList]);
-
-  useEffect(() => {
-    // Resize or Style 변경시 적용
-    if (isSetViewerCountList) {
-      const position = getSpinePosition(viewerCountList, viewerSpinePosition, viewerSpineIndex);
-      setPageCount(viewerSpineIndex, position);
-    }
-  }, [isSetViewerCountList]);
-
-  useEffect(() => {
-    if (viewerLinkPosition) {
-      const { spineIndex: linkSpineIndex, position } = viewerLinkPosition;
-      setPageCount(linkSpineIndex, position);
-    }
-  }, [viewerLinkPosition]);
-
-  useEffect(() => {
-    if (nowSpineIndex > -1) {
-      dispatch(viewerActions.setViewerSpineIndex(nowSpineIndex));
-    }
-  }, [nowSpineIndex]);
-
-  /**
-   * Calculate: Callback from single page, Set count in private store,
-   * Set count in public store when calculated all in private store
-   */
   const setCountCallback = useCallback((count: number, index: number) => {
-    const spine = spines[index];
-    const { href, id } = spine;
+    const { href, id } = spines[index];
     privateDispatch(privateReducer.addCount({
       index,
       count,
@@ -114,11 +78,30 @@ const ViewerPages: React.FunctionComponent<ViewerPagesProps> = ({
     }));
   }, [spines]);
 
+  const setViewerCountList = useCallback(() => {
+    const { countItems } = privateStates;
+    dispatch(viewerActions.setViewerCountList(countItems));
+  }, [privateStates]);
+
+  const setPageCount = useCallback(() => {
+    const pageCount = getPageCountBySpineIndex(viewerCountList, viewerSpineIndex);
+    const position = getSpinePosition(viewerCountList, viewerSpineIndex, viewerSpinePosition);
+    dispatch(viewerActions.setViewerPageCount(pageCount + position));
+  }, [viewerCountList, viewerSpineIndex, viewerSpinePosition]);
+
   useEffect(() => {
-    if (!isSetViewerCountList) {
+    if (isSetAllViewerCountList) {
+      setPageCount();
+    } else {
       privateDispatch(privateReducer.initCount());
     }
-  }, [isSetViewerCountList]);
+  }, [isSetAllViewerCountList]);
+
+  useEffect(() => {
+    if (spineIndexByPageCount > -1) {
+      dispatch(viewerActions.setViewerSpineIndex(spineIndexByPageCount));
+    }
+  }, [spineIndexByPageCount]);
 
   useEffect(() => {
     if (isAllPrivateCountItemsSet) {
@@ -126,29 +109,10 @@ const ViewerPages: React.FunctionComponent<ViewerPagesProps> = ({
     }
   }, [isAllPrivateCountItemsSet, setViewerCountList]);
 
-  /**
-   * Viewer: Set offset spine index, Click left or right, link
-   */
   useEffect(() => {
     const { current: containerCurrent } = containerRef;
-    containerCurrent.scrollLeft = nowSpineIndex * (widthWithRatio + VIEWER_PAGE_GAP);
-  }, [widthWithRatio, nowSpineIndex]);
-
-  const clickLink = useCallback((spineHref: string, hashTag: string) => {
-    if (!isOpenSettingMenu) {
-      const spineIndex = getSpineIndexByHref(viewerCountList, spineHref);
-      if (spineIndex > -1) {
-        if (hashTag) {
-          dispatch(viewerActions.setViewerLink({
-            spineIndex,
-            tag: hashTag,
-          }));
-        } else {
-          setPageCount(spineIndex);
-        }
-      }
-    }
-  }, [viewerCountList, isOpenSettingMenu, setPageCount]);
+    containerCurrent.scrollLeft = scrollLeft;
+  }, [scrollLeft]);
 
   return (
     <Container
@@ -158,12 +122,11 @@ const ViewerPages: React.FunctionComponent<ViewerPagesProps> = ({
         spineViewers.map((spineViewer, index) => (
           <ViewerPage
             key={spineViewer}
-            isSetViewerCountList={isSetViewerCountList}
+            isSetAllViewerCountList={isSetAllViewerCountList}
             spineIndex={index}
             spineViewer={spineViewer}
             spine={spines[index]}
             setCountCallback={setCountCallback}
-            clickLink={clickLink}
           />
         ))
     }

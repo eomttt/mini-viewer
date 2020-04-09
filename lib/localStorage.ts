@@ -1,6 +1,6 @@
 import { isWindowDefined } from './util';
 
-export const setLibraryOrder = (itemNames: string[]) => {
+export const setLibraryOrder = (itemNames: string[]): void => {
   localStorage.setItem('order', JSON.stringify(itemNames));
 };
 
