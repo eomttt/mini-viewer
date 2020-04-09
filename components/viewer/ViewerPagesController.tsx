@@ -1,5 +1,5 @@
 import React, {
-  useCallback, useEffect,
+  useCallback,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';

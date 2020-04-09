@@ -29,7 +29,6 @@ import { ViewerState } from '../interfaces/viewer';
 
 import { useIsSetAllViewerCountList } from '../hooks';
 
-
 interface ViewerPageProps {
   bookName: string;
 }
@@ -59,6 +58,8 @@ const Viewer: NextPage<ViewerPageProps> = ({ bookName }) => {
   }, []);
 
   const resizeViewer = useCallback(() => {
+    dispatch(settingActions.setViewerWidth(0));
+    dispatch(settingActions.setViewerHeight(0));
     dispatch(viewerActions.resizeViewerState());
     setViewerSize();
   }, []);

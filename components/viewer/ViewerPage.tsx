@@ -28,16 +28,15 @@ import { getPageCountBySpineIndex } from '../../lib/util';
 import {
   usePageWithWithRatio,
   useSpinePosition,
-  useSpineIndex,
   useSpineLinkInfo,
   useScrollLeft,
 } from '../../hooks';
 
 interface ViewerPageProps {
-  isSetAllViewerCountList: boolean;
   spineIndex: number;
   spineViewer: string;
   spine: EpubSpineItem;
+  toggleCalculateCount: boolean;
   setCountCallback: (count: number, index: number) => void;
 }
 
@@ -46,8 +45,8 @@ const Article = styled(ViewerArticle)`
 `;
 
 const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
-  isSetAllViewerCountList,
   spineIndex, spineViewer, spine,
+  toggleCalculateCount,
   setCountCallback,
 }) => {
   const dispatch = useDispatch();
@@ -129,18 +128,13 @@ const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
       });
     }
   }, [fontSize, lineHeight]);
-
   useEffect(() => {
     const { current: viewArticleRefCurrent } = viewArticleRef;
     if (viewArticleRefCurrent) {
-      setTimeout(() => {
-        if (widthWithRatio > 0 && !isSetAllViewerCountList) {
-          const count = getSpineViewerCount(viewArticleRefCurrent.scrollWidth, widthWithRatio);
-          setCountCallback(count, spineIndex);
-        }
-      });
+      const count = getSpineViewerCount(viewArticleRefCurrent.scrollWidth, widthWithRatio);
+      setCountCallback(count, spineIndex);
     }
-  }, [isSetAllViewerCountList]);
+  }, [toggleCalculateCount]);
 
   useEffect(() => {
     const {
