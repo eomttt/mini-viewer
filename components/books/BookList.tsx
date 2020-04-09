@@ -123,26 +123,26 @@ const BookList: React.FunctionComponent<Props> = ({ bookListItem, deleteBookList
   return (
     <ul>
       {
-        bookList.map(({ fileName, coverImage, title }, index) => (
+        bookList.map(({ fileName, coverImage, titles }, index) => (
           <Cover
-            onClick={() => openBook(index)}
-            onDragOver={(e) => dragOver(e, index)}
+            onClick={(): void => openBook(index)}
+            onDragOver={(e): void => dragOver(e, index)}
             key={fileName}
           >
             <CoverImage
               src={coverImage}
               draggable
-              onDragStart={(e) => dragStart(e, index)}
+              onDragStart={(e): void => dragStart(e, index)}
               onDragEnd={dragEnd}
               alt="Cover"
             />
             <div>
-              {title}
+              {titles}
             </div>
             <CancelIcon
               src="close-icon.svg"
               alt="Close"
-              onClick={(e) => onClickDeleteBook(e, index)}
+              onClick={(e): void => onClickDeleteBook(e, index)}
             />
           </Cover>
         ))

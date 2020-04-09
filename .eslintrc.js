@@ -5,8 +5,9 @@ module.exports = {
   },
   extends: [
     '@ridi',
-    '@ridi/eslint-config/typescript',
-    '@ridi/eslint-config/react'
+    'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:import/typescript'
   ],
   settings: {
     'import/resolver': {
@@ -21,16 +22,8 @@ module.exports = {
     createDefaultProgram: true,
   },
   rules: {
-    'react/jsx-props-no-spreading': 0,
+    'react/jsx-filename-extension': [1, { 'extensions': ['.js', '.jsx', '.ts', '.tsx'] }],
     'react/prop-types': 0,
-    'react-hooks/exhaustive-deps': 0,
-    '@typescript-eslint/no-explicit-any': 0,
-    '@typescript-eslint/no-var-requires': 0,
-    '@typescript-eslint/explicit-function-return-type': 0,
-    'import/prefer-default-export': 0,
-    'no-underscore-dangle': 0,
-    'no-await-in-loop': 0,
-    'global-require': 0,
     'import/extensions': [
       'error',
       'ignorePackages',

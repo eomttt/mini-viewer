@@ -9,7 +9,7 @@ const Container = styled.div`
   font-size: 2em;
 `;
 
-const NoBookList = () => (
+const NoBookList: React.FunctionComponent = () => (
   <>
     <Container>
       <div>

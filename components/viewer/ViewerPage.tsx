@@ -25,12 +25,8 @@ import {
   useSpineIndex,
 } from '../../hooks';
 
-const Article = styled(ViewerArticle)`
-  overflow: hidden;
-`;
-
-interface Props {
-  isSetCountList: boolean;
+interface ViewerPageProps {
+  isSetViewerCountList: boolean;
   spineIndex: number;
   spineViewer: string;
   spine: EpubSpineItem;
@@ -38,8 +34,12 @@ interface Props {
   clickLink: (spineHref: string, hashId: string) => void;
 }
 
-const ViewerPage: React.FunctionComponent<Props> = ({
-  isSetCountList,
+const Article = styled(ViewerArticle)`
+  overflow: hidden;
+`;
+
+const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
+  isSetViewerCountList,
   spineIndex, spineViewer, spine,
   setCountCallback,
   clickLink,
@@ -50,9 +50,9 @@ const ViewerPage: React.FunctionComponent<Props> = ({
     viewerLink, viewerPageCount, viewerCountList,
   }: ViewerState = useSelector((state: ReducerStates) => state.viewer);
   const {
-    viewerWidth, viewerHeight,
+    viewerWidth,
     fontSize, lineHeight, widthRatio,
-    settingChangeToggle,
+    settingChangeToggle, isOpenSettingMenu,
   }: ViewerSettingState = useSelector((state: ReducerStates) => state.viewerSetting);
 
   const viewArticleRef = useRef(null);
@@ -71,7 +71,6 @@ const ViewerPage: React.FunctionComponent<Props> = ({
     [viewerLink, spine]);
   const isShowNowSpineIndex = useMemo(() => nowSpineIndex === spineIndex,
     [nowSpineIndex, spineIndex]);
-
 
   useEffect(() => {
     setViewerStyle({
@@ -120,13 +119,13 @@ const ViewerPage: React.FunctionComponent<Props> = ({
     const { current: viewArticleRefCurrent } = viewArticleRef;
     if (viewArticleRefCurrent) {
       setTimeout(() => {
-        if (widthWithRatio > 0 && !isSetCountList) {
+        if (widthWithRatio > 0 && !isSetViewerCountList) {
           const count = viewArticleRefCurrent.scrollWidth / (widthWithRatio + VIEWER_PAGE_GAP);
           setCountCallback(Math.floor(count), spineIndex);
         }
       });
     }
-  }, [widthWithRatio, isSetCountList]);
+  }, [widthWithRatio, isSetViewerCountList]);
 
 
   /**
@@ -135,6 +134,7 @@ const ViewerPage: React.FunctionComponent<Props> = ({
   useEffect(() => {
     if (nowSpinePosition >= 0 && isShowNowSpineIndex) {
       const { current: viewArticleRefCurrent } = viewArticleRef;
+      // 계산식 constant
       viewArticleRefCurrent.scrollLeft = nowSpinePosition * (widthWithRatio + VIEWER_PAGE_GAP);
       dispatch(viewerActions.setViewerSpinePosition(nowSpinePosition));
     }
@@ -157,20 +157,12 @@ const ViewerPage: React.FunctionComponent<Props> = ({
   return (
     <Article
       ref={viewArticleRef}
-      styleProps={{
-        width: widthWithRatio,
-        height: viewerHeight,
-        fontSize: viewerStyle.fontSize,
-        lineHeight: viewerStyle.lineHeight,
-      }}
       onClickCapture={clickPage}
+      fontSize={viewerStyle.fontSize}
+      lineHeight={viewerStyle.lineHeight}
     >
       <ViewerSection
-        styleProps={{
-          width: widthWithRatio,
-          fontSize: viewerStyle.fontSize,
-          lineHeight: viewerStyle.lineHeight,
-        }}
+        width={widthWithRatio}
       >
         <ViewerContents
           dangerouslySetInnerHTML={{ __html: spineViewer }}

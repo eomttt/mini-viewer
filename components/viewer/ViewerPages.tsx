@@ -6,11 +6,7 @@ import styled from 'styled-components';
 
 import * as viewerActions from '../../reducers/viewer';
 
-import {
-  viewerPagesReducerStates,
-  viewerPagesReducer,
-  initCount, addCount,
-} from './ViewerPagesReducer';
+import * as privateReducer from './ViewerPagesReducer';
 import ViewerPage from './ViewerPage';
 
 import { ReducerStates } from '../../interfaces';
@@ -23,15 +19,20 @@ import {
 
 import {
   getPageCountBySpineIndex,
-  getMaxSpinePosition,
+  getSpinePosition,
   getSpineIndexByHref,
 } from '../../lib/util';
 
 import {
   usePageWithWithRatio,
   useSpineIndex,
-  useSetBookCount,
+  useIsSetViewerCountList,
 } from '../../hooks';
+
+interface ViewerPagesProps {
+  spines: EpubSpineItem[];
+  spineViewers: string[];
+}
 
 const Container = styled.div`
   width: 100%;
@@ -41,16 +42,11 @@ const Container = styled.div`
   overflow: hidden;
 `;
 
-interface Props {
-  spines: EpubSpineItem[];
-  spineViewers: string[];
-}
-
-const ViewerPages: React.FunctionComponent<Props> = ({
+const ViewerPages: React.FunctionComponent<ViewerPagesProps> = ({
   spines, spineViewers,
 }) => {
   const dispatch = useDispatch();
-  const [privateStates, privateDispatch] = useReducer(viewerPagesReducer, viewerPagesReducerStates);
+  const [privateStates, privateDispatch] = useReducer(privateReducer.reducer, privateReducer.initialState);
 
   const {
     viewerCountList, viewerPageCount,
@@ -63,14 +59,19 @@ const ViewerPages: React.FunctionComponent<Props> = ({
 
   const containerRef = useRef(null);
 
-  const isAllCountItemsSet = useMemo(() => {
+  const isAllPrivateCountItemsSet = useMemo(() => {
     const { countItems } = privateStates;
     return countItems.length >= spineViewers.length;
   }, [privateStates, spineViewers]);
 
   const nowSpineIndex = useSpineIndex(viewerCountList, viewerPageCount);
   const widthWithRatio = usePageWithWithRatio(viewerWidth, widthRatio);
-  const isSetCountList = useSetBookCount(viewerCountList, spines);
+  const isSetViewerCountList = useIsSetViewerCountList(viewerCountList, spines);
+
+  const setViewerCountList = useCallback(() => {
+    const { countItems } = privateStates;
+    dispatch(viewerActions.setViewerCountList(countItems));
+  }, [privateStates]);
 
   const setPageCount = useCallback((spineIndex: number, position = 0) => {
     const pageCount = getPageCountBySpineIndex(viewerCountList, spineIndex);
@@ -79,14 +80,11 @@ const ViewerPages: React.FunctionComponent<Props> = ({
 
   useEffect(() => {
     // Resize or Style 변경시 적용
-    if (isSetCountList && viewerSpineIndex > -1) {
-      const maxSpinePosition = getMaxSpinePosition(viewerCountList, viewerSpineIndex);
-      const position = viewerSpinePosition >= maxSpinePosition
-        ? maxSpinePosition - 1
-        : viewerSpinePosition;
+    if (isSetViewerCountList) {
+      const position = getSpinePosition(viewerCountList, viewerSpinePosition, viewerSpineIndex);
       setPageCount(viewerSpineIndex, position);
     }
-  }, [isSetCountList]);
+  }, [isSetViewerCountList]);
 
   useEffect(() => {
     if (viewerLinkPosition) {
@@ -108,7 +106,7 @@ const ViewerPages: React.FunctionComponent<Props> = ({
   const setCountCallback = useCallback((count: number, index: number) => {
     const spine = spines[index];
     const { href, id } = spine;
-    privateDispatch(addCount({
+    privateDispatch(privateReducer.addCount({
       index,
       count,
       href,
@@ -117,17 +115,16 @@ const ViewerPages: React.FunctionComponent<Props> = ({
   }, [spines]);
 
   useEffect(() => {
-    if (!isSetCountList) {
-      privateDispatch(initCount());
+    if (!isSetViewerCountList) {
+      privateDispatch(privateReducer.initCount());
     }
-  }, [isSetCountList]);
+  }, [isSetViewerCountList]);
 
   useEffect(() => {
-    const { countItems } = privateStates;
-    if (isAllCountItemsSet) {
-      dispatch(viewerActions.setViewerCountList(countItems));
+    if (isAllPrivateCountItemsSet) {
+      setViewerCountList();
     }
-  }, [isAllCountItemsSet, privateStates]);
+  }, [isAllPrivateCountItemsSet, setViewerCountList]);
 
   /**
    * Viewer: Set offset spine index, Click left or right, link
@@ -161,7 +158,7 @@ const ViewerPages: React.FunctionComponent<Props> = ({
         spineViewers.map((spineViewer, index) => (
           <ViewerPage
             key={spineViewer}
-            isSetCountList={isSetCountList}
+            isSetViewerCountList={isSetViewerCountList}
             spineIndex={index}
             spineViewer={spineViewer}
             spine={spines[index]}

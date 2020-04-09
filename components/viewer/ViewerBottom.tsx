@@ -8,16 +8,20 @@ import ViewerSlider from './ViewerSlider';
 
 import { ReducerStates } from '../../interfaces';
 
-const Container = styled(ViewerMenu)`
-  height: ${(props) => props.styleProps.height - 10}px;
-  bottom: 0;
-`;
+interface ViewerBottomStyleProps {
+  height: number;
+}
 
-interface Props {
+interface ViewerBottomProps {
   menuHeight: number;
 }
 
-const ViewerBottom: React.FunctionComponent<Props> = ({ menuHeight }) => {
+const Container = styled(ViewerMenu)`
+  height: ${(props: ViewerBottomStyleProps): number => props.height - 10}px;
+  bottom: 0;
+`;
+
+const ViewerBottom: React.FunctionComponent<ViewerBottomProps> = ({ menuHeight }) => {
   const {
     viewerWholePageCount,
   } = useSelector((state: ReducerStates) => state.viewer);
@@ -28,9 +32,7 @@ const ViewerBottom: React.FunctionComponent<Props> = ({ menuHeight }) => {
       menuHeight > 0
       && (
       <Container
-        styleProps={{
-          height: menuHeight,
-        }}
+        height={menuHeight}
       >
         <ViewerSlider
           maxValue={viewerWholePageCount}

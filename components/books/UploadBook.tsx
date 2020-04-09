@@ -5,6 +5,10 @@ import { fetchUploadEpub } from '../../lib/fetch';
 
 import { BookListItem } from '../../interfaces/books';
 
+import Loading from '../common/Loading';
+
+import { subTransparentColor } from '../../styles';
+
 const Container = styled.div`
   width: 95%;
   margin-top: 5em;
@@ -75,23 +79,33 @@ const UploadBook: React.FunctionComponent<Props> = ({ bookListItem, refetchBookL
   }, [isUploading, uploadFile]);
 
   return (
-    <Container>
-      <div>업로드 할 Epub 파일을 선택해주세요.</div>
-      <form encType="multipart/form-data" onSubmit={setFile}>
-        <div>
-          <input
-            className="form-control"
-            ref={fileRef}
-            type="file"
-            accept=".epub"
-          />
-        </div>
+    <>
+      {
+      isUploading && (
+      <Loading
+        text="책을 추가하고 있습니다..."
+        backgroundColor={subTransparentColor}
+      />
+      )
+    }
+      <Container>
+        <div>업로드 할 Epub 파일을 선택해주세요.</div>
+        <form encType="multipart/form-data" onSubmit={setFile}>
+          <div>
+            <input
+              className="form-control"
+              ref={fileRef}
+              type="file"
+              accept=".epub"
+            />
+          </div>
 
-        <button type="submit">
-          Upload
-        </button>
-      </form>
-    </Container>
+          <button type="submit">
+            Upload
+          </button>
+        </form>
+      </Container>
+    </>
   );
 };
 

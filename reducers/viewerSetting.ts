@@ -1,4 +1,4 @@
-import { ReducerAction } from '../interfaces';
+import { ViewerSettingReducerAction } from '../interfaces/index';
 import { ViewerSettingState } from '../interfaces/viewer';
 
 import { defaultColor } from '../styles';
@@ -29,62 +29,77 @@ export const CLOSE_SETTING_MEUN = 'viewerSetting/CLOSE_SETTING_MENU';
 export const TOGGLE_SETTING_CHANGED = 'viewerSetting/TOGGLE_SETTING_CHANGED';
 
 // Action creators
-export const setViewerWidth = (width: number) => ({
+export const setViewerWidth = (
+  width: number,
+): ViewerSettingReducerAction => ({
   type: SET_VIEWER_WIDTH,
   payload: {
     width,
   },
 });
 
-export const setViewerHeight = (height: number) => ({
+export const setViewerHeight = (
+  height: number,
+): ViewerSettingReducerAction => ({
   type: SET_VIEWER_HEIGHT,
   payload: {
     height,
   },
 });
 
-export const setViewerSettingFontSize = (fontSize: number) => ({
+export const setViewerSettingFontSize = (
+  fontSize: number,
+): ViewerSettingReducerAction => ({
   type: SET_FONT_SIZE,
   payload: {
     fontSize,
   },
 });
 
-export const setViewerSettingWidthRatio = (widthRatio: number) => ({
+export const setViewerSettingWidthRatio = (
+  widthRatio: number,
+): ViewerSettingReducerAction => ({
   type: SET_WIDTH_RATIO,
   payload: {
     widthRatio,
   },
 });
 
-export const setViewerSettingLineHeight = (lineHeight: number) => ({
+export const setViewerSettingLineHeight = (
+  lineHeight: number,
+): ViewerSettingReducerAction => ({
   type: SET_LINE_HEIGHT,
   payload: {
     lineHeight,
   },
 });
 
-export const setViewerSettingBackgroundColor = (color: string) => ({
+export const setViewerSettingBackgroundColor = (
+  color: string,
+): ViewerSettingReducerAction => ({
   type: SET_BACKGROUND_COLOR,
   payload: {
     backgroundColor: color,
   },
 });
 
-export const openSettingMenu = () => ({
+export const openSettingMenu = (): ViewerSettingReducerAction => ({
   type: OPEN_SETTING_MENU,
 });
 
-export const closeSettingMenu = () => ({
+export const closeSettingMenu = (): ViewerSettingReducerAction => ({
   type: CLOSE_SETTING_MEUN,
 });
 
-export const toggleSettingChanged = () => ({
+export const toggleSettingChanged = (): ViewerSettingReducerAction => ({
   type: TOGGLE_SETTING_CHANGED,
 });
 
 
-export default (state = initialState, action: ReducerAction): ViewerSettingState => {
+export default (
+  state = initialState,
+  action: ViewerSettingReducerAction,
+): ViewerSettingState => {
   const { type, payload } = action;
   switch (type) {
     case SET_VIEWER_WIDTH: {

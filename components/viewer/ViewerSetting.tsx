@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import ViewerSettingCountItem from './ViewerSettingCountItem';
 import ViewerSettingColorItem from './ViewerSettingColorItem';
 
+import * as viewerActions from '../../reducers/viewer';
 import * as settingActions from '../../reducers/viewerSetting';
 
 import { subColor, defaultColor } from '../../styles';
@@ -121,6 +122,7 @@ const ViewerSetting: React.FunctionComponent = () => {
         lineHeight,
         widthRatio,
       });
+      dispatch(viewerActions.resizeViewerState());
     }
   }, [isOpenSettingMenu, isSettingChange, fontSize, lineHeight, widthRatio]);
 

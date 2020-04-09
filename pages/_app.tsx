@@ -1,20 +1,22 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 import { ApolloProvider } from 'react-apollo';
+import { Store } from 'redux';
 import { Provider } from 'react-redux';
 
 import withRedux from 'next-redux-wrapper';
-import App, { AppInitialProps } from 'next/app';
+import App, { AppInitialProps, AppContext } from 'next/app';
 import ApolloClient from 'apollo-boost';
-import fetch from 'node-fetch';
+import fetch from 'cross-fetch';
 
 import initStore from '../store';
 
-interface Props {
-  store: any;
+interface AppProps {
+  store: Store;
 }
 
-class MyApp extends App<Props> {
-  public static async getInitialProps({ Component, ctx }): Promise<AppInitialProps> {
+class MyApp extends App<AppProps> {
+  public static async getInitialProps({ Component, ctx }: AppContext): Promise<AppInitialProps> {
     console.log('NODE_ENV', process.env.NODE_ENV);
 
     let pageProps = {};

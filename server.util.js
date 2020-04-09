@@ -2,21 +2,10 @@ const fs = require('fs');
 const { EpubParser } = require('@ridi/epub-parser');
 
 const {
-  getEpubFileKeys,
-  getEpubFile,
-  deleteEpubFile,
-  uploadEpubImageFiles,
-} = require('./server.s3.js');
-const {
   DEFAULT_COVER_IMAGE,
   EPUB_UNZIP_PATH,
   EPUB_IMAGE_STATIC_PATH,
 } = require('./server.constant.js');
-
-const clearEpubFile = (fileName) => {
-  fs.unlinkSync(`public/${fileName}.epub`);
-  fs.rmdirSync(`public/epub/${fileName}`, { recursive: true });
-};
 
 const parsingBook = async (parser, {
   unzipPath,
@@ -52,17 +41,6 @@ const parsingViewers = async (parser, {
   }
 };
 
-const uploadImages = async (fileName, epubFileName, images) => {
-  // eslint-disable-next-line no-restricted-syntax
-  for (const image of images) {
-    const { href, mediaType } = image;
-    const uploadImagePath = `${fileName}/${href}`;
-    const unzipImagePath = `${EPUB_UNZIP_PATH}/${epubFileName}/${href}`;
-
-    await uploadEpubImageFiles(uploadImagePath, unzipImagePath, mediaType);
-  }
-};
-
 const getStyleTexts = (epubFileName, styles) => {
   const styleTexts = [];
   // eslint-disable-next-line no-restricted-syntax
@@ -76,30 +54,36 @@ const getStyleTexts = (epubFileName, styles) => {
   return styleTexts;
 };
 
+const getString = (item) => item.reduce((acc, cur, index) => `${acc}${index > 0 ? ', ' : ''}${cur}`, '');
+
 const getBookInfo = async (epubFileName) => {
   const [fileName] = epubFileName.split('-');
   const parser = new EpubParser(`public/${epubFileName}.epub`);
 
   try {
     const book = await parsingBook(parser, {
-      unzipPath: `${EPUB_UNZIP_PATH}/${epubFileName}`,
+      unzipPath: `${EPUB_UNZIP_PATH}/${fileName}`,
     });
 
     if (book) {
-      const { styles, images, spines } = book;
-
-      await uploadImages(fileName, epubFileName, images);
+      const {
+        ncx, spines, styles, creators, cover, titles,
+      } = book;
       const viewers = await parsingViewers(parser, {
         bookSpines: spines,
         publicPath: `${EPUB_IMAGE_STATIC_PATH}/${fileName}`,
       });
-      const styleTexts = getStyleTexts(epubFileName, styles);
-      clearEpubFile(epubFileName);
+
+      const styleTexts = getStyleTexts(fileName, styles);
       return {
         fileName,
-        book,
+        ncx,
+        spines,
+        creators: getString(creators.map((authorItem) => authorItem.name)),
         viewers,
+        titles: getString(titles),
         styleText: styleTexts.join(''),
+        coverImage: cover ? `${EPUB_IMAGE_STATIC_PATH}/${fileName}/${cover.href}` : DEFAULT_COVER_IMAGE,
       };
     }
   } catch (error) {
@@ -108,63 +92,48 @@ const getBookInfo = async (epubFileName) => {
   }
 };
 
-const getTitle = (creators) => creators.reduce((acc, cur, index) => `${acc}${index > 0 ? ', ' : ''}${cur.name}`, '');
+const writeBookStaticInfo = (fileName, {
+  titles,
+  styleText,
+  coverImage,
+}) => (
+  fs.writeFileSync(
+    `public/epub/${fileName}/staticInfo.json`,
+    JSON.stringify({
+      titles,
+      styleText,
+      coverImage,
+    }),
+    'utf8',
+  )
+);
 
-const getBookListItems = async () => {
-  const bookListItems = [];
-  try {
-    const fileKeys = await getEpubFileKeys();
-    // eslint-disable-next-line no-restricted-syntax
-    for (const fileKey of fileKeys) {
-      const [fileName] = fileKey.split('.');
-      const epubFileName = await getEpubFile(fileName || 'jikji');
-      if (epubFileName) {
-        const { book } = await getBookInfo(epubFileName);
-        const { creators, cover } = book;
+const writeBookViewerInfo = (fileName, {
+  ncx,
+  spines,
+  creators,
+  viewers,
+}) => (
+  fs.writeFileSync(
+    `public/epub/${fileName}/viewerInfo.json`,
+    JSON.stringify({
+      ncx,
+      spines,
+      creators,
+      viewers,
+    }),
+    'utf8',
+  )
+);
 
-        bookListItems.push({
-          fileName,
-          title: getTitle(creators),
-          coverImage: cover ? `${EPUB_IMAGE_STATIC_PATH}/${fileName}/${cover.href}` : DEFAULT_COVER_IMAGE,
-        });
-      }
-    }
-    return bookListItems;
-  } catch (error) {
-    throw new Error(error);
-  }
+const clearEpubFile = (fileName) => {
+  fs.unlinkSync(`public/${fileName}.epub`);
+  fs.rmdirSync(`public/epub/${fileName}`, { recursive: true });
 };
 
-const deleteListItem = async (fileName) => {
-  try {
-    const res = await deleteEpubFile(fileName);
-    return res;
-  } catch (error) {
-    throw new Error(error);
-  }
-};
+module.exports.getBookInfo = getBookInfo;
 
-const getBook = async (fileName) => {
-  try {
-    const epubFileName = await getEpubFile(fileName || 'jikji');
-    if (epubFileName) {
-      const {
-        book, styleText, viewers,
-      } = await getBookInfo(epubFileName);
-      return {
-        ...book,
-        styleText,
-        spineViewers: viewers,
-        fileName,
-      };
-    }
+module.exports.writeBookStaticInfo = writeBookStaticInfo;
+module.exports.writeBookViewerInfo = writeBookViewerInfo;
 
-    return null;
-  } catch (error) {
-    throw new Error(error);
-  }
-};
-
-module.exports.getBookListItems = getBookListItems;
-module.exports.deleteListItem = deleteListItem;
-module.exports.getBook = getBook;
+module.exports.clearEpubFile = clearEpubFile;

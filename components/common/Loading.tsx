@@ -2,13 +2,17 @@ import React from 'react';
 import styled from 'styled-components';
 import { subColor, defaultColor } from '../../styles';
 
+interface LoadingStyleProps {
+  backgroundColor: string;
+}
+
 const Container = styled.div`
   position: absolute;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: ${(props) => (props.styleProps.backgroundColor ? props.styleProps.backgroundColor : '#dedede')};
+  background-color: ${(props: LoadingStyleProps): string => (props.backgroundColor ? props.backgroundColor : '#dedede')};
   z-index: 6;
 `;
 
@@ -36,9 +40,7 @@ interface Props {
 
 const Loading: React.FunctionComponent<Props> = ({ text, backgroundColor }) => (
   <Container
-    styleProps={{
-      backgroundColor,
-    }}
+    backgroundColor={backgroundColor}
   >
     <Content>
       <div>

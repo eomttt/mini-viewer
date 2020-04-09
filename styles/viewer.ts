@@ -3,6 +3,22 @@ import styled from 'styled-components';
 import { defaultColor, subColor } from './index';
 import { VIEWER_PAGE_GAP } from '../constants/viewer';
 
+export interface ViewerPageControllerStyleProps {
+  backgroundColor?: string;
+  width?: number;
+  height?: number;
+  menuHeight?: number;
+}
+
+interface ViewerArticleStyleProps {
+  fontSize: number;
+  lineHeight: number;
+}
+
+interface ViewerSectionStyleProps {
+  width: number;
+}
+
 export const ViewerMenu = styled.div`
   width: 100%;
   position: fixed;
@@ -22,15 +38,15 @@ export const ViewerArticle = styled.div`
   display: inline-block;
   width: 100%;
   height: 100%;
-  font-size: ${(props) => props.styleProps.fontSize}em;
-  line-height: ${(props) => props.styleProps.lineHeight}em;
+  font-size: ${(props: ViewerArticleStyleProps): number => props.fontSize}em;
+  line-height: ${(props: ViewerArticleStyleProps): number => props.lineHeight}em;
 `;
 
 export const ViewerSection = styled.div`
   height: 100%;
   column-gap: ${VIEWER_PAGE_GAP}px;
   column-fill: auto;
-  column-width: ${(props) => props.styleProps.width}px;
+  column-width: ${(props: ViewerSectionStyleProps): number => props.width}px;
 `;
 
 export const ViewerContents = styled.div`

@@ -1,7 +1,7 @@
 export interface BookListItem {
   fileName: string;
   coverImage: string;
-  title: string;
+  titles: string;
 }
 
 export interface EpubBookViewer extends EpubBook {

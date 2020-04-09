@@ -13,10 +13,16 @@ import { ViewerMenu } from '../../styles/viewer';
 
 import { ReducerStates } from '../../interfaces';
 
-import { getString } from '../../lib/util';
+interface ViewerHeaderStyleProps {
+  height: number;
+}
+
+interface ViewerHeaderProps {
+  menuHeight: number;
+}
 
 const Container = styled(ViewerMenu)`
-  height: ${(props) => props.styleProps.height - 10}px;
+  height: ${(props: ViewerHeaderStyleProps): number => props.height - 10}px;
   top: 0;
 `;
 
@@ -49,11 +55,7 @@ const HeaderSetting = styled.div`
   margin: auto 5% auto 0;
 `;
 
-interface Props {
-  menuHeight: number;
-}
-
-const ViewerHeader: React.FunctionComponent<Props> = ({
+const ViewerHeader: React.FunctionComponent<ViewerHeaderProps> = ({
   menuHeight,
 }) => {
   const book: EpubBookViewer | null = useSelector((state: ReducerStates) => state.book);
@@ -64,16 +66,14 @@ const ViewerHeader: React.FunctionComponent<Props> = ({
       book && menuHeight > 0
       && (
       <Container
-        styleProps={{
-          height: menuHeight,
-        }}
+        height={menuHeight}
       >
         <Info>
           <Title>
-            {getString(book.titles)}
+            {book.titles}
           </Title>
           <Author>
-            {getString(book.creators.map((authorItem) => authorItem.name))}
+            {book.creators}
           </Author>
         </Info>
         <HeaderNcx>

@@ -45,6 +45,7 @@ class MyDocument extends Document {
           padding: 0,
           width: '100%',
           maxWidth: 'unset',
+          userSelect: 'none',
         }}
         >
           <Main />

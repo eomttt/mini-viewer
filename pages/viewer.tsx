@@ -9,6 +9,7 @@ import debounce from 'lodash.debounce';
 import { fetchGetBook } from '../lib/fetch';
 
 import Layout from '../components/Layout';
+import Loading from '../components/common/Loading';
 import ViewerPagesController from '../components/viewer/ViewerPagesController';
 import ViewerBottom from '../components/viewer/ViewerBottom';
 import ViewerHeader from '../components/viewer/ViewerHeader';
@@ -21,22 +22,26 @@ import * as settingActions from '../reducers/viewerSetting';
 import { VIEWER_HEIGHT_RATIO, VIEWER_WIDTH_RATIO } from '../constants/viewer';
 
 import { ReducerStates } from '../interfaces';
-import { EpubBookViewer } from '../interfaces/books';
-import { ViewerSettingState } from '../interfaces/viewer';
+import { ViewerState } from '../interfaces/viewer';
 
+import { useIsSetViewerCountList } from '../hooks';
 
-const Viewer: NextPage = () => {
+interface ViewerPageProps {
+  bookName: string;
+}
+
+const Viewer: NextPage<ViewerPageProps> = ({ bookName }) => {
   const dispatch = useDispatch();
   const {
-    settingChangeToggle,
-  }: ViewerSettingState = useSelector((state: ReducerStates) => state.viewerSetting);
-
+    viewerCountList,
+  }: ViewerState = useSelector((state: ReducerStates) => state.viewer);
   const book = useSelector((state: ReducerStates) => state.book);
-  const [menuHeight, setMenuHeight] = useState(0);
 
-  const resizeViewer = useCallback(() => {
-    dispatch(viewerActions.resizeViewerState());
-  }, []);
+  const isSetViewerCountList = useIsSetViewerCountList(viewerCountList, book ? book.spines : []);
+
+  const [isResizing, setIsResizing] = useState(false);
+  const [isGettingBook, setIsGettingBook] = useState(true);
+  const [menuHeight, setMenuHeight] = useState(0);
 
   const setViewerSize = useCallback(() => {
     const windowWidth = window.innerWidth;
@@ -51,32 +56,65 @@ const Viewer: NextPage = () => {
     setMenuHeight((windowHeight - Math.floor(windowHeight * (VIEWER_HEIGHT_RATIO / 100))) / 2);
   }, []);
 
-  const resizeWindow = useCallback(() => {
-    setViewerSize();
-    resizeViewer();
-  }, [setViewerSize, resizeViewer]);
-
-  const debounceResizeWindow = useCallback(debounce(resizeWindow, 500), [resizeWindow]);
-
-  useEffect(() => {
-    window.addEventListener('resize', debounceResizeWindow);
-    return () => {
-      window.removeEventListener('resize', debounceResizeWindow);
-    };
-  }, [debounceResizeWindow]);
-
-  useEffect(() => {
-    resizeViewer();
-  }, [settingChangeToggle]);
-
-  useEffect(() => {
-    setViewerSize();
-    return () => {
-      // Page out
-      dispatch(viewerActions.initViewerState());
-      dispatch(bookActions.clearShowingBook());
-    };
+  const initViewer = useCallback(() => {
+    dispatch(viewerActions.initViewerState());
+    dispatch(bookActions.clearShowingBook());
   }, []);
+
+  const resizeViewer = useCallback(() => {
+    dispatch(viewerActions.resizeViewerState());
+    setViewerSize();
+  }, []);
+
+  const getBook = useCallback(async () => {
+    const bookData = await fetchGetBook(bookName);
+    if (bookData) {
+      dispatch(bookActions.setShowingBook(bookData));
+      setIsGettingBook(false);
+    }
+  }, []);
+
+  const debounceResizeViewer = useCallback(debounce(resizeViewer, 100), [resizeViewer]);
+
+  const addResizingEventListener = useCallback(() => {
+    window.addEventListener('resize', () => {
+      setIsResizing(true);
+      debounceResizeViewer();
+    });
+  }, [debounceResizeViewer]);
+
+  const removeResizingEventListener = useCallback(() => {
+    window.removeEventListener('resize', () => {
+      debounceResizeViewer();
+    });
+  }, [debounceResizeViewer]);
+
+  useEffect(() => {
+    if (isSetViewerCountList) {
+      const pageCount = viewerCountList.reduce((acc, cur) => acc + cur.count, 0);
+      dispatch(viewerActions.setViewerPageWholeCount(pageCount > 0 ? pageCount - 1 : 0));
+      setIsResizing(false);
+    }
+  }, [isSetViewerCountList]);
+
+  useEffect(() => {
+    addResizingEventListener();
+    return removeResizingEventListener;
+  }, [addResizingEventListener, removeResizingEventListener]);
+
+  useEffect(() => {
+    getBook();
+    setViewerSize();
+    return initViewer;
+  }, []);
+
+  if (isGettingBook) {
+    return (
+      <Loading
+        text="책을 가져오고 있습니다. 잠시만 기다려주세요..."
+      />
+    );
+  }
 
   if (!book) {
     return (
@@ -86,6 +124,7 @@ const Viewer: NextPage = () => {
 
   return (
     <Layout>
+      {(!isSetViewerCountList || isResizing) && <Loading text="로딩 중..." />}
       <ViewerHeader
         menuHeight={menuHeight}
       />
@@ -100,28 +139,14 @@ const Viewer: NextPage = () => {
   );
 };
 
-// eslint-disable-next-line @typescript-eslint/unbound-method
-Viewer.getInitialProps = async (context: NextPageContext<any>): Promise<any> => {
-  const { req, store, query } = context;
+Viewer.getInitialProps = (context: NextPageContext): ViewerPageProps => {
+  const { query } = context;
   const { fileName } = query;
   const queryName = decodeURI(String(fileName || 'jikji'));
 
-  let book: EpubBookViewer = null;
-
-  if (req) {
-    try {
-      const { getBook } = require('../server.util');
-      book = await getBook(queryName);
-    } catch (error) {
-      console.error(error);
-    }
-  } else {
-    book = await fetchGetBook(queryName);
-  }
-
-  if (book) {
-    store.dispatch(bookActions.setShowingBook(book));
-  }
+  return {
+    bookName: queryName,
+  };
 };
 
 export default Viewer;
