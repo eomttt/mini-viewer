@@ -30,32 +30,14 @@ export const addCount = (
   },
 });
 
-// countItems 중복 제거
 const getNewCountItems = (
   wholeItem: ViewerCount[],
   newItem: ViewerCount,
 ): ViewerCount[] => {
   const { index } = newItem;
-  let existIndex = -1;
-
-  wholeItem.some((item) => {
-    if (item.index === index) {
-      existIndex = index;
-      return true;
-    }
-    return false;
-  });
-
-  if (existIndex > -1) {
-    return wholeItem.map((item) => {
-      if (item.index === existIndex) {
-        return newItem;
-      }
-      return item;
-    });
-  }
-
-  return [...wholeItem, newItem];
+  const newWholeItem = [...wholeItem];
+  newWholeItem[index] = newItem;
+  return [...newWholeItem];
 };
 
 export const reducer = (

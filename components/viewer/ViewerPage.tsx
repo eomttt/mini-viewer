@@ -128,6 +128,7 @@ const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
       });
     }
   }, [fontSize, lineHeight]);
+
   useEffect(() => {
     const { current: viewArticleRefCurrent } = viewArticleRef;
     if (viewArticleRefCurrent) {

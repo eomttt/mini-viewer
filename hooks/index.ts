@@ -116,6 +116,11 @@ export const useIsLastPage = (viewerPageCount: number, viewerWholePageCount: num
   [viewerPageCount, viewerWholePageCount],
 );
 
+export const useIsSetViewerSize = (width: number, height: number): boolean => useMemo(
+  () => width > 0 && height > 0,
+  [width, height],
+);
+
 export const useScrollLeft = (offsetNumber: number, viewerWidth: number): number => useMemo(
   () => Math.floor(offsetNumber * (viewerWidth + VIEWER_PAGE_GAP)),
   [offsetNumber, viewerWidth],

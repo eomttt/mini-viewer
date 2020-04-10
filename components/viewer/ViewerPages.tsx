@@ -1,6 +1,6 @@
 import React, {
   useEffect, useCallback, useReducer,
-  useRef, useMemo, useState,
+  useRef, useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -27,6 +27,7 @@ import {
   useSpineIndex,
   useIsSetAllViewerCountList,
   useScrollLeft,
+  useIsSetViewerSize,
 } from '../../hooks';
 
 interface ViewerPagesProps {
@@ -60,13 +61,9 @@ const ViewerPages: React.FunctionComponent<ViewerPagesProps> = ({
 
   const containerRef = useRef(null);
 
-  const isSetAllPrivateCountList = useMemo(() => {
-    const { countItems } = privateStates;
-    return countItems.length >= spineViewers.length;
-  }, [privateStates, spineViewers]);
-
   const spineIndexByPageCount = useSpineIndex(viewerCountList, viewerPageCount);
   const widthWithRatio = usePageWithWithRatio(viewerWidth, widthRatio);
+  const isSetViewrSize = useIsSetViewerSize(viewerWidth, viewerHeight);
   const isSetAllViewerCountList = useIsSetAllViewerCountList(viewerCountList, spines);
   const scrollLeft = useScrollLeft(viewerSpineIndex, widthWithRatio);
 
@@ -80,10 +77,8 @@ const ViewerPages: React.FunctionComponent<ViewerPagesProps> = ({
     }));
   }, [spines]);
 
-  const setViewerCountList = useCallback(() => {
-    const { countItems } = privateStates;
-    dispatch(viewerActions.setViewerCountList(countItems));
-  }, [privateStates]);
+  const isSetAllPrivateCountList = useCallback((countItems) => countItems.length >= spineViewers.length,
+    [spineViewers]);
 
   const setPageCount = useCallback(() => {
     const pageCount = getPageCountBySpineIndex(viewerCountList, viewerSpineIndex);
@@ -92,7 +87,7 @@ const ViewerPages: React.FunctionComponent<ViewerPagesProps> = ({
   }, [viewerCountList, viewerSpineIndex, viewerSpinePosition]);
 
   useEffect(() => {
-    if (viewerWidth > 0 && viewerHeight > 0) {
+    if (isSetViewrSize) {
       if (isSetAllViewerCountList) {
         setPageCount();
       } else {
@@ -100,13 +95,14 @@ const ViewerPages: React.FunctionComponent<ViewerPagesProps> = ({
         setToggleCalculateCount(!toggleCalculateCount);
       }
     }
-  }, [isSetAllViewerCountList, viewerWidth, viewerHeight]);
+  }, [isSetAllViewerCountList, isSetViewrSize]);
 
   useEffect(() => {
-    if (isSetAllPrivateCountList) {
-      setViewerCountList();
+    const { countItems } = privateStates;
+    if (isSetAllPrivateCountList(countItems)) {
+      dispatch(viewerActions.setViewerCountList(countItems));
     }
-  }, [isSetAllPrivateCountList, setViewerCountList]);
+  }, [privateStates]);
 
   useEffect(() => {
     if (spineIndexByPageCount > -1) {
