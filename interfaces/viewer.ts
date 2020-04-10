@@ -11,7 +11,6 @@ export interface ViewerSettingState extends ViewerStyle {
   viewerHeight: number;
   backgroundColor: string;
   isOpenSettingMenu: boolean;
-  settingChangeToggle: boolean;
 }
 
 export interface ViewerStyle {

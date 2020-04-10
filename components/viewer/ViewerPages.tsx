@@ -1,6 +1,5 @@
 import React, {
-  useEffect, useCallback, useReducer,
-  useRef, useState,
+  useEffect, useCallback, useReducer, useRef, useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -61,10 +60,11 @@ const ViewerPages: React.FunctionComponent<ViewerPagesProps> = ({
 
   const containerRef = useRef(null);
 
-  const spineIndexByPageCount = useSpineIndex(viewerCountList, viewerPageCount);
   const widthWithRatio = usePageWithWithRatio(viewerWidth, widthRatio);
-  const isSetViewrSize = useIsSetViewerSize(viewerWidth, viewerHeight);
+  const isSetViewerSize = useIsSetViewerSize(viewerWidth, viewerHeight);
+
   const isSetAllViewerCountList = useIsSetAllViewerCountList(viewerCountList, spines);
+  const spineIndexByPageCount = useSpineIndex(viewerCountList, viewerPageCount);
   const scrollLeft = useScrollLeft(viewerSpineIndex, widthWithRatio);
 
   const setCountCallback = useCallback((count: number, index: number) => {
@@ -87,7 +87,7 @@ const ViewerPages: React.FunctionComponent<ViewerPagesProps> = ({
   }, [viewerCountList, viewerSpineIndex, viewerSpinePosition]);
 
   useEffect(() => {
-    if (isSetViewrSize) {
+    if (isSetViewerSize) {
       if (isSetAllViewerCountList) {
         setPageCount();
       } else {
@@ -95,7 +95,7 @@ const ViewerPages: React.FunctionComponent<ViewerPagesProps> = ({
         setToggleCalculateCount(!toggleCalculateCount);
       }
     }
-  }, [isSetAllViewerCountList, isSetViewrSize]);
+  }, [isSetAllViewerCountList, isSetViewerSize]);
 
   useEffect(() => {
     const { countItems } = privateStates;
@@ -111,8 +111,10 @@ const ViewerPages: React.FunctionComponent<ViewerPagesProps> = ({
   }, [spineIndexByPageCount]);
 
   useEffect(() => {
-    const { current: containerCurrent } = containerRef;
-    containerCurrent.scrollLeft = scrollLeft;
+    if (scrollLeft > -1) {
+      const { current: containerCurrent } = containerRef;
+      containerCurrent.scrollLeft = scrollLeft;
+    }
   }, [scrollLeft]);
 
   return (
@@ -126,6 +128,7 @@ const ViewerPages: React.FunctionComponent<ViewerPagesProps> = ({
             spineIndex={index}
             spineViewer={spineViewer}
             spine={spines[index]}
+            isSetAllViewerCountList={isSetAllViewerCountList}
             toggleCalculateCount={toggleCalculateCount}
             setCountCallback={setCountCallback}
           />

@@ -55,18 +55,26 @@ export const useSpinePosition = (
   viewerPageCount: number,
   viewerIndex: number,
 ): number => useMemo(() => {
-  if (viewerCountList.length > 0) {
-    let columnOffset = viewerPageCount;
-    viewerCountList.some((viewerCount, index) => {
-      if (index < viewerIndex) {
-        columnOffset -= (viewerCount.count);
-        return false;
-      }
+  let accurateCount = 0;
+  let viewerIndexCount = 0;
+  viewerCountList.some((viewerCount) => {
+    if (viewerCount.index > viewerIndex) {
       return true;
-    });
-    return columnOffset < 0 ? 0 : columnOffset;
+    }
+    accurateCount += viewerCount.count;
+    viewerIndexCount = viewerCount.count;
+    return false;
+  });
+
+  const positionOffset = accurateCount - viewerPageCount;
+  // positionOffset <= 0 이면 현재 viewerIndex 에 count 가 넘어갔다는 이야기
+  // viewerIndex 가 가질 수 있는 max page count (accurateCount) 가
+  // 현재 viewerPageCount 보다 작기 때문
+  // 즉, viewerIndex 가 바뀐 다음에 계산한 값을 넘겨주어야한다.
+  if (positionOffset <= 0 || viewerCountList.length <= 0) {
+    return -1;
   }
-  return -1;
+  return viewerIndexCount - positionOffset;
 }, [viewerPageCount, viewerIndex]);
 
 export const useIsSetAllViewerCountList = (

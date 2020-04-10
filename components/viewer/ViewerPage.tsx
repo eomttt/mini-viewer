@@ -36,6 +36,7 @@ interface ViewerPageProps {
   spineIndex: number;
   spineViewer: string;
   spine: EpubSpineItem;
+  isSetAllViewerCountList: boolean;
   toggleCalculateCount: boolean;
   setCountCallback: (count: number, index: number) => void;
 }
@@ -46,18 +47,21 @@ const Article = styled(ViewerArticle)`
 
 const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
   spineIndex, spineViewer, spine,
+  isSetAllViewerCountList,
   toggleCalculateCount,
   setCountCallback,
 }) => {
   const dispatch = useDispatch();
 
   const {
-    viewerPageCount, viewerCountList, viewerSpineIndex,
+    viewerPageCount,
+    viewerCountList,
+    viewerSpineIndex,
   }: ViewerState = useSelector((state: ReducerStates) => state.viewer);
   const {
     viewerWidth,
     fontSize, lineHeight, widthRatio,
-    settingChangeToggle,
+    isOpenSettingMenu,
   }: ViewerSettingState = useSelector((state: ReducerStates) => state.viewerSetting);
 
   const viewArticleRef = useRef(null);
@@ -72,8 +76,9 @@ const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
   });
 
   const widthWithRatio = usePageWithWithRatio(viewerWidth, widthRatio);
+
   const selectedSpineLink = useSpineLinkInfo(viewerCountList, selectedLink);
-  const nowSpinePosition = useSpinePosition(viewerCountList, viewerPageCount, spineIndex);
+  const nowSpinePosition = useSpinePosition(viewerCountList, viewerPageCount, viewerSpineIndex);
   const scrollLeft = useScrollLeft(nowSpinePosition, widthWithRatio);
 
   const isShowNowSpineIndex = useMemo(() => viewerSpineIndex === spineIndex,
@@ -114,22 +119,6 @@ const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
   }, [spine]);
 
   useEffect(() => {
-    setViewerStyle({
-      fontSize,
-      lineHeight,
-    });
-  }, [settingChangeToggle]);
-
-  useEffect(() => {
-    if (isShowNowSpineIndex) {
-      setViewerStyle({
-        fontSize,
-        lineHeight,
-      });
-    }
-  }, [fontSize, lineHeight]);
-
-  useEffect(() => {
     const { current: viewArticleRefCurrent } = viewArticleRef;
     if (viewArticleRefCurrent) {
       const count = getSpineViewerCount(viewArticleRefCurrent.scrollWidth, widthWithRatio);
@@ -138,10 +127,7 @@ const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
   }, [toggleCalculateCount]);
 
   useEffect(() => {
-    const {
-      index: selectedSpineLinkIndex,
-      tag,
-    } = selectedSpineLink;
+    const { index: selectedSpineLinkIndex, tag } = selectedSpineLink;
     if (selectedSpineLinkIndex > -1) {
       setPageCount(
         selectedSpineLinkIndex,
@@ -151,17 +137,26 @@ const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
   }, [selectedSpineLink]);
 
   useEffect(() => {
+    if (!isOpenSettingMenu || isShowNowSpineIndex) {
+      setViewerStyle({
+        fontSize,
+        lineHeight,
+      });
+    }
+  }, [isOpenSettingMenu, fontSize, lineHeight]);
+
+  useEffect(() => {
     if (isShowNowSpineIndex && nowSpinePosition > -1) {
       dispatch(viewerActions.setViewerSpinePosition(nowSpinePosition));
     }
-  }, [isShowNowSpineIndex, nowSpinePosition]);
+  }, [nowSpinePosition]);
 
   useEffect(() => {
-    if (isShowNowSpineIndex) {
+    if (isShowNowSpineIndex && scrollLeft > -1) {
       const { current: viewArticleRefCurrent } = viewArticleRef;
       viewArticleRefCurrent.scrollLeft = scrollLeft;
     }
-  }, [isShowNowSpineIndex, scrollLeft]);
+  }, [isSetAllViewerCountList, scrollLeft]);
 
   return (
     <Article

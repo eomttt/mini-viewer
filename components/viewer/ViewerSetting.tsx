@@ -116,7 +116,6 @@ const ViewerSetting: React.FunctionComponent = () => {
 
   useEffect(() => {
     if (!isOpenSettingMenu && isSettingChange) {
-      dispatch(settingActions.toggleSettingChanged());
       setBeforeValue({
         fontSize,
         lineHeight,

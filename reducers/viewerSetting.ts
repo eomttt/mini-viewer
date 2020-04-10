@@ -12,7 +12,6 @@ export const initialState: ViewerSettingState = {
   lineHeight: LINE_HEIGHT_RANGE.MIN,
   backgroundColor: defaultColor,
   isOpenSettingMenu: false,
-  settingChangeToggle: false,
 };
 
 // Action types
@@ -26,7 +25,6 @@ export const SET_BACKGROUND_COLOR = 'viewerSetting/SET_VIEWER_SETTING_BACKGROUND
 
 export const OPEN_SETTING_MENU = 'viewerSetting/OPEN_SETTING_MENU';
 export const CLOSE_SETTING_MEUN = 'viewerSetting/CLOSE_SETTING_MENU';
-export const TOGGLE_SETTING_CHANGED = 'viewerSetting/TOGGLE_SETTING_CHANGED';
 
 // Action creators
 export const setViewerWidth = (
@@ -91,11 +89,6 @@ export const closeSettingMenu = (): ViewerSettingReducerAction => ({
   type: CLOSE_SETTING_MEUN,
 });
 
-export const toggleSettingChanged = (): ViewerSettingReducerAction => ({
-  type: TOGGLE_SETTING_CHANGED,
-});
-
-
 export default (
   state = initialState,
   action: ViewerSettingReducerAction,
@@ -154,12 +147,6 @@ export default (
       return {
         ...state,
         isOpenSettingMenu: false,
-      };
-    }
-    case TOGGLE_SETTING_CHANGED: {
-      return {
-        ...state,
-        settingChangeToggle: !state.settingChangeToggle,
       };
     }
     default: {
