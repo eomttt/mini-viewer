@@ -54,9 +54,8 @@ const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
   const dispatch = useDispatch();
 
   const {
-    viewerPageCount,
-    viewerCountList,
-    viewerSpineIndex,
+    viewerCountList, viewerPageCount,
+    viewerSpineIndex, viewerSpinePosition,
   }: ViewerState = useSelector((state: ReducerStates) => state.viewer);
   const {
     viewerWidth,
@@ -79,7 +78,7 @@ const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
 
   const selectedSpineLink = useSpineLinkInfo(viewerCountList, selectedLink);
   const nowSpinePosition = useSpinePosition(viewerCountList, viewerPageCount, viewerSpineIndex);
-  const scrollLeft = useScrollLeft(nowSpinePosition, widthWithRatio);
+  const scrollLeft = useScrollLeft(viewerSpinePosition, widthWithRatio);
 
   const isShowNowSpineIndex = useMemo(() => viewerSpineIndex === spineIndex,
     [viewerSpineIndex, spineIndex]);

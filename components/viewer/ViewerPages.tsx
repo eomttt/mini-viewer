@@ -55,7 +55,8 @@ const ViewerPages: React.FunctionComponent<ViewerPagesProps> = ({
     viewerSpineIndex, viewerSpinePosition,
   }: ViewerState = useSelector((state: ReducerStates) => state.viewer);
   const {
-    viewerWidth, viewerHeight, widthRatio,
+    viewerWidth, viewerHeight,
+    widthRatio,
   }: ViewerSettingState = useSelector((state: ReducerStates) => state.viewerSetting);
 
   const containerRef = useRef(null);
@@ -64,7 +65,9 @@ const ViewerPages: React.FunctionComponent<ViewerPagesProps> = ({
   const isSetViewerSize = useIsSetViewerSize(viewerWidth, viewerHeight);
 
   const isSetAllViewerCountList = useIsSetAllViewerCountList(viewerCountList, spines);
-  const spineIndexByPageCount = useSpineIndex(viewerCountList, viewerPageCount);
+  const isSetAllPrivateCountList = useIsSetAllViewerCountList(privateStates.countItems, spines);
+
+  const nowSpineIndex = useSpineIndex(viewerCountList, viewerPageCount);
   const scrollLeft = useScrollLeft(viewerSpineIndex, widthWithRatio);
 
   const setCountCallback = useCallback((count: number, index: number) => {
@@ -76,9 +79,6 @@ const ViewerPages: React.FunctionComponent<ViewerPagesProps> = ({
       spineId: id,
     }));
   }, [spines]);
-
-  const isSetAllPrivateCountList = useCallback((countItems) => countItems.length >= spineViewers.length,
-    [spineViewers]);
 
   const setPageCount = useCallback(() => {
     const pageCount = getPageCountBySpineIndex(viewerCountList, viewerSpineIndex);
@@ -99,23 +99,23 @@ const ViewerPages: React.FunctionComponent<ViewerPagesProps> = ({
 
   useEffect(() => {
     const { countItems } = privateStates;
-    if (isSetAllPrivateCountList(countItems)) {
+    if (isSetAllPrivateCountList) {
       dispatch(viewerActions.setViewerCountList(countItems));
     }
-  }, [privateStates]);
+  }, [privateStates, isSetAllPrivateCountList]);
 
   useEffect(() => {
-    if (spineIndexByPageCount > -1) {
-      dispatch(viewerActions.setViewerSpineIndex(spineIndexByPageCount));
+    if (nowSpineIndex > -1) {
+      dispatch(viewerActions.setViewerSpineIndex(nowSpineIndex));
     }
-  }, [spineIndexByPageCount]);
+  }, [nowSpineIndex]);
 
   useEffect(() => {
     if (scrollLeft > -1) {
       const { current: containerCurrent } = containerRef;
       containerCurrent.scrollLeft = scrollLeft;
     }
-  }, [scrollLeft]);
+  }, [isSetAllViewerCountList, scrollLeft]);
 
   return (
     <Container
