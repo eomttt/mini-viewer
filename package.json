@@ -14,11 +14,6 @@
   "dependencies": {
     "@apollo/react-hooks": "^3.1.4",
     "@ridi/epub-parser": "^0.6.14",
-    "@types/lodash.debounce": "^4.0.6",
-    "@types/node-fetch": "^2.5.5",
-    "@types/react-redux": "^7.1.7",
-    "@types/redux-actions": "^2.6.1",
-    "@types/styled-components": "^5.0.1",
     "apollo-boost": "^0.4.7",
     "aws-sdk": "^2.650.0",
     "body-parser": "^1.19.0",
@@ -43,6 +38,11 @@
   },
   "devDependencies": {
     "@ridi/eslint-config": "^4.2.2",
+    "@types/lodash.debounce": "^4.0.6",
+    "@types/node-fetch": "^2.5.5",
+    "@types/react-redux": "^7.1.7",
+    "@types/redux-actions": "^2.6.1",
+    "@types/styled-components": "^5.0.1",
     "@types/node": "^13.9.1",
     "@types/react": "^16.9.23",
     "@typescript-eslint/eslint-plugin": "^2.24.0",
