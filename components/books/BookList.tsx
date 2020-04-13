@@ -1,61 +1,16 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import Router from 'next/router';
-import styled from 'styled-components';
 
-import { subColor } from '../../styles';
+import * as Styled from '../../styles/books/library';
 
 import { setLibraryOrder } from '../../lib/localStorage';
 
 import { BookListItem } from '../../interfaces/books';
+import { BookListProps } from '../../interfaces/books/library';
 
 import { VIEWER_PATH_NAME } from '../../constants/viewer';
 
-const CancelIcon = styled.img`
-  width: 1.5em;
-  box-shadow: none;
-  position: absolute;
-  top: -3%;
-  right: -6%;
-  display: none;
-`;
-
-const Cover = styled.li`
-  width: 10em;
-  display: inline-block;
-  margin: 1em;
-  vertical-align: bottom;
-  cursor: grab;
-  padding: 0;
-  position: relative;
-  & div {
-    width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    text-align: center;
-  }
-
-  &:hover ${CancelIcon} {
-    display: initial;
-  }
-`;
-
-const CoverImage = styled.img`
-  width: 100%;
-  user-select: none;
-  box-shadow: 1px 1px 5px ${subColor};
-`;
-
-interface Props {
-  bookListItem: BookListItem[];
-  deleteBookListItem: (params: {
-    variables: {
-      fileName: string;
-    };
-  }) => void;
-}
-
-const BookList: React.FunctionComponent<Props> = ({ bookListItem, deleteBookListItem }) => {
+const BookList: React.FunctionComponent<BookListProps> = ({ bookListItem, deleteBookListItem }) => {
   const [bookList, setBookList] = useState<BookListItem[]>([]);
   const [draggedItem, setDraggedItem] = useState<BookListItem>(null);
 
@@ -68,7 +23,8 @@ const BookList: React.FunctionComponent<Props> = ({ bookListItem, deleteBookList
   }, [bookList]);
 
   const onClickDeleteBook = useCallback((
-    e, index: number,
+    e: React.MouseEvent<HTMLImageElement, MouseEvent>,
+    index: number,
   ): void => {
     e.stopPropagation();
     e.preventDefault();
@@ -90,14 +46,15 @@ const BookList: React.FunctionComponent<Props> = ({ bookListItem, deleteBookList
     });
   }, [bookList]);
 
-  const dragStart = useCallback((e, index: number) => {
+  const dragStart = useCallback((e: React.DragEvent<HTMLImageElement>, index: number) => {
     setDraggedItem(bookList[index]);
+    const node = e.target as HTMLElement;
+    const nodeImage = node.parentNode as Element;
     e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/html', e.target.parentNode);
-    e.dataTransfer.setDragImage(e.target.parentNode, 20, 20);
+    e.dataTransfer.setDragImage(nodeImage, 20, 20);
   }, [bookList]);
 
-  const dragOver = useCallback((e, index) => {
+  const dragOver = useCallback((e: React.DragEvent<HTMLLIElement>, index: number) => {
     e.preventDefault();
     const draggedOverItem = bookList[index];
 
@@ -112,7 +69,7 @@ const BookList: React.FunctionComponent<Props> = ({ bookListItem, deleteBookList
     setLibraryOrder(newSortedBooks.map((item) => item.fileName));
   }, [bookList, draggedItem]);
 
-  const dragEnd = useCallback((e) => {
+  const dragEnd = useCallback((e: React.DragEvent<HTMLImageElement>) => {
     e.preventDefault();
   }, []);
 
@@ -125,12 +82,12 @@ const BookList: React.FunctionComponent<Props> = ({ bookListItem, deleteBookList
     <ul>
       {
         bookList.map(({ fileName, coverImage, titles }, index) => (
-          <Cover
+          <Styled.BookListCover
             onClick={(): void => openBook(index)}
             onDragOver={(e): void => dragOver(e, index)}
             key={fileName}
           >
-            <CoverImage
+            <Styled.BookListCoverImage
               src={coverImage}
               draggable
               onDragStart={(e): void => dragStart(e, index)}
@@ -140,12 +97,12 @@ const BookList: React.FunctionComponent<Props> = ({ bookListItem, deleteBookList
             <div>
               {titles}
             </div>
-            <CancelIcon
+            <Styled.BookListCancelIcon
               src="close-icon.svg"
               alt="Close"
               onClick={(e): void => onClickDeleteBook(e, index)}
             />
-          </Cover>
+          </Styled.BookListCover>
         ))
       }
     </ul>

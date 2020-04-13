@@ -25,15 +25,12 @@ import * as viewerActions from '../reducers/viewer';
 import * as settingActions from '../reducers/viewerSetting';
 
 import { ReducerStates } from '../interfaces';
-import { ViewerState } from '../interfaces/viewer';
+import { ViewerState, ViewerProps } from '../interfaces/viewer';
 
 import { useIsSetAllViewerCountList } from '../hooks';
+import { ViewerPageProps } from '../interfaces/viewer/page';
 
-interface ViewerPageProps {
-  bookName: string;
-}
-
-const Viewer: NextPage<ViewerPageProps> = ({ bookName }) => {
+const Viewer: NextPage<ViewerProps> = ({ bookName }) => {
   const dispatch = useDispatch();
   const {
     viewerCountList,
@@ -137,7 +134,7 @@ const Viewer: NextPage<ViewerPageProps> = ({ bookName }) => {
   );
 };
 
-Viewer.getInitialProps = (context: NextPageContext): ViewerPageProps => {
+Viewer.getInitialProps = (context: NextPageContext): ViewerProps => {
   const { query } = context;
   const { fileName } = query;
   const queryName = decodeURI(String(fileName || 'jikji'));

@@ -1,27 +1,16 @@
 import React, { useCallback, useRef, useState } from 'react';
-import styled from 'styled-components';
+
+import { subTransparentColor } from '../../styles';
+import * as Styled from '../../styles/books/library';
 
 import { fetchUploadEpub } from '../../lib/fetch';
 
 import { BookListItem } from '../../interfaces/books';
+import { UploadBookProps } from '../../interfaces/books/library';
 
 import Loading from '../common/Loading';
 
-import { subTransparentColor } from '../../styles';
-
-const Container = styled.div`
-  width: 95%;
-  margin-top: 5em;
-  margin-bottom: 5em;
-  text-align: right;
-`;
-
-interface Props {
-  bookListItem: BookListItem[];
-  refetchBookList: () => void;
-}
-
-const UploadBook: React.FunctionComponent<Props> = ({
+const UploadBook: React.FunctionComponent<UploadBookProps> = ({
   bookListItem,
   refetchBookList,
 }) => {
@@ -91,7 +80,7 @@ const UploadBook: React.FunctionComponent<Props> = ({
       />
       )
     }
-      <Container>
+      <Styled.UploadBookContainer>
         <div>업로드 할 Epub 파일을 선택해주세요.</div>
         <form encType="multipart/form-data" onSubmit={setFile}>
           <div>
@@ -107,7 +96,7 @@ const UploadBook: React.FunctionComponent<Props> = ({
             Upload
           </button>
         </form>
-      </Container>
+      </Styled.UploadBookContainer>
     </>
   );
 };

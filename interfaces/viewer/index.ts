@@ -1,3 +1,7 @@
+export interface ViewerProps {
+  bookName: string;
+}
+
 export interface ViewerPagesState {
   countItems: ViewerCount[];
 }
