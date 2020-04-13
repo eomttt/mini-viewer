@@ -2,22 +2,20 @@ import React, {
   useRef, useEffect, useCallback, useMemo, useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import styled from 'styled-components';
 
-import {
-  ViewerArticle,
-  ViewerSection,
-  ViewerContents,
-} from '../../styles/viewer';
-
+import * as Styled from '../../styles/viewer/page';
 import * as viewerActions from '../../reducers/viewer';
 
 import { ReducerStates } from '../../interfaces';
-import { EpubSpineItem } from '../../interfaces/books';
 import {
   ViewerState,
   ViewerSettingState,
+  ViewerStyle,
+  ViewerLinkInfo,
 } from '../../interfaces/viewer';
+import {
+  ViewerPageProps 
+} from '../../interfaces/viewer/page';
 
 import {
   getSpineViewerCount,
@@ -34,29 +32,6 @@ import {
   useSpineLinkInfo,
   useScrollLeft,
 } from '../../hooks';
-
-interface ViewerPageProps {
-  spineIndex: number;
-  spineViewer: string;
-  spine: EpubSpineItem;
-  isSetAllViewerCountList: boolean;
-  toggleCalculateCount: boolean;
-  setCountCallback: (count: number, index: number) => void;
-}
-
-interface ViewerStyle {
-  fontSize: number;
-  lineHeight: number;
-}
-
-interface LinkInfo {
-  href: string;
-  tag: string;
-}
-
-const Article = styled(ViewerArticle)`
-  overflow: hidden;
-`;
 
 const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
   spineIndex, spineViewer, spine,
@@ -82,18 +57,17 @@ const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
     fontSize,
     lineHeight,
   });
-  const [selectedLink, setSelectedLink] = useState<LinkInfo>({
+  const [selectedLink, setSelectedLink] = useState<ViewerLinkInfo>({
     href: '',
     tag: '',
   });
 
-  const widthWithRatio = usePageWithWithRatio(viewerWidth, widthRatio);
+  const widthWithRatio: number = usePageWithWithRatio(viewerWidth, widthRatio);
+  const selectedSpineLink: ViewerLinkInfo = useSpineLinkInfo(viewerCountList, selectedLink);
+  const nowSpinePosition: number = useSpinePosition(viewerCountList, viewerPageCount, viewerSpineIndex);
+  const scrollLeft: number = useScrollLeft(viewerSpinePosition, widthWithRatio);
 
-  const selectedSpineLink = useSpineLinkInfo(viewerCountList, selectedLink);
-  const nowSpinePosition = useSpinePosition(viewerCountList, viewerPageCount, viewerSpineIndex);
-  const scrollLeft = useScrollLeft(viewerSpinePosition, widthWithRatio);
-
-  const isShowNowSpineIndex = useMemo(() => viewerSpineIndex === spineIndex,
+  const isShowNowSpineIndex: boolean = useMemo(() => viewerSpineIndex === spineIndex,
     [viewerSpineIndex, spineIndex]);
 
   const setPageCount = useCallback((index: number, position = 0): void => {
@@ -106,7 +80,7 @@ const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
     return tagElement ? getTagPostion(tagElement.offsetLeft, index, widthWithRatio) : 0;
   }, [widthWithRatio]);
 
-  const getLinkInfo = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>): LinkInfo | null => {
+  const getLinkInfo = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>): ViewerLinkInfo | null => {
     let node = e.target as HTMLElement;
     while (node && node.localName !== 'a') {
       node = node.parentNode as HTMLElement;
@@ -122,7 +96,7 @@ const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
     return null;
   }, []);
 
-  const setLinkInfo = useCallback((linkInfo: LinkInfo): void => {
+  const setLinkInfo = useCallback((linkInfo: ViewerLinkInfo): void => {
     const { href, tag } = linkInfo;
     setSelectedLink({
       href: href || spine.href,
@@ -178,21 +152,21 @@ const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
   }, [isSetAllViewerCountList, scrollLeft]);
 
   return (
-    <Article
+    <Styled.ViewerArticle
       data-spineindex={spineIndex}
       ref={viewArticleRef}
       onClickCapture={clickPage}
       fontSize={viewerStyle.fontSize}
       lineHeight={viewerStyle.lineHeight}
     >
-      <ViewerSection
+      <Styled.ViewerSection
         width={widthWithRatio}
       >
-        <ViewerContents
+        <Styled.ViewerContents
           dangerouslySetInnerHTML={{ __html: spineViewer }}
         />
-      </ViewerSection>
-    </Article>
+      </Styled.ViewerSection>
+    </Styled.ViewerArticle>
   );
 };
 

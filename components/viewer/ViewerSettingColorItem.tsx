@@ -1,41 +1,10 @@
 import React, { useCallback } from 'react';
 
-import styled from 'styled-components';
+import * as Styled from '../../styles/viewer/header';
 
-import { subColor } from '../../styles';
-import {
-  ViewerSettingItem,
-  ViewerSettingLabel,
-} from '../../styles/viewer';
+import { ViewerSettingColorItemProps } from '../../interfaces/viewer/header';
 
-interface ViewerSettingColorItemStyleProps {
-  isSelected: boolean;
-  color: string;
-}
-
-const Controller = styled.div`
-  display: flex;
-  margin: auto 0 auto auto;
-`;
-
-const Content = styled.div`
-  width: 1em;
-  height: 1em;
-  border: 1px solid ${(props: ViewerSettingColorItemStyleProps): string => (props.isSelected ? 'black' : `${subColor}`)};  
-  border-radius: 50%;
-  background-color: ${(props: ViewerSettingColorItemStyleProps): string => props.color} !important;
-  cursor: pointer;
-  margin: 0 .2em;
-`;
-
-interface Props {
-  label: string;
-  value: number | string;
-  colors: string[];
-  action: (param: string | number) => void;
-}
-
-const ViewerSettingColorItem: React.FunctionComponent<Props> = ({
+const ViewerSettingColorItem: React.FunctionComponent<ViewerSettingColorItemProps> = ({
   label, value, colors, action,
 }) => {
   const selectColor = useCallback((selectedColor: string): void => {
@@ -43,23 +12,23 @@ const ViewerSettingColorItem: React.FunctionComponent<Props> = ({
   }, [action]);
 
   return (
-    <ViewerSettingItem>
-      <ViewerSettingLabel>
+    <Styled.SettingHeaderItem>
+      <Styled.SettingHeaderLabel>
         {label}
-      </ViewerSettingLabel>
-      <Controller>
+      </Styled.SettingHeaderLabel>
+      <Styled.SettingColorItems>
         {
         colors.map((color) => (
-          <Content
+          <Styled.SettingColorItem
             key={color}
-            onClick={() => selectColor(color)}
+            onClick={(): void => selectColor(color)}
             color={color}
             isSelected={color === value}
           />
         ))
       }
-      </Controller>
-    </ViewerSettingItem>
+      </Styled.SettingColorItems>
+    </Styled.SettingHeaderItem>
   );
 };
 

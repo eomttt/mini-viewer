@@ -2,19 +2,21 @@ import React, {
   useEffect, useCallback, useReducer, useRef, useState,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import styled from 'styled-components';
 
+import * as Styled from '../../styles/viewer/page';
 import * as viewerActions from '../../reducers/viewer';
 
 import * as privateReducer from './ViewerPagesReducer';
 import ViewerPage from './ViewerPage';
 
 import { ReducerStates } from '../../interfaces';
-import { EpubSpineItem } from '../../interfaces/books';
 import {
   ViewerState,
   ViewerSettingState,
 } from '../../interfaces/viewer';
+import {
+  ViewerPagesProps
+} from '../../interfaces/viewer/page';
 
 import {
   getPageCountBySpineIndex,
@@ -29,26 +31,13 @@ import {
   useIsSetViewerSize,
 } from '../../hooks';
 
-interface ViewerPagesProps {
-  spines: EpubSpineItem[];
-  spineViewers: string[];
-}
-
-const Container = styled.div`
-  width: 100%;
-  height: 100%;
-  white-space: nowrap;
-  text-align: initial;
-  overflow: hidden;
-`;
-
 const ViewerPages: React.FunctionComponent<ViewerPagesProps> = ({
   spines, spineViewers,
 }) => {
   const dispatch = useDispatch();
   const [privateStates, privateDispatch] = useReducer(privateReducer.reducer, privateReducer.initialState);
 
-  const [toggleCalculateCount, setToggleCalculateCount] = useState(false);
+  const [toggleCalculateCount, setToggleCalculateCount] = useState<boolean>(false);
 
   const {
     viewerCountList, viewerPageCount,
@@ -59,16 +48,16 @@ const ViewerPages: React.FunctionComponent<ViewerPagesProps> = ({
     widthRatio,
   }: ViewerSettingState = useSelector((state: ReducerStates) => state.viewerSetting);
 
-  const containerRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const widthWithRatio = usePageWithWithRatio(viewerWidth, widthRatio);
-  const isSetViewerSize = useIsSetViewerSize(viewerWidth, viewerHeight);
+  const widthWithRatio: number = usePageWithWithRatio(viewerWidth, widthRatio);
+  const isSetViewerSize: boolean = useIsSetViewerSize(viewerWidth, viewerHeight);
 
-  const isSetAllViewerCountList = useIsSetAllViewerCountList(viewerCountList, spines);
-  const isSetAllPrivateCountList = useIsSetAllViewerCountList(privateStates.countItems, spines);
+  const isSetAllViewerCountList: boolean = useIsSetAllViewerCountList(viewerCountList, spines);
+  const isSetAllPrivateCountList: boolean = useIsSetAllViewerCountList(privateStates.countItems, spines);
 
-  const nowSpineIndex = useSpineIndex(viewerCountList, viewerPageCount);
-  const scrollLeft = useScrollLeft(viewerSpineIndex, widthWithRatio);
+  const nowSpineIndex: number = useSpineIndex(viewerCountList, viewerPageCount);
+  const scrollLeft: number = useScrollLeft(viewerSpineIndex, widthWithRatio);
 
   const initPrivatePageCount = useCallback((): void => {
     privateDispatch(privateReducer.initCount());
@@ -126,7 +115,7 @@ const ViewerPages: React.FunctionComponent<ViewerPagesProps> = ({
   }, [isSetAllViewerCountList, scrollLeft]);
 
   return (
-    <Container
+    <Styled.ViewerPagesContainer
       ref={containerRef}
     >
       {
@@ -142,7 +131,7 @@ const ViewerPages: React.FunctionComponent<ViewerPagesProps> = ({
           />
         ))
     }
-    </Container>
+    </Styled.ViewerPagesContainer>
   );
 };
 

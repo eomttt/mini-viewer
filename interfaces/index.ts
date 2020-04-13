@@ -39,7 +39,13 @@ export interface ViewerReducerAction extends ReducerAction {
 }
 
 export interface ViewerSettingReducerAction extends ReducerAction {
-  payload?: ViewerSettingPayload; 
+  payload?: ViewerSettingPayload;
+}
+
+export interface ViewerPageReducerAction extends ReducerAction {
+  payload?: {
+    countData?: ViewerCount;
+  };
 }
 
 export interface ReducerStates {

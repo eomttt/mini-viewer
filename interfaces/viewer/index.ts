@@ -1,3 +1,7 @@
+export interface ViewerPagesState {
+  countItems: ViewerCount[];
+}
+
 export interface ViewerState {
   viewerCountList: ViewerCount[];
   viewerPageCount: number;
@@ -14,7 +18,7 @@ export interface ViewerSettingState extends ViewerStyle {
 }
 
 export interface ViewerStyle {
-  widthRatio: number;
+  widthRatio?: number;
   fontSize: number;
   lineHeight: number;
 }
@@ -26,7 +30,7 @@ export interface ViewerCount {
   href: string;
 }
 
-export interface SettingItem {
+export interface ViewerSettingItem {
   label: string;
   key: string;
   value: number | string;
@@ -35,4 +39,10 @@ export interface SettingItem {
   maxValue?: number;
   colors?: string[];
   action: (param: number | string) => void;
+}
+
+export interface ViewerLinkInfo {
+  href?: string;
+  index?: number;
+  tag: string;
 }

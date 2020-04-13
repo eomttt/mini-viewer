@@ -3,15 +3,13 @@ import React, {
 } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import styled from 'styled-components';
+import * as Styled from '../../styles/viewer/header';
 
 import ViewerSettingCountItem from './ViewerSettingCountItem';
 import ViewerSettingColorItem from './ViewerSettingColorItem';
 
 import * as viewerActions from '../../reducers/viewer';
 import * as settingActions from '../../reducers/viewerSetting';
-
-import { subColor, defaultColor } from '../../styles';
 
 import {
   SETTING_ITEM_KEY,
@@ -21,27 +19,7 @@ import {
 } from '../../constants/viewer';
 
 import { ReducerStates } from '../../interfaces';
-import { SettingItem } from '../../interfaces/viewer';
-
-const Container = styled.div`
-  position: relative;
-`;
-
-const ToggleButton = styled.div`
-  cursor: pointer;
-`;
-
-const SettingItems = styled.ul`
-  position: absolute;
-  width: 15em;
-  right: 0;
-  overflow: scroll;
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  border: 1px solid ${subColor};
-  background-color: ${defaultColor};
-`;
+import { ViewerSettingItem } from '../../interfaces/viewer';
 
 const ViewerSetting: React.FunctionComponent = () => {
   const {
@@ -55,9 +33,9 @@ const ViewerSetting: React.FunctionComponent = () => {
     widthRatio,
     lineHeight,
   });
-  const [settingItems, setSettingItems] = useState<SettingItem[]>([]);
+  const [settingItems, setSettingItems] = useState<ViewerSettingItem[]>([]);
 
-  const isSettingChange = useMemo(() => {
+  const isSettingChange = useMemo((): boolean => {
     if (beforeValue.fontSize !== fontSize) {
       return true;
     }
@@ -133,7 +111,7 @@ const ViewerSetting: React.FunctionComponent = () => {
     }
   }, [isOpenSettingMenu]);
 
-  const renderSettingItem = useCallback((settingItem: SettingItem) => {
+  const renderSettingItem = useCallback((settingItem: ViewerSettingItem) => {
     const {
       key, label, value, valueUnit, action, minValue, maxValue, colors,
     } = settingItem;
@@ -163,21 +141,21 @@ const ViewerSetting: React.FunctionComponent = () => {
   }, []);
 
   return (
-    <Container>
-      <ToggleButton onClick={toggleShowNcs}>
+    <Styled.SettingContainer>
+      <Styled.SettingToggleButton onClick={toggleShowNcs}>
         설정
-      </ToggleButton>
+      </Styled.SettingToggleButton>
       {
         isOpenSettingMenu
         && (
-        <SettingItems>
+        <Styled.SettingItems>
           {
             settingItems.map((settingItem) => renderSettingItem(settingItem))
           }
-        </SettingItems>
+        </Styled.SettingItems>
         )
       }
-    </Container>
+    </Styled.SettingContainer>
   );
 };
 

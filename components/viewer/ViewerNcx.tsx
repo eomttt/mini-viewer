@@ -1,66 +1,26 @@
 import React, { useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import styled from 'styled-components';
-
-import { subColor, defaultColor } from '../../styles';
+import * as Styled from '../../styles/viewer/header';
 
 import * as viewerActions from '../../reducers/viewer';
 
 import { ReducerStates } from '../../interfaces';
-import { EpubNcxItem, EpubNavPoint } from '../../interfaces/books';
+import { ViewerNcxProps } from '../../interfaces/viewer/header';
+import { EpubNavPoint } from '../../interfaces/books';
 import { ViewerSettingState, ViewerState } from '../../interfaces/viewer';
 
 import { getSpineIndexById, getPageCountBySpineIndex } from '../../lib/util';
 
-const Container = styled.div`
-  position: relative;
-`;
-
-const ToggleButton = styled.div`
-  cursor: pointer;
-`;
-
-const NavPointItems = styled.ul`
-  position: absolute;
-  width: 10em;
-  height: 30em;
-  left: 50%;
-  transform: translateX(-50%);
-  overflow: scroll;
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  border: 1px solid ${subColor};
-  background-color: ${defaultColor};
-`;
-
-const NavPointItem = styled.li`
-  text-align: center;
-  padding: 2px;
-  border-bottom: 1px solid ${subColor};
-  cursor: pointer;
-  margin: 0;
-  &:nth-last-child(1) {
-    border-bottom: initial;
-  }
-`;
-
-interface Props {
-  ncxItem?: EpubNcxItem;
-}
-
-const ViewerNcx: React.FunctionComponent<Props> = ({ ncxItem }) => {
-  const { navPoints } = ncxItem;
-
+const ViewerNcx: React.FunctionComponent<ViewerNcxProps> = ({ ncxItem }) => {
   const dispatch = useDispatch();
-
-  const [isShowNcx, setIsShowNcx] = useState(false);
-
+  const [isShowNcx, setIsShowNcx] = useState<boolean>(false);
   const {
     isOpenSettingMenu,
   }: ViewerSettingState = useSelector((state: ReducerStates) => state.viewerSetting);
-  const { viewerCountList }: ViewerState = useSelector((state: ReducerStates) => state.viewer);
+  const {
+    viewerCountList,
+  }: ViewerState = useSelector((state: ReducerStates) => state.viewer);
 
   const setPageCountBySpineId = useCallback((selectedSpineId: string): void => {
     const spineIndex = getSpineIndexById(viewerCountList, selectedSpineId);
@@ -84,28 +44,28 @@ const ViewerNcx: React.FunctionComponent<Props> = ({ ncxItem }) => {
   }, [isOpenSettingMenu, setPageCountBySpineId]);
 
   return (
-    <Container>
-      <ToggleButton onClick={toggleShowNcs}>
+    <Styled.NcxContainer>
+      <Styled.NcxToggleButton onClick={toggleShowNcs}>
         목차
-      </ToggleButton>
+      </Styled.NcxToggleButton>
       {
         isShowNcx
         && (
-        <NavPointItems>
+        <Styled.NcxNavPointItems>
           {
-            navPoints.map((navPoint) => (
-              <NavPointItem
+            ncxItem.navPoints.map((navPoint) => (
+              <Styled.NcxNavPointItem
                 onClick={() => selectNavPoint(navPoint)}
                 key={navPoint.label}
               >
                 {navPoint.label}
-              </NavPointItem>
+              </Styled.NcxNavPointItem>
             ))
           }
-        </NavPointItems>
+        </Styled.NcxNavPointItems>
         )
       }
-    </Container>
+    </Styled.NcxContainer>
   );
 };
 

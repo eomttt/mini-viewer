@@ -1,37 +1,19 @@
 import React, { useCallback, useState, useMemo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import styled from 'styled-components';
+import * as Styled from '../../styles/viewer/bottom';
 
 import * as viewerActions from '../../reducers/viewer';
 
-import { VIEWER_SLIDER_LEN_RATIO } from '../../constants/viewer';
-
 import { ReducerStates } from '../../interfaces';
-import { ViewerSettingState, ViewerState } from '../../interfaces/viewer';
+import {
+  ViewerSettingState,
+  ViewerState,
+} from '../../interfaces/viewer';
+import { ViewerSliderProps } from '../../interfaces/viewer/bottom';
 
-const Container = styled.div`
-  width: 100%;
-  margin: auto 5%;
-  flex-direction: column;
-  display: flex;
-`;
 
-const Input = styled.input`
-  margin-left: ${(100 - VIEWER_SLIDER_LEN_RATIO) / 2}%;
-  width: ${VIEWER_SLIDER_LEN_RATIO}%;
-  cursor: grab;
-`;
-
-const Marker = styled.div`
-  margin-left: ${(100 - VIEWER_SLIDER_LEN_RATIO) / 2}%;
-`;
-
-interface Props {
-  maxValue: number;
-}
-
-const ViewerSlider: React.FunctionComponent<Props> = ({ maxValue }) => {
+const ViewerSlider: React.FunctionComponent<ViewerSliderProps> = ({ maxValue }) => {
   const dispatch = useDispatch();
   const [value, setValue] = useState(0);
 
@@ -46,26 +28,26 @@ const ViewerSlider: React.FunctionComponent<Props> = ({ maxValue }) => {
     setValue(viewerPageCount);
   }, [viewerPageCount]);
 
-  const onChangeSlider = useCallback((e) => {
+  const onChangeSlider = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     if (!isOpenSettingMenu) {
       dispatch(viewerActions.setViewerPageCount(Number(e.target.value)));
     }
   }, [isOpenSettingMenu]);
 
   return (
-    <Container>
+    <Styled.SliderContainer>
       {
         hasMaxValue
         && (
         <>
-          <Marker>
+          <Styled.SliderMarker>
             {`${value}/${maxValue}`}
-          </Marker>
-          <Input type="range" min="0" max={maxValue} value={value} onChange={onChangeSlider} />
+          </Styled.SliderMarker>
+          <Styled.SliderInput type="range" min="0" max={maxValue} value={value} onChange={onChangeSlider} />
         </>
         )
       }
-    </Container>
+    </Styled.SliderContainer>
   );
 };
 

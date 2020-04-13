@@ -1,47 +1,12 @@
 import React, { useCallback, useState } from 'react';
 
-import styled from 'styled-components';
-
 import debounce from 'lodash.debounce';
 
-import { subColor } from '../../styles';
-import {
-  ViewerSettingItem,
-  ViewerSettingLabel,
-  ViewerSettingValue,
-} from '../../styles/viewer';
+import * as Styled from '../../styles/viewer/header';
 
-const Controller = styled.div`
-  display: flex;
-  width: 30%;
-  margin: auto 0 auto auto;
-  border: 1px solid ${subColor};
-  border-radius: 1em;
-  padding-left: .3em;
-  padding-right: .3em;
-`;
+import { ViewerSettingCountItemProps } from '../../interfaces/viewer/header';
 
-const MinusButton = styled.div`
-  width: 50%;
-  cursor: pointer;
-  border-right: 1px solid ${subColor}
-`;
-
-const PlusButton = styled.div`
-  width: 50%;
-  cursor: pointer;
-`;
-
-interface Props {
-  label: string;
-  value: string | number;
-  valueUnit: number;
-  minValue: number;
-  maxValue: number;
-  action: (param: string | number) => void;
-}
-
-const ViewerSettingCountItem: React.FunctionComponent<Props> = ({
+const ViewerSettingCountItem: React.FunctionComponent<ViewerSettingCountItemProps> = ({
   label, value, valueUnit,
   minValue, maxValue, action,
 }) => {
@@ -50,7 +15,7 @@ const ViewerSettingCountItem: React.FunctionComponent<Props> = ({
   const isIntegerNumber = useCallback((number) => number % 1 === 0, []);
   const debounceAction = useCallback(debounce(action, 400), [action]);
 
-  const countUpValue = useCallback(() => {
+  const countUpValue = useCallback((): void => {
     const expectedValue = Number(showValue) + valueUnit;
 
     if (expectedValue <= maxValue) {
@@ -62,7 +27,7 @@ const ViewerSettingCountItem: React.FunctionComponent<Props> = ({
     }
   }, [debounceAction, showValue, maxValue, valueUnit, isIntegerNumber]);
 
-  const countDownValue = useCallback(() => {
+  const countDownValue = useCallback((): void => {
     const expectedValue = Number(showValue) - valueUnit;
 
     if (expectedValue >= minValue) {
@@ -76,23 +41,22 @@ const ViewerSettingCountItem: React.FunctionComponent<Props> = ({
   }, [debounceAction, showValue, minValue, valueUnit, isIntegerNumber]);
 
   return (
-    <ViewerSettingItem>
-      <ViewerSettingLabel>
+    <Styled.SettingHeaderItem>
+      <Styled.SettingHeaderLabel>
         {label}
-      </ViewerSettingLabel>
-      <ViewerSettingValue>
+      </Styled.SettingHeaderLabel>
+      <Styled.SettingHeaderValue>
         {showValue}
-      </ViewerSettingValue>
-      <Controller>
-        <MinusButton onClick={countDownValue}>
+      </Styled.SettingHeaderValue>
+      <Styled.SettingCountItem>
+        <Styled.SettingCountItemMinusButton onClick={countDownValue}>
           -
-        </MinusButton>
-        <PlusButton onClick={countUpValue}
-        >
+        </Styled.SettingCountItemMinusButton>
+        <Styled.SettingCountItemPlusButton onClick={countUpValue}>
           +
-        </PlusButton>
-      </Controller>
-    </ViewerSettingItem>
+        </Styled.SettingCountItemPlusButton>
+      </Styled.SettingCountItem>
+    </Styled.SettingHeaderItem>
   );
 };
 

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { EpubSpineItem, BookListItem } from '../interfaces/books';
-import { ViewerCount } from '../interfaces/viewer';
+import { ViewerCount, ViewerLinkInfo } from '../interfaces/viewer';
 
 import { getLibraryOrder } from '../lib/localStorage';
 
@@ -26,10 +26,7 @@ export const useSpineIndex = (
 
 export const useSpineLinkInfo = (
   viewerCountList: ViewerCount[],
-  selectedLink: {
-    href: string;
-    tag: string;
-  },
+  selectedLink: ViewerLinkInfo,
 ): {
   index: number;
   tag: string;

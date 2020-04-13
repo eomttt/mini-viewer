@@ -1,16 +1,7 @@
-import { ReducerAction } from '../../interfaces/index';
-import { ViewerCount } from '../../interfaces/viewer';
+import { ViewerPageReducerAction } from '../../interfaces/index';
+import { ViewerCount, ViewerPagesState } from '../../interfaces/viewer';
 
-interface ViewerPageReducerAction extends ReducerAction {
-  payload?: {
-    countData?: ViewerCount;
-  };
-}
-interface ViewerPagesStates {
-  countItems: ViewerCount[];
-}
-
-export const initialState: ViewerPagesStates = {
+export const initialState: ViewerPagesState = {
   countItems: [],
 };
 
@@ -43,7 +34,7 @@ const getNewCountItems = (
 export const reducer = (
   state = initialState,
   action: ViewerPageReducerAction,
-): ViewerPagesStates => {
+): ViewerPagesState => {
   switch (action.type) {
     case VIEWER_PAGES_ADD_COUNT_ACTION: {
       const { payload } = action;
