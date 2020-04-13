@@ -127,6 +127,11 @@ export const useIsSetViewerSize = (width: number, height: number): boolean => us
   [width, height],
 );
 
+export const useIsShowNowSpineIndexViewer = (nowViewerSpineIndex: number, spineIndex: number): boolean => useMemo(
+  () => nowViewerSpineIndex === spineIndex,
+  [nowViewerSpineIndex, spineIndex],
+);
+
 export const useScrollLeft = (offsetNumber: number, viewerWidth: number): number => useMemo(
   () => getScrollLeft(offsetNumber, viewerWidth),
   [offsetNumber, viewerWidth],

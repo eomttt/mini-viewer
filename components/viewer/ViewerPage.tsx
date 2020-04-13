@@ -30,6 +30,7 @@ import {
   usePageWithWithRatio,
   useSpineLinkInfo,
   useScrollLeft,
+  useIsShowNowSpineIndexViewer,
 } from '../../hooks';
 
 const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
@@ -63,8 +64,7 @@ const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
   const widthWithRatio: number = usePageWithWithRatio(viewerWidth, widthRatio);
   const selectedSpineLink: ViewerLinkInfo = useSpineLinkInfo(viewerCountList, selectedLink);
   const scrollLeft: number = useScrollLeft(viewerSpinePosition, widthWithRatio);
-  const isShowNowSpineIndex: boolean = useMemo(() => viewerSpineIndex === spineIndex,
-    [viewerSpineIndex, spineIndex]);
+  const isShowNowSpineIndex: boolean = useIsShowNowSpineIndexViewer(viewerSpineIndex, spineIndex);
 
   const setPageCount = useCallback((index: number, position = 0): void => {
     const pageCount = getPageCountBySpineIndex(viewerCountList, index);
