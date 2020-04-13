@@ -1,16 +1,16 @@
 import React, { useCallback, useState, useMemo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import * as Styled from '../../styles/viewer/bottom';
+import * as Styled from '../../../styles/viewer/bottom';
 
-import * as viewerActions from '../../reducers/viewer';
+import * as viewerActions from '../../../reducers/viewer';
 
-import { ReducerStates } from '../../interfaces';
+import { ReducerStates } from '../../../interfaces';
 import {
   ViewerSettingState,
   ViewerState,
-} from '../../interfaces/viewer';
-import { ViewerSliderProps } from '../../interfaces/viewer/bottom';
+} from '../../../interfaces/viewer';
+import { ViewerSliderProps } from '../../../interfaces/viewer/bottom';
 
 
 const ViewerSlider: React.FunctionComponent<ViewerSliderProps> = ({ maxValue }) => {

@@ -4,11 +4,11 @@ import { useSelector } from 'react-redux';
 import ViewerNcx from './ViewerNcx';
 import ViewerSetting from './ViewerSetting';
 
-import * as Styled from '../../styles/viewer/header';
+import * as Styled from '../../../styles/viewer/header';
 
-import { ReducerStates } from '../../interfaces';
-import { EpubBookViewer } from '../../interfaces/books';
-import { ViewerHeaderProps } from '../../interfaces/viewer/header';
+import { ReducerStates } from '../../../interfaces';
+import { EpubBookViewer } from '../../../interfaces/books';
+import { ViewerHeaderProps } from '../../../interfaces/viewer/header';
 
 const ViewerHeader: React.FunctionComponent<ViewerHeaderProps> = ({
   menuHeight,

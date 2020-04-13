@@ -1,5 +1,5 @@
-import { ViewerPageReducerAction } from '../../interfaces/index';
-import { ViewerCount, ViewerPagesState } from '../../interfaces/viewer';
+import { ViewerPageReducerAction } from '../../../interfaces/index';
+import { ViewerCount, ViewerPagesState } from '../../../interfaces/viewer';
 
 export const initialState: ViewerPagesState = {
   countItems: [],

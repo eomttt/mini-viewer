@@ -1,16 +1,16 @@
 import React, { useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import * as Styled from '../../styles/viewer/header';
+import * as Styled from '../../../styles/viewer/header';
 
-import * as viewerActions from '../../reducers/viewer';
+import * as viewerActions from '../../../reducers/viewer';
 
-import { ReducerStates } from '../../interfaces';
-import { ViewerNcxProps } from '../../interfaces/viewer/header';
-import { EpubNavPoint } from '../../interfaces/books';
-import { ViewerSettingState, ViewerState } from '../../interfaces/viewer';
+import { ReducerStates } from '../../../interfaces';
+import { ViewerNcxProps } from '../../../interfaces/viewer/header';
+import { EpubNavPoint } from '../../../interfaces/books';
+import { ViewerSettingState, ViewerState } from '../../../interfaces/viewer';
 
-import { getSpineIndexById, getPageCountBySpineIndex } from '../../lib/util';
+import { getSpineIndexById, getPageCountBySpineIndex } from '../../../lib/util';
 
 const ViewerNcx: React.FunctionComponent<ViewerNcxProps> = ({ ncxItem }) => {
   const dispatch = useDispatch();

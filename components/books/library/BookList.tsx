@@ -1,14 +1,14 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import Router from 'next/router';
 
-import * as Styled from '../../styles/books/library';
+import * as Styled from '../../../styles/books/library';
 
-import { setLibraryOrder } from '../../lib/localStorage';
+import { setLibraryOrder } from '../../../lib/localStorage';
 
-import { BookListItem } from '../../interfaces/books';
-import { BookListProps } from '../../interfaces/books/library';
+import { BookListItem } from '../../../interfaces/books';
+import { BookListProps } from '../../../interfaces/books/library';
 
-import { VIEWER_PATH_NAME } from '../../constants/viewer';
+import { VIEWER_PATH_NAME } from '../../../constants/viewer';
 
 const BookList: React.FunctionComponent<BookListProps> = ({ bookListItem, deleteBookListItem }) => {
   const [bookList, setBookList] = useState<BookListItem[]>([]);

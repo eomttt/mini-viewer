@@ -3,26 +3,26 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import * as Styled from '../../styles/viewer/page';
+import * as Styled from '../../../styles/viewer/page';
 
 import ViewerPages from './ViewerPages';
 
-import * as viewerActions from '../../reducers/viewer';
+import * as viewerActions from '../../../reducers/viewer';
 
-import { ReducerStates } from '../../interfaces';
+import { ReducerStates } from '../../../interfaces';
 import {
   ViewerState,
   ViewerSettingState,
-} from '../../interfaces/viewer';
+} from '../../../interfaces/viewer';
 import {
   ViewerPageControllerProps
-} from '../../interfaces/viewer/page';
+} from '../../../interfaces/viewer/page';
 
 import {
   usePageWithWithRatio,
   useIsFirstPage,
   useIsLastPage,
-} from '../../hooks';
+} from '../../../hooks';
 
 const ViewerPagesController: React.FunctionComponent<ViewerPageControllerProps> = ({
   menuHeight, book,

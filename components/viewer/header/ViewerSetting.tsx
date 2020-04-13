@@ -3,23 +3,23 @@ import React, {
 } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import * as Styled from '../../styles/viewer/header';
+import * as Styled from '../../../styles/viewer/header';
 
 import ViewerSettingCountItem from './ViewerSettingCountItem';
 import ViewerSettingColorItem from './ViewerSettingColorItem';
 
-import * as viewerActions from '../../reducers/viewer';
-import * as settingActions from '../../reducers/viewerSetting';
+import * as viewerActions from '../../../reducers/viewer';
+import * as settingActions from '../../../reducers/viewerSetting';
 
 import {
   SETTING_ITEM_KEY,
   SETTING_ITEM_LABEL,
   SETTING_ITEM_UNIT,
   FONT_SIZE_RANGE, WIDTH_RATIO_RANGE, LINE_HEIGHT_RANGE, BACKGROUND_COLORS,
-} from '../../constants/viewer';
+} from '../../../constants/viewer';
 
-import { ReducerStates } from '../../interfaces';
-import { ViewerSettingItem } from '../../interfaces/viewer';
+import { ReducerStates } from '../../../interfaces';
+import { ViewerSettingItem } from '../../../interfaces/viewer';
 
 const ViewerSetting: React.FunctionComponent = () => {
   const {

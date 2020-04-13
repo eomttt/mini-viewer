@@ -1,8 +1,8 @@
 import React, { useCallback } from 'react';
 
-import * as Styled from '../../styles/viewer/header';
+import * as Styled from '../../../styles/viewer/header';
 
-import { ViewerSettingColorItemProps } from '../../interfaces/viewer/header';
+import { ViewerSettingColorItemProps } from '../../../interfaces/viewer/header';
 
 const ViewerSettingColorItem: React.FunctionComponent<ViewerSettingColorItemProps> = ({
   label, value, colors, action,

@@ -3,11 +3,11 @@ import { useSelector } from 'react-redux';
 
 import ViewerSlider from './ViewerSlider';
 
-import * as Styled from '../../styles/viewer/bottom';
+import * as Styled from '../../../styles/viewer/bottom';
 
-import { ReducerStates } from '../../interfaces';
-import { ViewerState } from '../../interfaces/viewer';
-import { ViewerBottomProps } from '../../interfaces/viewer/bottom';
+import { ReducerStates } from '../../../interfaces';
+import { ViewerState } from '../../../interfaces/viewer';
+import { ViewerBottomProps } from '../../../interfaces/viewer/bottom';
 
 const ViewerBottom: React.FunctionComponent<ViewerBottomProps> = ({ menuHeight }) => {
   const {

@@ -3,35 +3,35 @@ import React, {
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import * as Styled from '../../styles/viewer/page';
-import * as viewerActions from '../../reducers/viewer';
+import * as Styled from '../../../styles/viewer/page';
+import * as viewerActions from '../../../reducers/viewer';
 
-import { ReducerStates } from '../../interfaces';
+import { ReducerStates } from '../../../interfaces';
 import {
   ViewerState,
   ViewerSettingState,
   ViewerStyle,
   ViewerLinkInfo,
-} from '../../interfaces/viewer';
+} from '../../../interfaces/viewer';
 import {
   ViewerPageProps 
-} from '../../interfaces/viewer/page';
+} from '../../../interfaces/viewer/page';
 
 import {
   getSpineViewerCount,
   getTagPostion,
-} from '../../lib/calculate';
+} from '../../../lib/calculate';
 import {
   getPageCountBySpineIndex,
   getTagElement,
-} from '../../lib/util';
+} from '../../../lib/util';
 
 import {
   usePageWithWithRatio,
   useSpineLinkInfo,
   useScrollLeft,
   useIsShowNowSpineIndexViewer,
-} from '../../hooks';
+} from '../../../hooks';
 
 const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
   spineIndex, spineViewer, spine,
