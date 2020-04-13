@@ -1,9 +1,8 @@
 import React from 'react';
 import { NextPage } from 'next';
 
-
 import Layout from '../components/Layout';
-import Library from '../components/books/Library';
+import Library from '../components/books/library';
 
 const Home: NextPage = () => (
   <Layout>

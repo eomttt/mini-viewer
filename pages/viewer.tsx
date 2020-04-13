@@ -15,9 +15,9 @@ import { fetchGetBook } from '../lib/fetch';
 
 import Layout from '../components/Layout';
 import Loading from '../components/common/Loading';
-import ViewerPagesController from '../components/viewer/ViewerPagesController';
-import ViewerBottom from '../components/viewer/ViewerBottom';
-import ViewerHeader from '../components/viewer/ViewerHeader';
+import ViewerPagesController from '../components/viewer/page';
+import ViewerBottom from '../components/viewer/bottom';
+import ViewerHeader from '../components/viewer/header';
 import ViewerNotSupport from '../components/viewer/ViewerNotSupport';
 
 import * as bookActions from '../reducers/book';
