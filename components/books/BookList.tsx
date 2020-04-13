@@ -59,37 +59,33 @@ const BookList: React.FunctionComponent<Props> = ({ bookListItem, deleteBookList
   const [bookList, setBookList] = useState<BookListItem[]>([]);
   const [draggedItem, setDraggedItem] = useState<BookListItem>(null);
 
-  useEffect(() => {
-    setBookList([...bookListItem]);
-    setLibraryOrder(bookListItem.map((orderedBook) => orderedBook.fileName));
-  }, [bookListItem]);
+  const deleteBookInList = useCallback((index: number): void => {
+    deleteBookListItem({
+      variables: {
+        fileName: bookList[index].fileName,
+      },
+    });
+  }, [bookList]);
 
   const onClickDeleteBook = useCallback((
     e, index: number,
-  ) => {
+  ): void => {
     e.stopPropagation();
     e.preventDefault();
 
     const res = window.confirm('삭제 하시겠습니까?');
     if (res) {
-      const selectedFileName = bookList[index].fileName;
-      deleteBookListItem({
-        variables: {
-          fileName: selectedFileName,
-        },
-      });
+      deleteBookInList(index);
     } else {
       // Pass
     }
-  }, [bookList]);
+  }, [deleteBookInList]);
 
   const openBook = useCallback((bookIndex: number) => {
-    const selectedBook = bookList[bookIndex];
-
     Router.push({
       pathname: VIEWER_PATH_NAME,
       query: {
-        fileName: encodeURI(selectedBook.fileName),
+        fileName: encodeURI(bookList[bookIndex].fileName),
       },
     });
   }, [bookList]);
@@ -119,6 +115,11 @@ const BookList: React.FunctionComponent<Props> = ({ bookListItem, deleteBookList
   const dragEnd = useCallback((e) => {
     e.preventDefault();
   }, []);
+
+  useEffect(() => {
+    setBookList([...bookListItem]);
+    setLibraryOrder(bookListItem.map((orderedBook) => orderedBook.fileName));
+  }, [bookListItem]);
 
   return (
     <ul>

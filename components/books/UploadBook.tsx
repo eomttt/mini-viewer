@@ -21,11 +21,14 @@ interface Props {
   refetchBookList: () => void;
 }
 
-const UploadBook: React.FunctionComponent<Props> = ({ bookListItem, refetchBookList }) => {
+const UploadBook: React.FunctionComponent<Props> = ({
+  bookListItem,
+  refetchBookList,
+}) => {
   const [isUploading, setIsUploading] = useState(false);
-  const fileRef = useRef(null);
+  const fileRef = useRef<HTMLInputElement>(null);
 
-  const isExistBook = useCallback((fileName) => {
+  const isExistBook = useCallback((fileName: string): boolean => {
     const [name] = fileName.split('.');
     let isExist = false;
 
@@ -40,7 +43,7 @@ const UploadBook: React.FunctionComponent<Props> = ({ bookListItem, refetchBookL
     return isExist;
   }, [bookListItem]);
 
-  const uploadFile = useCallback(async (files) => {
+  const uploadFile = useCallback(async (files: FileList): Promise<void> => {
     setIsUploading(true);
 
     if (isExistBook(files[0].name)) {
@@ -61,7 +64,7 @@ const UploadBook: React.FunctionComponent<Props> = ({ bookListItem, refetchBookL
     }
   }, [isExistBook]);
 
-  const setFile = useCallback((e) => {
+  const setFile = useCallback((e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (isUploading) {

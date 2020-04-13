@@ -23,7 +23,10 @@ import {
   getSpineViewerCount,
   getTagPostion,
 } from '../../lib/calculate';
-import { getPageCountBySpineIndex } from '../../lib/util';
+import {
+  getPageCountBySpineIndex,
+  getTagElement,
+} from '../../lib/util';
 
 import {
   usePageWithWithRatio,
@@ -39,6 +42,16 @@ interface ViewerPageProps {
   isSetAllViewerCountList: boolean;
   toggleCalculateCount: boolean;
   setCountCallback: (count: number, index: number) => void;
+}
+
+interface ViewerStyle {
+  fontSize: number;
+  lineHeight: number;
+}
+
+interface LinkInfo {
+  href: string;
+  tag: string;
 }
 
 const Article = styled(ViewerArticle)`
@@ -65,11 +78,11 @@ const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
 
   const viewArticleRef = useRef(null);
 
-  const [viewerStyle, setViewerStyle] = useState({
+  const [viewerStyle, setViewerStyle] = useState<ViewerStyle>({
     fontSize,
     lineHeight,
   });
-  const [selectedLink, setSelectedLink] = useState({
+  const [selectedLink, setSelectedLink] = useState<LinkInfo>({
     href: '',
     tag: '',
   });
@@ -83,39 +96,46 @@ const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
   const isShowNowSpineIndex = useMemo(() => viewerSpineIndex === spineIndex,
     [viewerSpineIndex, spineIndex]);
 
-  const setPageCount = useCallback((index: number, position = 0) => {
+  const setPageCount = useCallback((index: number, position = 0): void => {
     const pageCount = getPageCountBySpineIndex(viewerCountList, index);
     dispatch(viewerActions.setViewerPageCount(pageCount + position));
   }, [viewerCountList]);
 
-  const getLinkPosition = useCallback((index: number, tag: string) => {
-    if (tag) {
-      const selectedLinkSpineElement = document.querySelector(`[data-spineindex='${index}']`);
-      const tagElement: HTMLElement = selectedLinkSpineElement.querySelector(`#${tag}`);
-      if (tagElement) {
-        return getTagPostion(tagElement.offsetLeft, index, widthWithRatio);
-      }
-    }
-
-    return 0;
+  const getLinkPosition = useCallback((index: number, tag: string): number => {
+    const tagElement = getTagElement(index, tag);
+    return tagElement ? getTagPostion(tagElement.offsetLeft, index, widthWithRatio) : 0;
   }, [widthWithRatio]);
 
-  const clickPage = useCallback((e) => {
-    let node = e.target;
+  const getLinkInfo = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>): LinkInfo | null => {
+    let node = e.target as HTMLElement;
     while (node && node.localName !== 'a') {
-      node = node.parentNode;
+      node = node.parentNode as HTMLElement;
     }
     if (node) {
       e.preventDefault();
-      const [spineHref, hashId] = node.getAttribute('href').split('#');
-      setSelectedLink({
-        href: spineHref || spine.href,
-        tag: hashId,
-      });
-      return false;
+      const [href, tag] = node.getAttribute('href').split('#');
+      return {
+        href,
+        tag,
+      };
     }
-    return true;
+    return null;
+  }, []);
+
+  const setLinkInfo = useCallback((linkInfo: LinkInfo): void => {
+    const { href, tag } = linkInfo;
+    setSelectedLink({
+      href: href || spine.href,
+      tag,
+    });
   }, [spine]);
+
+  const clickPage = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
+    const linkInfo = getLinkInfo(e);
+    if (linkInfo) {
+      setLinkInfo(linkInfo);
+    }
+  }, [setLinkInfo]);
 
   useEffect(() => {
     const { current: viewArticleRefCurrent } = viewArticleRef;
@@ -126,11 +146,11 @@ const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
   }, [toggleCalculateCount]);
 
   useEffect(() => {
-    const { index: selectedSpineLinkIndex, tag } = selectedSpineLink;
-    if (selectedSpineLinkIndex > -1) {
+    const { index, tag } = selectedSpineLink;
+    if (index > -1) {
       setPageCount(
-        selectedSpineLinkIndex,
-        getLinkPosition(selectedSpineLinkIndex, tag),
+        index,
+        getLinkPosition(index, tag),
       );
     }
   }, [selectedSpineLink]);

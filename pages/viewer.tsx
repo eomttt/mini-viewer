@@ -46,25 +46,25 @@ const Viewer: NextPage<ViewerPageProps> = ({ bookName }) => {
   const [isGettingBook, setIsGettingBook] = useState(true);
   const [menuHeight, setMenuHeight] = useState(0);
 
-  const setViewerSize = useCallback(() => {
+  const setViewerSize = useCallback((): void => {
     dispatch(settingActions.setViewerWidth(getViewerWidth()));
     dispatch(settingActions.setViewerHeight(getViewerHeight()));
     setMenuHeight(getMenuHeight());
   }, []);
 
-  const initViewer = useCallback(() => {
+  const initViewer = useCallback((): void => {
     dispatch(viewerActions.initViewerState());
     dispatch(bookActions.clearShowingBook());
   }, []);
 
-  const resizeViewer = useCallback(() => {
+  const resizeViewer = useCallback((): void => {
     dispatch(settingActions.setViewerWidth(0));
     dispatch(settingActions.setViewerHeight(0));
     dispatch(viewerActions.resizeViewerState());
     setViewerSize();
   }, []);
 
-  const getBook = useCallback(async () => {
+  const getBook = useCallback(async (): Promise<void> => {
     const bookData = await fetchGetBook(bookName);
     if (bookData) {
       dispatch(bookActions.setShowingBook(bookData));
@@ -74,14 +74,14 @@ const Viewer: NextPage<ViewerPageProps> = ({ bookName }) => {
 
   const debounceResizeViewer = useCallback(debounce(resizeViewer, 500), [resizeViewer]);
 
-  const addResizingEventListener = useCallback(() => {
+  const addResizingEventListener = useCallback((): void => {
     window.addEventListener('resize', () => {
       setIsResizing(true);
       debounceResizeViewer();
     });
   }, [debounceResizeViewer]);
 
-  const removeResizingEventListener = useCallback(() => {
+  const removeResizingEventListener = useCallback((): void => {
     window.removeEventListener('resize', () => {
       debounceResizeViewer();
     });

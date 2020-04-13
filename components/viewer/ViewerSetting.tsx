@@ -125,7 +125,7 @@ const ViewerSetting: React.FunctionComponent = () => {
     }
   }, [isOpenSettingMenu, isSettingChange]);
 
-  const toggleShowNcs = useCallback(() => {
+  const toggleShowNcs = useCallback((): void => {
     if (isOpenSettingMenu) {
       dispatch(settingActions.closeSettingMenu());
     } else {

@@ -38,7 +38,7 @@ interface Props {
 const ViewerSettingColorItem: React.FunctionComponent<Props> = ({
   label, value, colors, action,
 }) => {
-  const selectColor = useCallback((selectedColor: string) => {
+  const selectColor = useCallback((selectedColor: string): void => {
     action(selectedColor);
   }, [action]);
 

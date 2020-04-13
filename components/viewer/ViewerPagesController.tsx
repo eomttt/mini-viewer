@@ -65,13 +65,13 @@ const ViewerPagesController: React.FunctionComponent<ViewerPageControllerProps> 
   const isLastPage = useIsLastPage(viewerPageCount, viewerWholePageCount);
   const widthWithRatio = usePageWithWithRatio(viewerWidth, widthRatio);
 
-  const clickLeft = useCallback(() => {
+  const clickLeft = useCallback((): void => {
     if (!isOpenSettingMenu) {
       dispatch(viewerActions.setCountDownViewerPageCount());
     }
   }, [isOpenSettingMenu]);
 
-  const clickRight = useCallback(() => {
+  const clickRight = useCallback((): void => {
     if (!isOpenSettingMenu) {
       dispatch(viewerActions.setCountUpViewerPageCount());
     }

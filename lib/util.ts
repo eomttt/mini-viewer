@@ -80,4 +80,16 @@ export const getSpinePosition = (
 export const getString = (
   items: string[],
 ): string => items.reduce((acc, cur, index) => `${acc}${index > 0 ? ', ' : ''}${cur}`, '');
+
+export const getTagElement = (spineIndex: number, tag: string): HTMLElement | null => {
+  if (tag) {
+    const selectedLinkSpineElement = document.querySelector(`[data-spineindex='${spineIndex}']`);
+    const tagElement: HTMLElement = selectedLinkSpineElement.querySelector(`#${tag}`);
+
+    return tagElement;
+  }
+
+  return null;
+};
+
 export const isWindowDefined = (): boolean => typeof window !== 'undefined';

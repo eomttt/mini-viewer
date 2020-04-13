@@ -62,7 +62,7 @@ const ViewerNcx: React.FunctionComponent<Props> = ({ ncxItem }) => {
   }: ViewerSettingState = useSelector((state: ReducerStates) => state.viewerSetting);
   const { viewerCountList }: ViewerState = useSelector((state: ReducerStates) => state.viewer);
 
-  const setPageCountBySpineId = useCallback((selectedSpineId) => {
+  const setPageCountBySpineId = useCallback((selectedSpineId: string): void => {
     const spineIndex = getSpineIndexById(viewerCountList, selectedSpineId);
     if (spineIndex > -1) {
       const pageCount = getPageCountBySpineIndex(viewerCountList, spineIndex);
@@ -70,7 +70,7 @@ const ViewerNcx: React.FunctionComponent<Props> = ({ ncxItem }) => {
     }
   }, [viewerCountList]);
 
-  const toggleShowNcs = useCallback(() => {
+  const toggleShowNcs = useCallback((): void => {
     if (!isOpenSettingMenu) {
       setIsShowNcx(!isShowNcx);
     }
