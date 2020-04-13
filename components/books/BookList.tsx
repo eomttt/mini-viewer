@@ -22,6 +22,17 @@ const BookList: React.FunctionComponent<BookListProps> = ({ bookListItem, delete
     });
   }, [bookList]);
 
+  const setNewBookList = useCallback((newBookList: BookListItem[]) => {
+    setBookList([...newBookList]);
+    setLibraryOrder(newBookList.map((orderedBook) => orderedBook.fileName))
+  }, []);
+
+  const sortDraggedBookList = useCallback((draggedBookIndex: number, draggedItem: BookListItem) => {
+    const newSortedBooks = bookList.filter((item) => item.fileName !== draggedItem.fileName);
+    newSortedBooks.splice(draggedBookIndex, 0, draggedItem);
+    setNewBookList(newSortedBooks)
+  }, [bookList]);
+
   const onClickDeleteBook = useCallback((
     e: React.MouseEvent<HTMLImageElement, MouseEvent>,
     index: number,
@@ -61,21 +72,15 @@ const BookList: React.FunctionComponent<BookListProps> = ({ bookListItem, delete
     if (draggedItem.fileName === draggedOverItem.fileName) {
       return;
     }
-
-    const newSortedBooks = bookList.filter((item) => item.fileName !== draggedItem.fileName);
-    newSortedBooks.splice(index, 0, draggedItem);
-
-    setBookList([...newSortedBooks]);
-    setLibraryOrder(newSortedBooks.map((item) => item.fileName));
-  }, [bookList, draggedItem]);
+    sortDraggedBookList(index, draggedItem);
+  }, [draggedItem, sortDraggedBookList]);
 
   const dragEnd = useCallback((e: React.DragEvent<HTMLImageElement>) => {
     e.preventDefault();
   }, []);
 
   useEffect(() => {
-    setBookList([...bookListItem]);
-    setLibraryOrder(bookListItem.map((orderedBook) => orderedBook.fileName));
+    setNewBookList(bookListItem);
   }, [bookListItem]);
 
   return (
