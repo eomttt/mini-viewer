@@ -25,10 +25,11 @@ import {
 
 import {
   usePageWithWithRatio,
-  useSpineIndex,
-  useIsSetAllViewerCountList,
-  useScrollLeft,
   useIsSetViewerSize,
+  useIsSetAllViewerCountList,
+  useSpineIndex,
+  useSpinePosition,
+  useScrollLeft,
 } from '../../hooks';
 
 const ViewerPages: React.FunctionComponent<ViewerPagesProps> = ({
@@ -57,12 +58,13 @@ const ViewerPages: React.FunctionComponent<ViewerPagesProps> = ({
   const isSetAllPrivateCountList: boolean = useIsSetAllViewerCountList(privateStates.countItems, spines);
 
   const nowSpineIndex: number = useSpineIndex(viewerCountList, viewerPageCount);
+  const nowSpinePosition: number = useSpinePosition(viewerCountList, viewerPageCount, viewerSpineIndex);
   const scrollLeft: number = useScrollLeft(viewerSpineIndex, widthWithRatio);
 
   const initPrivatePageCount = useCallback((): void => {
     privateDispatch(privateReducer.initCount());
     setToggleCalculateCount(!toggleCalculateCount);
-  }, []);
+  }, [toggleCalculateCount]);
 
   const setPrivatePageCount = useCallback((count: number, index: number): void => {
     const { href, id } = spines[index];
@@ -106,6 +108,12 @@ const ViewerPages: React.FunctionComponent<ViewerPagesProps> = ({
       dispatch(viewerActions.setViewerSpineIndex(nowSpineIndex));
     }
   }, [nowSpineIndex]);
+
+  useEffect(() => {
+    if (nowSpinePosition > -1) {
+      dispatch(viewerActions.setViewerSpinePosition(nowSpinePosition));
+    }
+  }, [nowSpinePosition]);
 
   useEffect(() => {
     if (scrollLeft > -1) {

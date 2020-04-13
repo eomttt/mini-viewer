@@ -28,7 +28,6 @@ import { ReducerStates } from '../interfaces';
 import { ViewerState, ViewerProps } from '../interfaces/viewer';
 
 import { useIsSetAllViewerCountList } from '../hooks';
-import { ViewerPageProps } from '../interfaces/viewer/page';
 
 const Viewer: NextPage<ViewerProps> = ({ bookName }) => {
   const dispatch = useDispatch();

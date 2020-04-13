@@ -28,7 +28,6 @@ import {
 
 import {
   usePageWithWithRatio,
-  useSpinePosition,
   useSpineLinkInfo,
   useScrollLeft,
 } from '../../hooks';
@@ -42,8 +41,7 @@ const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
   const dispatch = useDispatch();
 
   const {
-    viewerCountList, viewerPageCount,
-    viewerSpineIndex, viewerSpinePosition,
+    viewerCountList, viewerSpineIndex, viewerSpinePosition,
   }: ViewerState = useSelector((state: ReducerStates) => state.viewer);
   const {
     viewerWidth,
@@ -51,7 +49,7 @@ const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
     isOpenSettingMenu,
   }: ViewerSettingState = useSelector((state: ReducerStates) => state.viewerSetting);
 
-  const viewArticleRef = useRef(null);
+  const viewArticleRef = useRef<HTMLDivElement>(null);
 
   const [viewerStyle, setViewerStyle] = useState<ViewerStyle>({
     fontSize,
@@ -64,9 +62,7 @@ const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
 
   const widthWithRatio: number = usePageWithWithRatio(viewerWidth, widthRatio);
   const selectedSpineLink: ViewerLinkInfo = useSpineLinkInfo(viewerCountList, selectedLink);
-  const nowSpinePosition: number = useSpinePosition(viewerCountList, viewerPageCount, viewerSpineIndex);
   const scrollLeft: number = useScrollLeft(viewerSpinePosition, widthWithRatio);
-
   const isShowNowSpineIndex: boolean = useMemo(() => viewerSpineIndex === spineIndex,
     [viewerSpineIndex, spineIndex]);
 
@@ -86,7 +82,6 @@ const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
       node = node.parentNode as HTMLElement;
     }
     if (node) {
-      e.preventDefault();
       const [href, tag] = node.getAttribute('href').split('#');
       return {
         href,
@@ -105,6 +100,7 @@ const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
   }, [spine]);
 
   const clickPage = useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
+    e.preventDefault();
     const linkInfo = getLinkInfo(e);
     if (linkInfo) {
       setLinkInfo(linkInfo);
@@ -113,10 +109,8 @@ const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
 
   useEffect(() => {
     const { current: viewArticleRefCurrent } = viewArticleRef;
-    if (viewArticleRefCurrent) {
-      const count = getSpineViewerCount(viewArticleRefCurrent.scrollWidth, widthWithRatio);
-      setCountCallback(count, spineIndex);
-    }
+    const count = getSpineViewerCount(viewArticleRefCurrent.scrollWidth, widthWithRatio);
+    setCountCallback(count, spineIndex);
   }, [toggleCalculateCount]);
 
   useEffect(() => {
@@ -139,17 +133,11 @@ const ViewerPage: React.FunctionComponent<ViewerPageProps> = ({
   }, [isOpenSettingMenu, fontSize, lineHeight]);
 
   useEffect(() => {
-    if (isShowNowSpineIndex && nowSpinePosition > -1) {
-      dispatch(viewerActions.setViewerSpinePosition(nowSpinePosition));
-    }
-  }, [nowSpinePosition]);
-
-  useEffect(() => {
     if (isShowNowSpineIndex && scrollLeft > -1) {
       const { current: viewArticleRefCurrent } = viewArticleRef;
       viewArticleRefCurrent.scrollLeft = scrollLeft;
     }
-  }, [isSetAllViewerCountList, scrollLeft]);
+  }, [isSetAllViewerCountList, viewerSpineIndex, scrollLeft]);
 
   return (
     <Styled.ViewerArticle

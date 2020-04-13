@@ -4,6 +4,7 @@ import { EpubSpineItem, BookListItem } from '../interfaces/books';
 import { ViewerCount, ViewerLinkInfo } from '../interfaces/viewer';
 
 import { getLibraryOrder } from '../lib/localStorage';
+import { getScrollLeft } from '../lib/calculate';
 
 import { VIEWER_PAGE_GAP } from '../constants/viewer';
 
@@ -127,6 +128,6 @@ export const useIsSetViewerSize = (width: number, height: number): boolean => us
 );
 
 export const useScrollLeft = (offsetNumber: number, viewerWidth: number): number => useMemo(
-  () => Math.floor(offsetNumber * (viewerWidth + VIEWER_PAGE_GAP)),
+  () => getScrollLeft(offsetNumber, viewerWidth),
   [offsetNumber, viewerWidth],
 );
