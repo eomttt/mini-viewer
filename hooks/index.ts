@@ -90,7 +90,7 @@ export const useOrderedBookList = (
   () => {
     if (bookListItems) {
       const orderedItems = getLibraryOrder();
-      if (bookListItems && orderedItems) {
+      if (orderedItems) {
         const newOrderedItems: BookListItem[] = [];
         orderedItems.forEach((orderedItem) => {
           bookListItems.some((bookListItem) => {
@@ -108,9 +108,11 @@ export const useOrderedBookList = (
           }
         });
         return [...newOrderedItems];
+      } else {
+        return [...bookListItems];
       }
     }
-    return null;
+    return [];
   }, [bookListItems],
 );
 
