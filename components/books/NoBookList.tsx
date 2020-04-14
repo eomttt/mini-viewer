@@ -1,5 +1,5 @@
 import React from 'react';
-import * as Styled from '../../styles/books/library';
+import * as Styled from '../../styles/books';
 
 const NoBookList: React.FunctionComponent = () => (
   <Styled.NoBookListContainer>

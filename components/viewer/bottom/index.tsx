@@ -7,7 +7,7 @@ import * as Styled from '../../../styles/viewer/bottom';
 
 import { ReducerStates } from '../../../interfaces';
 import { ViewerState } from '../../../interfaces/viewer';
-import { ViewerBottomProps } from '../../../interfaces/viewer/bottom';
+import { ViewerBottomProps } from '../../../interfaces/viewer/props';
 
 const ViewerBottom: React.FunctionComponent<ViewerBottomProps> = ({ menuHeight }) => {
   const {

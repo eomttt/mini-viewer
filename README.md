@@ -81,11 +81,10 @@
 ```
 ├── Layout.tsx
 ├── books
+│   ├── BookList.tsx
 │   ├── NoBookList.tsx
-│   └── library
-│       ├── BookList.tsx
-│       ├── UploadBook.tsx
-│       └── index.tsx
+│   ├── UploadBook.tsx
+│   └── index.tsx
 ├── common
 │   ├── Error.tsx
 │   └── Loading.tsx
@@ -108,13 +107,12 @@
 ```
 - Layout: pages내에 컴포넌트들 틀
 - books
+  - index:
+    - GraphQL를 통하여 책 목록 관리
+    - 컴포넌트 관리
   - NoBookList: 책 목록이 없을 때 render
-  - library:
-    - index:
-      - GraphQL를 통하여 책 목록 관리
-      - 컴포넌트 관리
-    - BookList: 책 목록을 보여주고 순서 변경
-    - UploadBook: epub 파일 업로드
+  - BookList: 책 목록을 보여주고 순서 변경
+  - UploadBook: epub 파일 업로드
 - common
   - Error: 에러 팝업 컴포넌트
   - Loading: 로딩 팝업 컴포넌트
@@ -170,7 +168,7 @@
 ### Styles
 ```
 ├── books
-│   └── library.ts
+│   └── index.ts
 ├── common
 │   └── index.ts
 ├── index.ts
@@ -180,31 +178,31 @@
     ├── index.ts
     └── page.ts
 ```
-- books: Library 화면 내 컴포넌트에 사용하는 스타일
+- books: 책 목록 화면 내 컴포넌트에 사용하는 스타일
 - common: Loading, Error 같은 공통 컴포넌트에 사용하는 스타일
 - viewer: Viewer 화면 내 컴포넌트에 사용하는 스타일
+  - index: Viewer 내 공통으로 사용하는 스타일
   - bottom: Viewer Bottom 내 사용하는 스타일 (Slider)
   - header: Viewer Header 내 사용하는 스타일 (Ncx, Setting, Title, Authors)
-  - index: Viewer 내 공통으로 사용하는 스타일
   - pages: Viewer Page 내 사용하는 스타일 (ViewerPages, ViewerPage)
 
 ### Interface
 ```
 ├── books
 │   ├── index.ts
-│   └── library.ts
+│   └── props.ts
 ├── common
 │   ├── index.ts
 │   └── style.ts
 ├── index.ts
 └── viewer
-    ├── bottom.ts
-    ├── header.ts
     ├── index.ts
-    ├── page.ts
+    ├── props.ts
     └── style.ts
 ```
-- Styles와 구조가 거의 동일하나 index 는 reducer에 interface이고 각각의 파일은 각 컴포넌트에 props에 관련된 interface들이다.
+- index: reducer 또는 공통으로 사용하는 interface들
+- style: styled-components 내에서 사용하는 interface
+- props: 각 컴포넌트 props interface
 
 ## Issue
 - When parse viewer basePath:  https://${url} or http://${url} 을 basePath로 지정할 경우, https:/${url} or http:/${url} 로 나오는데,

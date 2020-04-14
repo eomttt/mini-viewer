@@ -1,14 +1,13 @@
 import React, { useCallback, useRef, useState } from 'react';
 
-import { subTransparentColor } from '../../../styles';
-import * as Styled from '../../../styles/books/library';
+import { subTransparentColor } from '../../styles';
+import * as Styled from '../../styles/books';
 
-import { fetchUploadEpub } from '../../../lib/fetch';
+import { fetchUploadEpub } from '../../lib/fetch';
 
-import { BookListItem } from '../../../interfaces/books';
-import { UploadBookProps } from '../../../interfaces/books/library';
+import { UploadBookProps } from '../../interfaces/books/props';
 
-import Loading from '../../common/Loading';
+import Loading from '../common/Loading';
 
 const UploadBook: React.FunctionComponent<UploadBookProps> = ({
   bookListItem,

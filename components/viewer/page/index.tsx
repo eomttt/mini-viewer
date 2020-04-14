@@ -16,7 +16,7 @@ import {
 } from '../../../interfaces/viewer';
 import {
   ViewerPageControllerProps
-} from '../../../interfaces/viewer/page';
+} from '../../../interfaces/viewer/props';
 
 import {
   usePageWithWithRatio,

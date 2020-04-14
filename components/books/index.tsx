@@ -1,26 +1,26 @@
 import React, { useState } from 'react';
 import { useMutation, useQuery } from 'react-apollo';
 
-import { subTransparentColor } from '../../../styles';
+import { subTransparentColor } from '../../styles';
 
 import UploadBook from './UploadBook';
 import BookList from './BookList';
-import NoBookList from '../NoBookList';
-import Loading from '../../common/Loading';
-import Error from '../../common/Error';
+import NoBookList from './NoBookList';
+import Loading from '../common/Loading';
+import Error from '../common/Error';
 
-import { REFETCH_NETWORK_STATUS } from '../../../constants';
+import { REFETCH_NETWORK_STATUS } from '../../constants';
 
 import {
   GET_BOOK_LIST_QUERY,
   DELETE_BOOKLIST_ITEM,
-} from '../../../apollo/query';
+} from '../../apollo/query';
 
-import { useOrderedBookList } from '../../../hooks';
+import { useOrderedBookList } from '../../hooks';
 
-import { BookListItem } from '../../../interfaces/books';
+import { BookListItem } from '../../interfaces/books';
 
-const Library: React.FunctionComponent = () => {
+const Books: React.FunctionComponent = () => {
   const [deleteBookListItem] = useMutation(DELETE_BOOKLIST_ITEM, {
     update(cache, { data: mutationData }) {
       const { bookList }: {bookList: BookListItem[]} = cache.readQuery({
@@ -85,4 +85,4 @@ const Library: React.FunctionComponent = () => {
   );
 };
 
-export default Library;
+export default Books;

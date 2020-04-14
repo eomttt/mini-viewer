@@ -10,7 +10,7 @@ import {
   ViewerSettingState,
   ViewerState,
 } from '../../../interfaces/viewer';
-import { ViewerSliderProps } from '../../../interfaces/viewer/bottom';
+import { ViewerSliderProps } from '../../../interfaces/viewer/props';
 
 
 const ViewerSlider: React.FunctionComponent<ViewerSliderProps> = ({ maxValue }) => {

@@ -4,7 +4,7 @@ import debounce from 'lodash.debounce';
 
 import * as Styled from '../../../styles/viewer/header';
 
-import { ViewerSettingCountItemProps } from '../../../interfaces/viewer/header';
+import { ViewerSettingCountItemProps } from '../../../interfaces/viewer/props';
 
 const ViewerSettingCountItem: React.FunctionComponent<ViewerSettingCountItemProps> = ({
   label, value, valueUnit,

@@ -2,11 +2,11 @@ import React from 'react';
 import { NextPage } from 'next';
 
 import Layout from '../components/Layout';
-import Library from '../components/books/library';
+import Books from '../components/books';
 
 const Home: NextPage = () => (
   <Layout>
-    <Library />
+    <Books />
   </Layout>
 );
 

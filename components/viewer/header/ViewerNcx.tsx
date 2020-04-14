@@ -6,9 +6,9 @@ import * as Styled from '../../../styles/viewer/header';
 import * as viewerActions from '../../../reducers/viewer';
 
 import { ReducerStates } from '../../../interfaces';
-import { ViewerNcxProps } from '../../../interfaces/viewer/header';
 import { EpubNavPoint } from '../../../interfaces/books';
 import { ViewerSettingState, ViewerState } from '../../../interfaces/viewer';
+import { ViewerNcxProps } from '../../../interfaces/viewer/props';
 
 import { getSpineIndexById, getPageCountBySpineIndex } from '../../../lib/util';
 

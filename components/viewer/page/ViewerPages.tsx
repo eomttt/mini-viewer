@@ -16,7 +16,7 @@ import {
 } from '../../../interfaces/viewer';
 import {
   ViewerPagesProps
-} from '../../../interfaces/viewer/page';
+} from '../../../interfaces/viewer/props';
 
 import {
   getPageCountBySpineIndex,

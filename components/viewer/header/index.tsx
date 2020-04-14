@@ -8,7 +8,7 @@ import * as Styled from '../../../styles/viewer/header';
 
 import { ReducerStates } from '../../../interfaces';
 import { EpubBookViewer } from '../../../interfaces/books';
-import { ViewerHeaderProps } from '../../../interfaces/viewer/header';
+import { ViewerHeaderProps } from '../../../interfaces/viewer/props';
 
 const ViewerHeader: React.FunctionComponent<ViewerHeaderProps> = ({
   menuHeight,

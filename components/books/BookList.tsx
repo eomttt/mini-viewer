@@ -1,14 +1,14 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import Router from 'next/router';
 
-import * as Styled from '../../../styles/books/library';
+import * as Styled from '../../styles/books';
 
-import { setLibraryOrder } from '../../../lib/localStorage';
+import { setLibraryOrder } from '../../lib/localStorage';
 
-import { BookListItem } from '../../../interfaces/books';
-import { BookListProps } from '../../../interfaces/books/library';
+import { BookListItem } from '../../interfaces/books';
+import { BookListProps } from '../../interfaces/books/props';
 
-import { VIEWER_PATH_NAME } from '../../../constants/viewer';
+import { VIEWER_PATH_NAME } from '../../constants/viewer';
 
 const BookList: React.FunctionComponent<BookListProps> = ({ bookListItem, deleteBookListItem }) => {
   const [bookList, setBookList] = useState<BookListItem[]>([]);
@@ -24,14 +24,14 @@ const BookList: React.FunctionComponent<BookListProps> = ({ bookListItem, delete
 
   const setNewBookList = useCallback((newBookList: BookListItem[]) => {
     setBookList([...newBookList]);
-    setLibraryOrder(newBookList.map((orderedBook) => orderedBook.fileName))
+    setLibraryOrder(newBookList.map((orderedBook) => orderedBook.fileName));
   }, []);
 
-  const sortDraggedBookList = useCallback((draggedBookIndex: number, draggedItem: BookListItem) => {
+  const sortDraggedBookList = useCallback((draggedBookIndex: number) => {
     const newSortedBooks = bookList.filter((item) => item.fileName !== draggedItem.fileName);
     newSortedBooks.splice(draggedBookIndex, 0, draggedItem);
-    setNewBookList(newSortedBooks)
-  }, [bookList]);
+    setNewBookList(newSortedBooks);
+  }, [bookList, draggedItem]);
 
   const onClickDeleteBook = useCallback((
     e: React.MouseEvent<HTMLImageElement, MouseEvent>,
@@ -72,8 +72,8 @@ const BookList: React.FunctionComponent<BookListProps> = ({ bookListItem, delete
     if (draggedItem.fileName === draggedOverItem.fileName) {
       return;
     }
-    sortDraggedBookList(index, draggedItem);
-  }, [draggedItem, sortDraggedBookList]);
+    sortDraggedBookList(index);
+  }, [draggedItem, bookList, sortDraggedBookList]);
 
   const dragEnd = useCallback((e: React.DragEvent<HTMLImageElement>) => {
     e.preventDefault();
