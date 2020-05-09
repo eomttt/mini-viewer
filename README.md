@@ -204,6 +204,8 @@
 - style: styled-components 내에서 사용하는 interface
 - props: 각 컴포넌트 props interface
 
+## [회고](https://velog.io/@eomttt/RIDI-%EC%9E%85%EC%82%AC%EC%9E%90-%EA%B3%BC%EC%A0%9C-%ED%9A%8C%EA%B3%A0)
+
 ## Issue
 - When parse viewer basePath:  https://${url} or http://${url} 을 basePath로 지정할 경우, https:/${url} or http:/${url} 로 나오는데,
 이유는 path.join 시 url 일 경우 다음과 같이 반환 한다고 함.
